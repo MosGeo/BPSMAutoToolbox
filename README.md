@@ -1,3 +1,4 @@
+
 # The Stanford BPSM Petromod Toolbox
 
 This is an effort to automate creation and modification of models used in the Schlumberger PetroMod software. 
@@ -11,6 +12,7 @@ Please check out the power point presentation. It includes important information
 
 ## What is next?
 Anshuman: he will start making some functions to modify some of the parameters that are needed for his work. 
+
 Mustafa: finish of the writer so that the lithologies file can be written back in PetroMod format.
 
 ## This is input, how about output?
