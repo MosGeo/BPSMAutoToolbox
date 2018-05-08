@@ -7,7 +7,7 @@ Currently, it is focused on modifying the lithologies.
 Lithology file can be read in Matlab and parsed into an easily modifiable tables.
 
 ## How to start
-Please check out the power point presentation. It includes important information of how the data is organized.
+Please check out the power point presentation. It includes important information of how the data is organized. The "main" file contains a few lines of code to read the file.
 
 ## What is next?
 Anshuman: he will start making some functions to modify some of the parameters that are needed for his work. 
