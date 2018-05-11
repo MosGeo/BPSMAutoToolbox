@@ -57,31 +57,7 @@ classdef LithologyFile
            XMLTools.addElement(docNode, 'Version', '2.1');
            XMLTools.addElement(docNode, 'ReadOnly', 'false');
            [docNode] = obj.meta.writeMetaNode( docNode);
-           
-           %% Add Meta Node 
-%            metaElement = XMLTools.addElement(docNode, 'Meta');
-%            [infoMetaParameterGroup] = obj.meta.getMetaParameterGroups();
-%            for i=1:infoMetaParameterGroup.n
-%               metaGroupElement = XMLTools.addElement(metaElement, 'MetaParameterGroup');
-%               XMLTools.addElement(metaGroupElement, 'Id', infoMetaParameterGroup.id{i});
-%               XMLTools.addElement(metaGroupElement, 'Name', infoMetaParameterGroup.name{i});
-%               
-%               [infoMetaParameter] = obj.meta.getMetaParameter(infoMetaParameterGroup.id{i});
-%               for j = 1:infoMetaParameter.n
-%                    metaParameterElement = XMLTools.addElement(metaGroupElement, 'MetaParameter');
-%                    XMLTools.addElement(metaParameterElement, 'Id', infoMetaParameter.id{j});
-%                    XMLTools.addElement(metaParameterElement, 'Name', infoMetaParameter.name{j});
-%                    XMLTools.addElement(metaParameterElement, 'ValueType', infoMetaParameter.valueType{j});
-%                    XMLTools.addElement(metaParameterElement, 'PetrelTemplate', infoMetaParameter.petrelTemplate{j});
-%                    XMLTools.addElement(metaParameterElement, 'PetroModUnit', infoMetaParameter.petroModUnit{j});
-%                    XMLTools.addElement(metaParameterElement, 'ReadOnly', infoMetaParameter.readOnly{j});
-%               end
-%               
-%               
-%               XMLTools.addElement(metaGroupElement, 'ReadOnly', infoMetaParameterGroup.readOnly{i});
-% 
-%            end
-           
+           [docNode] = obj.curve.writeCurveNode(docNode);
 %            % Curve
 %            [infoCurveGroup] = obj.curve.getCurveGroups();
 %            for i=1:infoCurveGroup.n

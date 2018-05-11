@@ -95,7 +95,6 @@ classdef Meta
 
                
                [infoMetaParameter, nRecordsMetaParameter] = getMetaParameter(obj, infoMetaParameterGroup{i,1});
-               disp(infoMetaParameter)
                for m=1:nRecordsMetaParameter
                metaGroupParameterElement = XMLTools.addElement(metaGroupElement, 'MetaParameter');
                for n=1:numel(obj.metaParameterTitles)

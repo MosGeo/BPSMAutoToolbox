@@ -109,6 +109,36 @@ classdef Curve
           info.curvePoints     = obj.curveGroups(selectedCurves, 12);
           info.n               = sum(selectedCurves);
        end
+       
+       function [docNode] = writeCurveNode(obj, docNode)
+           [infoCurveGroup] = obj.getCurveGroups();
+           for i=1:infoCurveGroup.n
+              curveGroupElement = XMLTools.addElement(docNode, 'CurveGroup');
+              XMLTools.addElement(curveGroupElement, 'Id', infoCurveGroup.id{i});
+              XMLTools.addElement(curveGroupElement, 'Name', infoCurveGroup.name{i});
+              XMLTools.addElement(curveGroupElement, 'ReadOnly', infoCurveGroup.readOnly{i});
+              
+              [infoCurves] = obj.getCurves(infoCurveGroup.id{i});
+              for j = 1:infoCurves.n
+                 curveElement = XMLTools.addElement(curveGroupElement, 'Curve');
+                 XMLTools.addElement(curveElement, 'Id', infoCurves.id{j});
+                 XMLTools.addElement(curveElement, 'Name', infoCurves.name{j});
+                 XMLTools.addElement(curveElement, 'ReadOnly', infoCurves.readOnly{j});
+                 XMLTools.addElement(curveElement, 'PetrelTemplateX', infoCurves.petrelTemplateX{j});
+                 XMLTools.addElement(curveElement, 'PetrelTemplateY', infoCurves.petrelTemplateY{j});
+                 XMLTools.addElement(curveElement, 'PetroModUnitX', infoCurves.petroModUnitX{j});
+                 XMLTools.addElement(curveElement, 'PetroModUnitY', infoCurves.petroModUnitY{j});
+                 XMLTools.addElement(curveElement, 'PetroModId', infoCurves.petroModId{j});
+                 nCurvePoints = size(infoCurves.curvePoints{j},1);
+                 for k = 1:nCurvePoints
+                   curvePointElement = XMLTools.addElement(curveElement, 'CurvePoint');
+                   XMLTools.addElement(curvePointElement, 'X', infoCurves.curvePoints{j}(k,1));
+                   XMLTools.addElement(curvePointElement, 'Y', infoCurves.curvePoints{j}(k,2));
+                 end
+              end
+           end
+
+   end
           
            
        

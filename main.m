@@ -8,7 +8,7 @@ LithoFile = LithologyFile(lithoFileName);
 % Write the lithology file
 LithoFile.writeLithologyFile('OutputTest.xml')
 
-%% running a model
+%% Running a PetroMod model
 
 petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2016.2\WIN64\bin';
 projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
