@@ -6,4 +6,4 @@ lithoFileName = 'Lithologies.xml';
 LithoFile = LithologyFile(lithoFileName);
 
 % Write the lithology file
-%LithoFile.writeLithologyFile('OutputTest.xml')
+LithoFile.writeLithologyFile('OutputTest.xml')
