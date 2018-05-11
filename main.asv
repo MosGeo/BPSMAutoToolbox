@@ -11,14 +11,13 @@ LithoFile.writeLithologyFile('OutputTest.xml')
 %% running a model
 
 petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2016.2\WIN64\bin';
+
 projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
 
-nDim = 2;
+nDim = 2
 modelsToRun = {'LayerCake'};
 
 i = 1;
 hermesFileName  = fullfile(petroModFolder, 'hermes.exe');
-modelFileName   = fullfile(projectFolder,['pm', num2str(nDim), 'd'], modelsToRun{i});
-commandToRun    = ['"' hermesFileName '" -model "' modelFileName '"'];
-[status,cmdout]  = system(commandToRun, '-echo');
+modelFileName   = fullfile()
 
