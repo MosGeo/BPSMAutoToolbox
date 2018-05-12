@@ -119,6 +119,7 @@ classdef Curve
               XMLTools.addElement(curveGroupElement, 'ReadOnly', infoCurveGroup.readOnly{i});
               
               [infoCurves] = obj.getCurves(infoCurveGroup.id{i});
+              if infoCurves.n > 1
               for j = 1:infoCurves.n
                  curveElement = XMLTools.addElement(curveGroupElement, 'Curve');
                  XMLTools.addElement(curveElement, 'Id', infoCurves.id{j});
@@ -135,6 +136,7 @@ classdef Curve
                    XMLTools.addElement(curvePointElement, 'X', infoCurves.curvePoints{j}(k,1));
                    XMLTools.addElement(curvePointElement, 'Y', infoCurves.curvePoints{j}(k,2));
                  end
+              end
               end
            end
 

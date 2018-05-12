@@ -58,6 +58,8 @@ classdef LithologyFile
            XMLTools.addElement(docNode, 'ReadOnly', 'false');
            [docNode] = obj.meta.writeMetaNode( docNode);
            [docNode] = obj.curve.writeCurveNode(docNode);
+           [docNode] = obj.lithology.writeLithologyNode(docNode);
+
 %            % Curve
 %            [infoCurveGroup] = obj.curve.getCurveGroups();
 %            for i=1:infoCurveGroup.n

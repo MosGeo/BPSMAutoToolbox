@@ -1,13 +1,12 @@
 clear all
 % Define the template file
-lithoFileName = 'Lithologies.xml';
+lithoFileName = 'LithologiesOrig.xml';
 
 % Read the lithology file
 LithoFile = LithologyFile(lithoFileName);
 
 % Write the lithology file
-LithoFile.writeLithologyFile('OutputTest.xml')
-
+LithoFile.writeLithologyFile('Lithologies.xml')
 %% Running a PetroMod model
 
 petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2016.2\WIN64\bin';
@@ -22,3 +21,7 @@ modelFileName   = fullfile(projectFolder,['pm', num2str(nDim), 'd'], modelsToRun
 commandToRun    = ['"' hermesFileName '" -model "' modelFileName '"'];
 [status,cmdout]  = system(commandToRun, '-echo');
 
+%% Test Output
+
+fileID = fopen('C:\Users\malibrah\Desktop\TestPetromod2\pm2d\LayerCake\out\xn29.pmb');
+A = fread(fileID,[3 2],'double')

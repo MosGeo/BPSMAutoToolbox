@@ -152,18 +152,10 @@ classdef Lithology
                    
                    parametersTable = infoLithology{o,end};
                    [~,ia,~] = unique(parametersTable(:,1));
-                   metaParameterId = parametersTable(ia,1);
                    for q = 1:numel(ia)
                        parameterGroupElement = XMLTools.addElement(lithologyElement, 'ParameterGroup');
-                       XMLTools.addElement(parameterGroupElement, 'MetaParameterGroupId', metaParameterId{q});
-
-                       indToInclude = ismember(parametersTable(:,1), metaParameterId{q});
-                       parameters = parametersTable(indToInclude, 2:3);
-                       for r = 1:sum(indToInclude)
-                            parameterElement = XMLTools.addElement(parameterGroupElement, 'Parameter');
-                            XMLTools.addElement(parameterElement, 'MetaParameterId', parameters{r,1});
-                            XMLTools.addElement(parameterElement, 'Value', parameters{r,2});
-                       end
+                       indToInclude = ismember(parametersTable(:,1), ia{q})
+                       
                    end
                    
                        

@@ -182,7 +182,7 @@ classdef Meta
        function [info, nRecords] = getMetaParameterGroup(obj)
            startIndex = 1;
            endIndex   = numel(obj.metaParameterGroupTitles);  
-           id = obj.meta(:,1);           
+           id = obj.meta(:,startIndex);           
            [~,ia,~] = unique(id);
            nRecords = numel(ia);
            info =  obj.meta(ia,startIndex:endIndex);
