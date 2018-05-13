@@ -1,26 +1,28 @@
 clear all
-% Define the template file
-lithoFileName = 'LithologiesOrig.xml';
 
-% Read the lithology file
-LithoFile = LithologyFile(lithoFileName);
-
-% Write the lithology file
-LithoFile.writeLithologyFile('Lithologies.xml')
-%% Running a PetroMod model
+% Define parameters
 petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2016.2\WIN64\bin';
 projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
 
 nDim = 2;
-modelsToRun = {'LayerCake2'};
+templateModel = 'LayerCake2';
+newModel ='UpdatedModel';
 
-i = 1;
-hermesFileName  = fullfile(petroModFolder, 'hermes.exe');
-modelFileName   = fullfile(projectFolder,['pm', num2str(nDim), 'd'], modelsToRun{i});
-commandToRun    = ['"' hermesFileName '" -model "' modelFileName '"'];
-[status,cmdout]  = system(commandToRun, '-echo');
+% Open the project and create a new Model
+PM = PetroMod(petroModFolder, projectFolder);
 
-%% Test Output
+% Change some parameter
+PM = PM.changeLithoValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', '0.49');
+PM.updateProject();
+
+% Check if the parameter is updated
+%PM.Lithology.getLithologyInfo('Sandstone (clay rich)')
+
+% Create a new model and simulate
+PM.copyModel(templateModel, newModel, nDim);
+[output] = PM.simModel(newModel, nDim, true);
+
+%% Test Binary Output
 
 fileID = fopen('C:\Users\malibrah\Desktop\TestPetromod2\pm2d\LayerCake\out\xn29.pmb');
 A = fread(fileID,[3 2],'double')

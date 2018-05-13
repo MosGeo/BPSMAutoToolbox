@@ -201,6 +201,22 @@ classdef Meta
            info =  meta(ia,startIndex:endIndex);
        end
        
+       function [id] = getId(obj,parameterName)
+            nameIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Name'));
+            idIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));
+            ind = ismember(obj.meta(:,nameIndex), parameterName);
+            id = obj.meta(ind,idIndex);
+       end
+       
+       function [names] = getParameterNames(obj,ids)
+          idIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));
+          nameIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Name'));
+          groupNameIndex  = ismember(obj.metaParameterGroupTitles, 'Name');
+          [~,Locb] = ismember(ids,obj.meta(:,idIndex));    
+          Locb
+          names = [obj.meta(Locb,groupNameIndex), obj.meta(Locb,nameIndex)];
+       end
+       
    end
     
     

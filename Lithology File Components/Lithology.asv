@@ -3,7 +3,7 @@ classdef Lithology
        lithology
        lithologyGroupTitles = {'Id', 'Name', 'ReadOnly', 'PetroModId'}
        lithologyTitles = {'Id', 'Name', 'ReadOnly', 'PetroModId', 'Pattern' , 'Color'};
-       parameterGroupTitles = {'MetaParameterGroupId'};
+       metaParameterGroupTitles = {'MetaParameterGroupId'};
        parameterTitles = {'MetaParameterId', 'Value'};
    end
    
@@ -129,22 +129,13 @@ classdef Lithology
             lithologyParameters = obj.lithology{lithologyIndex, end};
        end
        
-       function obj = updateLithologyParameters(obj, lithologyName, id, value)
-           
-            if iscell(value) == false; value = cellstr(value); end
-           
-            nameIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Name'));
-            idIndex    =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'MetaParameterId'));
-            valueIndex =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'Value'));
-                   
+       function lithologyParameters = updateLithologyParameters(obj, lithologyName, id, value)
+            nameIndex = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Name'));
             lithologyIndex = ismember(obj.lithology(:,nameIndex), lithologyName);
             lithologyParameters = obj.lithology{lithologyIndex, end};
-            parameterIndex = ismember(lithologyParameters(:,idIndex),id);
+  
+            parameterIndex = ismember(lithologyParameters(:,2),id);
             
-            lithologyParameters(parameterIndex,valueIndex) =  value;
-            lithologyParameters(parameterIndex,valueIndex)
-
-            obj.lithology{lithologyIndex, end} = lithologyParameters;
        end
        
    end
