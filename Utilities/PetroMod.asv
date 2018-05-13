@@ -1,0 +1,33 @@
+classdef PetroMod
+   
+   properties
+        PetroModDirectory = '';
+        ProjectDirectory = '';
+   end
+   
+  methods
+       function obj = PetroMod(directory)
+            if exist('fileName','var') == true
+                if isPetroModDirectory(directory) == true
+                   obj.PetroModDirectory = directory;
+                else
+                    warning('dfdf)
+
+                end
+            end 
+       end
+       
+       
+
+  end
+  
+  methods(Static)
+       function isPMDirectory = isPetroModDirectory(PetroModDirectory)
+           hermesFileName = fullfile(PetroModDirectory, 'bin', 'hermes.exe');
+           isPMDirectory = exist(hermesFileName, 'file') == 2;
+       end
+      
+  end
+
+   
+end
