@@ -129,9 +129,12 @@ classdef Lithology
             lithologyParameters = obj.lithology{lithologyIndex, end};
        end
        
-       function obj = updateLithologyParameters(obj, lithologyName, id, value)
+       % =========================================================   
+       function obj = updateLithologyParametersValue(obj, lithologyName, id, value)
            
-            if iscell(value) == false; value = cellstr(value); end
+           if isa(value, 'double') == true; value = num2str(value); end 
+           if iscell(value) == false; value = cellstr(value); end
+           
            
             nameIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Name'));
             idIndex    =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'MetaParameterId'));
@@ -146,6 +149,22 @@ classdef Lithology
 
             obj.lithology{lithologyIndex, end} = lithologyParameters;
        end
+       
+       
+       % =========================================================   
+       function curveId = getCurveId(obj, lithologyName, id)
+           
+            nameIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Name'));
+            idIndex    =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'MetaParameterId'));
+            valueIndex =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'Value'));
+                   
+            lithologyIndex = ismember(obj.lithology(:,nameIndex), lithologyName);
+            lithologyParameters = obj.lithology{lithologyIndex, end};
+            parameterIndex = ismember(lithologyParameters(:,idIndex),id);
+            
+            curveId = lithologyParameters(parameterIndex,valueIndex);
+       end
+       
        
    end
     

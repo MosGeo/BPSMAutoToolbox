@@ -43,8 +43,15 @@ classdef LithologyFile
        
        function obj = changeValue(obj, lithologyName, parameterName, value)
            id = obj.meta.getId(parameterName);
-           obj.lithology = obj.lithology.updateLithologyParameters(lithologyName, id, value);
+           obj.lithology = obj.lithology.updateLithologyParametersValue(lithologyName, id, value);
        end
+       
+       function obj = changeCurve (obj, lithologyName, parameterName, matrix)
+           id = obj.meta.getId(parameterName);
+           curveId = obj.lithology.getCurveId(lithologyName, id);
+           obj.curve = obj.curve.updateCurve(curveId, matrix);
+       end
+           
        
        function lithologyInfo = getLithologyInfo(obj, lithologyName)
            lithologyParameters = obj.lithology.getLithologyParameters(lithologyName);

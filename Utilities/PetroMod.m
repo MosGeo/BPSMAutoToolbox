@@ -56,6 +56,10 @@ classdef PetroMod
        obj.Lithology = obj.Lithology.changeValue(lithologyName, parameterName, value);
     end
     
+    function obj = changeLithoCurve(obj, lithologyName, parameterName, value)
+       obj.Lithology = obj.Lithology.changeCurve(lithologyName, parameterName, value);
+    end
+    
     %=====================================================
     function [status,msg] = copyModel(obj, sourceModel, distModel, dimension, isOverwrite)
         
