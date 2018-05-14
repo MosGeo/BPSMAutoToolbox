@@ -7,8 +7,9 @@ Currently, it is focused on modifying the lithologies.
 A project is loaded into Matlab. Lithologies can be modified (addition of new lithologies will be implemented next). Models can be duplicated and simulated directly from Matlab.
 
 ## How to start
-- Create your "template project"
-- Simulate your template project and make sure it works.
+- Create your PetroMod 2016.2 "template project"
+- Create your output script in python to export output if needed (see below).
+- Simulate your template project and make sure everything works.
 - See the "main.m" for the procedure to load your template project in Matlab, modify parameters, duplicate models and simulate them in Matlab.
 
 ## What is next?
