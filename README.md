@@ -22,3 +22,6 @@ The basic framework is implemented now and is validated. The whole process can b
 - Check out scripts folder in PetroMod 2016.2 (e.g., "C:\Program Files\Schlumberger\PetroMod 2016.2\scripts"). You will need to write your own scripts that export your specific needed data automatically after the simulator.
 - To activate your script, in the Simulator window, choose "Output", "Open Simulator" and select your script. Make sure your script run in the template project.
 - Save the simulator window.
+
+## This is great, but can I run this on a cluster?
+Technically yes but I have not tested it. We need to install PetroMod on the cluster. Last time I was trying that with Best, we had lots of issues mainly because we do not have admin previlages to install required packages. I do not know the current status. Since then, I figured all the required packages and tested the procedure of installing it on linux in a desktop machine. The same workflow can be done in the cluster. You can see the "Linux PetroMod" folder in the BPSM folder for instructions on how to install PetroMod in Linux.
