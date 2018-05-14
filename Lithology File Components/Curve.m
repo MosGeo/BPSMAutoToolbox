@@ -91,7 +91,8 @@ classdef Curve
        function obj = updateCurve(obj, curveId, matrix)
             idIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
             [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
-            obj.curveGroups{Locb,end} = num2cell(matrix);
+            matrix = cellfun(@(x) num2str(x), num2cell(matrix), 'UniformOutput', false);
+            obj.curveGroups{Locb,end} = matrix;
        end
        
    end

@@ -145,7 +145,6 @@ classdef Lithology
             parameterIndex = ismember(lithologyParameters(:,idIndex),id);
             
             lithologyParameters(parameterIndex,valueIndex) =  value;
-            lithologyParameters(parameterIndex,valueIndex)
 
             obj.lithology{lithologyIndex, end} = lithologyParameters;
        end
