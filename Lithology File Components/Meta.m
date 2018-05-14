@@ -212,8 +212,7 @@ classdef Meta
           idIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));
           nameIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Name'));
           groupNameIndex  = ismember(obj.metaParameterGroupTitles, 'Name');
-          [~,Locb] = ismember(ids,obj.meta(:,idIndex));    
-          Locb
+          [~,Locb] = ismember(ids,obj.meta(:,idIndex));
           names = [obj.meta(Locb,groupNameIndex), obj.meta(Locb,nameIndex)];
        end
        
