@@ -75,9 +75,15 @@ classdef PetroMod < handle
     function [] =  updateProject(obj)
     % updateProject  updates the current project by writing the lithology 
     % file.
-
         lithologyFileName = fullfile(obj.PMProjectDirectory, 'geo', 'Lithologies.xml');
         obj.Litho.writeLithologyFile(lithologyFileName);
+    end
+    %=====================================================
+    function [] =  restoreProject(obj)
+    % updateProject  updates the current project by writing the lithology 
+    % file.
+        lithologyFileName = fullfile(obj.PMProjectDirectory, 'geo', 'Lithologies.xml');
+        obj.Litho.restoreBackupLithologyFile(lithologyFileName);
     end
     %=====================================================
 

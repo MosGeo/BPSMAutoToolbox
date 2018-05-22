@@ -22,9 +22,12 @@ PM.Litho.changeCurve('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 1
 PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology')
 PM.Litho.deleteLithology('Mos Lithology');
 
-% Update lithology file
+% Update lithology file 
 PM.updateProject();
 
 % Create a new model and simulate
 PM.copyModel(templateModel, newModel, nDim);
 [output] = PM.simModel(newModel, nDim, true);
+
+% Restore lithology file (does not restore models)
+PM.restoreProject();
