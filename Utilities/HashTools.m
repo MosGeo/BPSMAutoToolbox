@@ -1,12 +1,16 @@
 classdef HashTools
     methods (Static)
         %=====================================================
-        function hash = getUniqueHash(oldHashs)
+        function hash = getUniqueHash(oldHashs, startingString)
+            % Default values
+            if exist('startingString','var') == false; startingString = ''; end
+            
             isUnique = false;
             nTrys = 0;
             stringLength = 64;
             while(isUnique==false && nTrys<=100)
                 randomString =  HashTools.getRandomString(stringLength);
+                randomString = [startingString randomString];
                 hash = HashTools.getHash(randomString);
                 isUnique = ~ismember(hash, oldHashs);
                 nTrys =  nTrys + 1;

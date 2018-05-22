@@ -94,7 +94,9 @@ classdef Curve < handle
             matrix = cellfun(@(x) num2str(x), num2cell(matrix), 'UniformOutput', false);
             obj.curveGroups{Locb,end} = matrix;
        end
-              
+       
+       function obj = getCurveMatrix()
+       
        function ids = getIds(obj)
            idIndex1  = find(ismember(obj.curveGroupTitles, 'Id'));
            idIndex2  = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'Id'));

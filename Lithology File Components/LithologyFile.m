@@ -123,7 +123,7 @@ classdef LithologyFile < handle
    %=====================================================
    function [] = dublicateLithology(obj, sourceLithoName, distLithoName)
         allIds = obj.getIds();
-        hash = HashTools.getUniqueHash(allIds);
+        hash = HashTools.getUniqueHash(allIds, distLithoName);
         obj.lithology.dublicateLithology(sourceLithoName, distLithoName, hash)
    end  
    %=====================================================
