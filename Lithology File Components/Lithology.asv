@@ -186,14 +186,15 @@ classdef Lithology < handle
            ids = cellstr(ids);
        end
        
-       function [] = dublicateLithology(obj, sourceLithoName, distLithoName, hash)
-           lithologyIndex = obj.getLithologyIndex(sourceLithoName);
-           newLithology = obj.lithology(lithologyIndex,:);
+       function [] = addLithology(obj, sourceLithoName, distLithoName)
+           allIds = obj.getIds();
+           hash = HashTools.getUniqueHash(allIds);
+           lithologyIndex = obj.lithology.getLithologyIndex(sourceLithoName);
+           oldLithology = obj.lithology.lithology(lithologyIndex,:);
            idIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Id'));         
            nameIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Name'));         
-           newLithology{:,idIndex} = hash;
-           newLithology{:,nameIndex} = distLithoName;
-           obj.lithology(end+1,:)= newLithology;
+
+           obj.lithology.lithology(end+1,:)= oldLithology;
        end
        
    end

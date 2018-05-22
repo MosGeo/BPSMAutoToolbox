@@ -14,16 +14,13 @@ PM = PetroMod(petroModFolder, projectFolder);
 
 % Check the current parameter of the lithology
 PM.Litho.getLithologyInfo('Sandstone (clay rich)')
+PM.Litho.addLithology('Sandstone (clay rich)', 'Mos Lithology')
 
 % Change some parameters (one scaler, and one curve)
 PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .9);
 PM.Litho.changeCurve('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
+PM.Litho.deleteLithology('Sandstone (clay rich)');
 
-% Add and delete lithology
-PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology')
-PM.Litho.deleteLithology('Mos Lithology');
-
-% Update lithology file
 PM.updateProject();
 
 % Create a new model and simulate
