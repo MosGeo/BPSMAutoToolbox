@@ -7,18 +7,21 @@ projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
 nDim = 2;   % is your model 1D, 2D, or 3D
 templateModel = 'LayerCake3';
 
-
 newModel ='UpdatedModel';
 
-% Open the project and create a new Model
+% Open the project
 PM = PetroMod(petroModFolder, projectFolder);
 
 % Check the current parameter of the lithology
-PM.Lithology.getLithologyInfo('Sandstone (clay rich)')
+PM.Litho.getLithologyInfo('Sandstone (clay rich)')
+
+oldHashs = PM.Litho.getIds()
 
 % Change some parameters (one scaler, and one curve)
-PM = PM.changeLithoValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .8);
-PM = PM.changeLithoCurve('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
+PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .9);
+PM.Litho.changeCurve('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
+PM.Litho.deleteLithology('Sandstone (clay rich)');
+
 PM.updateProject();
 
 % Create a new model and simulate

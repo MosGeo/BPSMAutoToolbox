@@ -1,4 +1,4 @@
-classdef Meta
+classdef Meta < handle
    properties
        metaParameterGroupTitles = {'Id', 'Name', 'ReadOnly'}
        metaParameterTitles = {'Id', 'Name', 'ValueType', 'DefaultValue', 'PetrelTemplate', 'PetroModUnit', 'ReadOnly'};
@@ -214,6 +214,17 @@ classdef Meta
           groupNameIndex  = ismember(obj.metaParameterGroupTitles, 'Name');
           [~,Locb] = ismember(ids,obj.meta(:,idIndex));
           names = [obj.meta(Locb,groupNameIndex), obj.meta(Locb,nameIndex)];
+       end
+       
+       function ids = getIds(obj)
+           idIndex1  = find(ismember(obj.metaParameterGroupTitles, 'Id'));
+           idIndex2  = numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterGroupTitles, 'Id'));
+           idIndex3  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));         
+           ids = [obj.meta(:,idIndex1); obj.meta(:,idIndex2); obj.meta(:,idIndex3)];
+           keepInd = cellfun(@(x) ~isempty(x), ids);
+           ids = ids(keepInd);
+           ids = unique(cell2mat(ids),'rows');
+           ids = cellstr(ids);
        end
        
    end

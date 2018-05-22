@@ -180,7 +180,7 @@ classdef Lithology < handle
            idIndex1  = find(ismember(obj.lithologyGroupTitles, 'Id'));
            idIndex2  = numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyGroupTitles, 'Id'));
            idIndex3  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Id'));         
-           ids = [obj.lithology(:,idIndex1); obj.lithology(:,idIndex2); obj.lithology(:,idIndex3)];
+           ids = [obj.meta(:,idIndex1); obj.meta(:,idIndex2); obj.meta(:,idIndex3)];
            keepInd = cellfun(@(x) ~isempty(x), ids);
            ids = ids(keepInd);
            ids = unique(cell2mat(ids),'rows');

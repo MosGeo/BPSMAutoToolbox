@@ -1,10 +1,10 @@
-classdef PetroMod < handle
+classdef PetroMod
    
    properties
         PMDirectory = '';
         PMProjectDirectory = '';
         isReady = true;
-        Litho = [];
+        Lithology = [];
    end
    
   methods
@@ -24,7 +24,7 @@ classdef PetroMod < handle
             if PetroMod.isPetroModProject(PMProjectDirectory) == true
                 obj.PMProjectDirectory = PMProjectDirectory;
                 lithologyFileName = fullfile(obj.PMProjectDirectory, 'geo', 'Lithologies.xml');
-                obj.Litho = LithologyFile(lithologyFileName);
+                obj.Lithology = LithologyFile(lithologyFileName);
             else
                 obj.isReady = false;
                 warning('Cannot find PetroMod Project!');
@@ -57,9 +57,20 @@ classdef PetroMod < handle
     end
     
     %=====================================================
-    function [status,msg] = copyModel(obj, sourceModel, distModel, dimension, isOverwrite)
-    % copyModel  Duplicate a model from source name to destination.
+    
+    function obj = changeLithoValue(obj, lithologyName, parameterName, value)
+    % changeLithoValue  Changes a parameter value giving a lithology name, the 
 
+       obj.Lithology = obj.Lithology.changeValue(lithologyName, parameterName, value);
+    end
+    
+    function obj = changeLithoCurve(obj, lithologyName, parameterName, value)
+       obj.Lithology = obj.Lithology.changeCurve(lithologyName, parameterName, value);
+    end
+    
+    %=====================================================
+    function [status,msg] = copyModel(obj, sourceModel, distModel, dimension, isOverwrite)
+        
        if exist('isOverwrite', 'var') == false; isOverwrite = true; end
                
        sourceFolder   = fullfile(obj.PMProjectDirectory,['pm', num2str(dimension), 'd'], sourceModel);
@@ -73,18 +84,11 @@ classdef PetroMod < handle
     end
     %=====================================================
     function [] =  updateProject(obj)
-    % updateProject  updates the current project by writing the lithology 
-    % file.
-
         lithologyFileName = fullfile(obj.PMProjectDirectory, 'geo', 'Lithologies.xml');
-        obj.Litho.writeLithologyFile(lithologyFileName);
+        obj.Lithology.writeLithologyFile(lithologyFileName);
     end
-    %=====================================================
-
 
   end
-  %=====================================================
-
   
   methods(Static)
        

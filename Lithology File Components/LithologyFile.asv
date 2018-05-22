@@ -93,13 +93,10 @@ classdef LithologyFile < handle
        XMLTools.saveXML(xmlDoc, fileName);     
    end
    %=====================================================
-   function allIds = getIds(obj)   
-       allIds = [obj.meta.getIds(); obj.curve.getIds(); obj.lithology.getIds()];
-   end
-   %=====================================================
+   function allIds = getAllIds()   
+       allIds
 
+   end
     
     
-   end
-
 end

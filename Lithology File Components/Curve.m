@@ -1,4 +1,4 @@
-classdef Curve
+classdef Curve < handle
    properties(SetAccess = public)
        curveGroupTitles = {'Id', 'Name', 'ReadOnly'}
        curveTitles = {'Id', 'Name', 'ReadOnly', 'PetrelTemplateX', 'PetrelTemplateY', 'PetroModUnitX', 'PetroModUnitY', 'PetroModId', 'CurvePoints'};
@@ -93,6 +93,16 @@ classdef Curve
             [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
             matrix = cellfun(@(x) num2str(x), num2cell(matrix), 'UniformOutput', false);
             obj.curveGroups{Locb,end} = matrix;
+       end
+       
+       function ids = getIds(obj)
+           idIndex1  = find(ismember(obj.curveGroupTitles, 'Id'));
+           idIndex2  = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'Id'));
+           ids = [obj.curveGroups(:,idIndex1); obj.curveGroups(:,idIndex2)];
+           keepInd = cellfun(@(x) ~isempty(x), ids);
+           ids = ids(keepInd);
+           ids = unique(cell2mat(ids),'rows');
+           ids = cellstr(ids);
        end
        
    end
