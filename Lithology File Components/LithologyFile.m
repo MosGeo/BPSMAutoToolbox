@@ -77,11 +77,18 @@ classdef LithologyFile < handle
         %   write the lithology file
 
        % Default values:
-       if exist('isOverwrite','var') == false; isOverwrite = false; end
+       if exist('isOverwrite','var') == false; isOverwrite = true; end
        if exist('fileName','var')  == false; fileName = 'Output.xml'; end
        if exist('isCreateBackup','var')  == false; isCreateBackup = true; end
 
-       if exist('fileName','file') == 2 && isCreateBackup == true
+       % Create backup if required
+       if exist(fileName,'file') == 2 && isOverwrite == false
+         sprintf('Warning, did not update lithology, make sure to give permission to overwrite file');
+         return;   
+       end
+       
+       % Create backup if required
+       if exist(fileName,'file') == 2 && isCreateBackup == true
          [status,msg,msgID] = copyfile(fileName, [fileName '.bak']);
        end
        
