@@ -72,14 +72,19 @@ classdef LithologyFile < handle
            end
        end
    %=====================================================
-   function [] = writeLithologyFile(obj, fileName, isOverwrite)
+   function [] = writeLithologyFile(obj, fileName, isOverwrite, isCreateBackup)
         %WRITELITHOLOGYFILE Write lithology file
-        %   write the lithology file and returns 
+        %   write the lithology file
 
        % Default values:
        if exist('isOverwrite','var') == false; isOverwrite = false; end
        if exist('fileName','var')  == false; fileName = 'Output.xml'; end
+       if exist('isCreateBackup','var')  == false; isCreateBackup = true; end
 
+       if exist('fileName','file') == 2 && isCreateBackup == true
+         [status,msg,msgID] = copyfile(fileName, [fileName '.bak']);
+       end
+       
        % Write the file
        [docNode, xmlDoc] = XMLTools.createXML('Catalogue');
        XMLTools.setAttribute(docNode, 'xmlns:xsd', obj.xmlnsXsd);
@@ -100,7 +105,7 @@ classdef LithologyFile < handle
    function [] = dublicateLithology(obj, sourceLithoName, distLithoName)
         allIds = obj.getIds();
         hash = HashTools.getUniqueHash(allIds);
-        obj.lithology.addLithology(sourceLithoName, distLithoName, hash)
+        obj.lithology.dublicateLithology(sourceLithoName, distLithoName, hash)
    end  
     
     

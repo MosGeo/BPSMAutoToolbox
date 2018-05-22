@@ -6,7 +6,6 @@ projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
 
 nDim = 2;   % is your model 1D, 2D, or 3D
 templateModel = 'LayerCake3';
-
 newModel ='UpdatedModel';
 
 % Open the project
