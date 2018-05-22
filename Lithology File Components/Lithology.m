@@ -186,9 +186,6 @@ classdef Lithology < handle
            ids = unique(cell2mat(ids),'rows');
            ids = cellstr(ids);
        end
-
-
-       
        
    end
     

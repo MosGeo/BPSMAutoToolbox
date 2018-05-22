@@ -97,7 +97,15 @@ classdef LithologyFile < handle
        allIds = [obj.meta.getIds(); obj.curve.getIds(); obj.lithology.getIds()];
    end
    %=====================================================
-
+   function [] = addLithology(obj, sourceLithoName, distLithoName)
+        allIds = obj.getIds();
+        hash = HashTools.getUniqueHash(allIds);
+        lithologyIndex = obj.lithology.getLithologyIndex(sourceLithoName);
+        oldLithology = obj.lithology.lithology(lithologyIndex,:);
+        obj.changeValue(sourceLithoName, 'Id', hash)
+        obj.changeValue(sourceLithoName, 'Name', distLithoName)
+        obj.lithology.lithology(end+1,:)= oldLithology;
+   end  
     
     
    end

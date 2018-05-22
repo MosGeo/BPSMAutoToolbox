@@ -15,7 +15,10 @@ PM = PetroMod(petroModFolder, projectFolder);
 % Check the current parameter of the lithology
 PM.Litho.getLithologyInfo('Sandstone (clay rich)')
 
-oldHashs = PM.Litho.getIds()
+PM.Litho.addLithology('Sandstone (clay rich)', 'Mos Lithology')
+
+PM.Litho.getLithologyInfo('Mos Lithology')
+
 
 % Change some parameters (one scaler, and one curve)
 PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .9);

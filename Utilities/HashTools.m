@@ -6,8 +6,8 @@ classdef HashTools
             nTrys = 0;
             stringLength = 64;
             while(isUnique==false && nTrys<=100)
-                randomString =  getRandomString(stringLength);
-                hash = getHash(randomString);
+                randomString =  HashTools.getRandomString(stringLength);
+                hash = HashTools.getHash(randomString);
                 isUnique = ~ismember(hash, oldHashs);
                 nTrys =  nTrys + 1;
                 stringLength = stringLength + 1;
