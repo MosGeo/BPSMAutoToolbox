@@ -40,6 +40,13 @@ classdef HashTools
             isUnique = ~ismember(hash, oldHashs);
         end
         %=====================================================
+        function ishash = isHash(hash)
+           % A very simple hash checker. Too simplistic but it will work
+           % for our current needs.
+           regExpString = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+           [match,noMatch]  = regexp(hash, regExpString, 'match','split');
+           ishash = numel(match)==1 && all(isempty(noMatch))==0;
+        end
 
         
     end
