@@ -46,7 +46,7 @@ classdef LithologyFile < handle
        end
    %=====================================================
       
-       function [] = changeValue(obj, lithologyName, parameterName, value)
+       function [] = changeScaler(obj, lithologyName, parameterName, value)
            id = obj.meta.getId(parameterName);
            obj.lithology.updateLithologyParametersValue(lithologyName, id, value);
        end

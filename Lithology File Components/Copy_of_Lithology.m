@@ -2,11 +2,9 @@ classdef Lithology < handle
    properties
        lithology
        lithologyGroupTitles = {'Id', 'Name', 'ReadOnly', 'PetroModId'}
-       lithologyTitles = {'Id', 'Name', 'ReadOnly', 'PetroModId', 'Pattern' , 'Color' , 'Mixing'};
+       lithologyTitles = {'Id', 'Name', 'ReadOnly', 'PetroModId', 'Pattern' , 'Color'};
        parameterGroupTitles = {'MetaParameterGroupId'};
        parameterTitles = {'MetaParameterId', 'Value'};
-       mixingTitles = {'LithologyComponent', 'ThermalConductivity', 'Permeability', 'CapillaryEntryPressure' ,'ReadOnly'}
-       lithoCompTitles = {'LithologyId', 'Fraction'}
    end
    
    methods
@@ -77,22 +75,16 @@ classdef Lithology < handle
        end
        
        
-      % =========================================================
+       % =========================================================
       function lithology = analyzeLithologyNode(obj, lithologyNode)
-          lithology = {};
-          for i = 1:numel(obj.lithologyTitles)-1
-              lithology{i} = char(lithologyNode.getElementsByTagName(obj.lithologyTitles{i}).item(0).getFirstChild.getData);
-          end
-          
-          mixingNode = lithologyNode.getElementsByTagName(obj.lithologyTitles{end});
-          if mixingNode.getLength==0
-              lithology{end+1} = '';
-          else
-              mixingNode = mixingNode.item(0);
-              lithology{end+1} = obj.analyzeMixingNode(mixingNode);
-          end
-          
-         
+
+          id         = char(lithologyNode.getElementsByTagName('Id').item(0).getFirstChild.getData);
+          name       = char(lithologyNode.getElementsByTagName('Name').item(0).getFirstChild.getData);
+          readOnly   = char(lithologyNode.getElementsByTagName('ReadOnly').item(0).getFirstChild.getData);
+          petroModId = char(lithologyNode.getElementsByTagName('PetroModId').item(0).getFirstChild.getData);
+          pattern = char(lithologyNode.getElementsByTagName('Pattern').item(0).getFirstChild.getData);
+          color      = char(lithologyNode.getElementsByTagName('Color').item(0).getFirstChild.getData);
+
           parameterGroupNodes = lithologyNode.getElementsByTagName('ParameterGroup');
           nPrameterGroups = parameterGroupNodes.getLength;
           parameterGroup = {};
@@ -102,29 +94,10 @@ classdef Lithology < handle
              parameterGroupRow  = obj.analyzeParameterGroup(parameterGroupNode);
              parameterGroup     = [parameterGroup; parameterGroupRow];
           end
-          lithology{end+1} = parameterGroup;
+          lithology = {id, name, readOnly, petroModId, pattern, color, parameterGroup};
       end 
-      % =========================================================
-      function mixing = analyzeMixingNode(obj, mixingNode)
-          mixing = {};
-          lithoCompNodes = mixingNode.getElementsByTagName(obj.mixingTitles{1});
-          nLithoComp = lithoCompNodes.getLength; 
-          
-          lithoMatrix = {};
-          for i=1:nLithoComp
-              lithoCompNode = lithoCompNodes.item(i-1);
-              for j=1:numel(obj.lithoCompTitles)
-                  lithoMatrix{i,j} = char(lithoCompNode.getElementsByTagName(obj.lithoCompTitles{j}).item(0).getFirstChild.getData);
-              end
-          end
-          mixing{1} = lithoMatrix;
-          
-          for i =2:numel(obj.mixingTitles)
-              mixing{i} = char(mixingNode.getElementsByTagName(obj.mixingTitles{i}).item(0).getFirstChild.getData);
-          end
-          
-      end
-      % =========================================================
+      
+       % =========================================================
        function [parameterGroup] = analyzeParameterGroup(obj, parameterGroupNode)
           id = char(parameterGroupNode.getElementsByTagName('MetaParameterGroupId').item(0).getFirstChild.getData);
 
@@ -143,11 +116,7 @@ classdef Lithology < handle
        % =========================================================
        function [parameter] = analyzeParameter(obj, parameterNode)
            id = char(parameterNode.getElementsByTagName('MetaParameterId').item(0).getFirstChild.getData); 
-           try
-                value = char(parameterNode.getElementsByTagName('Value').item(0).getFirstChild.getData);
-           catch
-                value = '';
-           end
+           value = char(parameterNode.getElementsByTagName('Value').item(0).getFirstChild.getData);
            parameter = {id, value};
        end
        
@@ -253,24 +222,8 @@ classdef Lithology < handle
                    if nRecordsLithology> 0
                    for o=1:nRecordsLithology
                    lithologyElement = XMLTools.addElement(lithologyGroupElement2, 'Lithology');
-                       for p=1:numel(obj.lithologyTitles)-1
+                       for p=1:numel(obj.lithologyTitles)
                             XMLTools.addElement(lithologyElement, obj.lithologyTitles{p}, infoLithology{o,p});
-                       end
-                       
-                       mixing = infoLithology{o,p+1}; 
-                       if mixing ~= ''
-                            mixingElement = XMLTools.addElement(lithologyElement, 'Mixing');
-                            lithoComponents = mixing{1}
-                            for t = 1:size(lithoComponents,1)
-                                parameterElement = XMLTools.addElement(parameterGroupElement, 'LithologyComponent');
-                                XMLTools.addElement(parameterElement, 'LithologyId', lithoComponents{t,1});
-                                XMLTools.addElement(parameterElement, 'Fraction', lithoComponents{t,2});
-                            end
-                            
-                            for t = 2:size(mixing)
-                                XMLTools.addElement(parameterElement, obj.mixingTitles{t}, mixing{t});
-                            end
-
                        end
                    
                    parametersTable = infoLithology{o,end};
