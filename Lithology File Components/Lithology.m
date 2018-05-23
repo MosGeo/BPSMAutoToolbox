@@ -1,7 +1,7 @@
 classdef Lithology < handle
    properties
        lithology
-       lithologyGroupTitles = {'Id', 'Name', 'ReadOnly', 'PetroModId'}
+       lithologyGroupTitles = {'Id', 'Name', 'Creator', 'ReadOnly', 'PetroModId'}
        lithologyTitles = {'Id', 'Name', 'Creator', 'ReadOnly', 'PetroModId', 'Pattern' , 'Color' , 'Mixing'};
        parameterGroupTitles = {'MetaParameterGroupId'};
        parameterTitles = {'MetaParameterId', 'Value'};
@@ -34,7 +34,13 @@ classdef Lithology < handle
           name   = char(lithologyGroupNodeMain.getElementsByTagName('Name').item(0).getFirstChild.getData);
           readOnly   = char(lithologyGroupNodeMain.getElementsByTagName('ReadOnly').item(0).getFirstChild.getData);
           petroModId   = char(lithologyGroupNodeMain.getElementsByTagName('PetroModId').item(0).getFirstChild.getData);
-
+          
+          try
+              creator   = char(lithologyGroupNodeMain.getElementsByTagName('Creator').item(0).getFirstChild.getData);
+          catch
+              creator = '';
+          end
+          
           lithologyGroupSubNodes = lithologyGroupNodeMain.getElementsByTagName('LithologyGroup');
           nLithologyGroupSubNodes = lithologyGroupSubNodes.getLength;
           
@@ -49,7 +55,8 @@ classdef Lithology < handle
                names = repmat({name}, nRows,1);
                readOnlys = repmat({readOnly}, nRows,1);
                petroModIds = repmat({petroModId}, nRows, 1);
-               lithologyGroupSubMatrix = [ids, names, readOnlys, petroModIds, lithologyGroupSub];
+               creators = repmat({creator}, nRows, 1);
+               lithologyGroupSubMatrix = [ids, names, creators, readOnlys, petroModIds, lithologyGroupSub];
                lithologyGroupSubRows = [lithologyGroupSubRows; lithologyGroupSubMatrix];
           end
                lithologyGroupMain = [lithologyGroupMain; lithologyGroupSubRows];
@@ -62,7 +69,11 @@ classdef Lithology < handle
           name   = char(lithologyGroupNodeSub.getElementsByTagName('Name').item(0).getFirstChild.getData);
           readOnly   = char(lithologyGroupNodeSub.getElementsByTagName('ReadOnly').item(0).getFirstChild.getData);
           petroModId   = char(lithologyGroupNodeSub.getElementsByTagName('PetroModId').item(0).getFirstChild.getData);
-
+          try
+          creator   = char(lithologyGroupNodeSub.getElementsByTagName('Creator').item(0).getFirstChild.getData);
+          catch
+              creator = {''};
+          end
           lithologyNodes = lithologyGroupNodeSub.getElementsByTagName('Lithology');
           nLithologyGroupSubNodes = lithologyNodes.getLength;
           
@@ -71,7 +82,7 @@ classdef Lithology < handle
           for i=0:nLithologyGroupSubNodes-1
                lithologyNode = lithologyNodes.item(i);
                lithology = obj.analyzeLithologyNode(lithologyNode);
-               lithologyRows(i+1,:) = [id, name, readOnly, petroModId, lithology];
+               lithologyRows(i+1,:) = [id, name, creator, readOnly, petroModId, lithology];
           end
           lithologyGroupSub = [lithologyGroupSub; lithologyRows];
        end

@@ -59,7 +59,8 @@ classdef LithologyFile < handle
        end
    %=====================================================
        function [] = changeCurve (obj, lithologyName, parameterName, matrix)
-           curveId = obj.getValue(lithologyName, parameterName);
+           id = obj.meta.getId(parameterName);
+           curveId = obj.lithology.getParameterValue(lithologyName, id);
            obj.curve.updateCurve(curveId, matrix);
        end
    %=====================================================
@@ -70,7 +71,7 @@ classdef LithologyFile < handle
                parameterValue = obj.curve.getCurve(parameterValue);
            end
            parameterValue = cellfun(@str2num, parameterValue, 'UniformOutput', false);
-           parameterValue = cell2mat(parameterValue)
+           parameterValue = cell2mat(parameterValue);
        end
    %=====================================================
        function obj = deleteLithology(obj, lithologyName)
