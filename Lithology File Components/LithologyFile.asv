@@ -66,11 +66,7 @@ classdef LithologyFile < handle
        function parameterValue = getValue (obj, lithologyName, parameterName)
            id = obj.meta.getId(parameterName);
            parameterValue = obj.lithology.getParameterValue(lithologyName, id);
-           if HashTools.isHash(parameterValue)
-               parameterValue = obj.curve.getCurve(parameterValue);
-           end
-           parameterValue = cellfun(@str2num, parameterValue, 'UniformOutput', false);
-           parameterValue = cell2mat(parameterValue)
+           if HashTools.isMD5
        end
    %=====================================================
        function obj = deleteLithology(obj, lithologyName)

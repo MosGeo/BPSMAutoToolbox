@@ -159,9 +159,8 @@ classdef Lithology < handle
 
    methods
        
-      % =========================================================
-
-       function lithologyParameters =  getLithologyParameters(obj, lithologyName)
+        % =========================================================
+        function lithologyParameters =  getLithologyParameters(obj, lithologyName)
             lithologyIndex = obj.getLithologyIndex(lithologyName);
             if any(lithologyIndex) == false 
                 disp('Could not find lithology!'); 
@@ -169,7 +168,7 @@ classdef Lithology < handle
                 return; 
             end
             lithologyParameters = obj.lithology{lithologyIndex, end};
-       end
+        end
        
       % =========================================================   
        function obj = updateLithologyParametersValue(obj, lithologyName, id, value)
@@ -191,16 +190,13 @@ classdef Lithology < handle
        
        
        % =========================================================   
-       function curveId = getCurveId(obj, lithologyName, id)
-           
+       function parameterValue = getParameterValue(obj, lithologyName, id)
             idIndex    =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'MetaParameterId'));
             valueIndex =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'Value'));
-                   
             lithologyIndex = obj.getLithologyIndex(lithologyName);
             lithologyParameters = obj.lithology{lithologyIndex, end};
             parameterIndex = ismember(lithologyParameters(:,idIndex),id);
-            
-            curveId = lithologyParameters(parameterIndex,valueIndex);
+            parameterValue = lithologyParameters(parameterIndex,valueIndex);
        end
        
        % =========================================================   
@@ -232,7 +228,7 @@ classdef Lithology < handle
        
    end
     
- % Get methods
+ % Get methods for writing xml file
  methods
      
      function [docNode] = writeLithologyNode(obj, docNode)
