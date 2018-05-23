@@ -88,7 +88,13 @@ classdef Curve < handle
    
    methods
       
-       function obj = updateCurve(obj, curveId, matrix)
+       function matrix = getCurve(obj, curveId)
+            idIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
+            [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
+            matrix = obj.curveGroups{Locb,end};
+       end
+       
+       function [] = updateCurve(obj, curveId, matrix)
             idIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
             [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
             matrix = cellfun(@(x) num2str(x), num2cell(matrix), 'UniformOutput', false);
