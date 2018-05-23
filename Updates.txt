@@ -1,0 +1,6 @@
+New features since last Email update:
+- No need to re-assign the PM object when changing values.
+- Ability to dublicate lithologies (i.e. add lithology).
+- Ability to dublicate lithologies.
+- Lithology file backup creation.
+- Ability to restore the lithology backup file
