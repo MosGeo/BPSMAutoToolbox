@@ -117,12 +117,14 @@ classdef Curve < handle
             % Update curve name
             oldName = newCurve{:,nameIndex};
             nameComponents = strsplit(oldName,'_');
-            newName = [nameComponents{1} LithoName];
-            newCurve(
+            newName = [nameComponents{1} '_' LithoName];
+            newCurve{:,nameIndex} = newName;
+
+            % Update curve id
+            newCurve{:,idIndex} = hash;
             
-            [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
-            matrix = cellfun(@(x) num2str(x), num2cell(matrix), 'UniformOutput', false);
-            obj.curveGroups{Locb,end} = matrix;
+            % Add the new curve
+            obj.curveGroups(end+1,:) = newCurve;
        end
        % =========================================================                 
        function ids = getIds(obj)
@@ -135,7 +137,17 @@ classdef Curve < handle
            ids = cellstr(ids);
        end
        % =========================================================   
-
+       function petroModIds = getPetroModId(obj)
+           petroModIdIndex   = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'PetroModId'));
+           petroModIds = unique(obj.curveGroups(:,petroModIdIndex)); 
+           petroModIds = cell2mat(cellfun(@str2num, petroModIds, 'UniformOutput', false));
+       end
+       
+       function NewPetroModId =  getNewPetroModId(obj, oldPetroModIds)
+           sortedIds = sort(petroModIds);
+           NewPetroModId = sortedIds(find(diff(sort(sortedIds))>1,1,'first'))+1;
+       end
+       % =========================================================   
        
    end
    

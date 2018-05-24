@@ -110,7 +110,8 @@ classdef Curve < handle
        function [] = duplicateCurve(obj, curveId, hash, LithoName)
             idIndex   = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
             nameIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Name'));
-            
+            petroModIdIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'PetroModId'));
+
             [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
             newCurve  = obj.curveGroups(Locb,:);
             
@@ -122,6 +123,11 @@ classdef Curve < handle
 
             % Update curve id
             newCurve{:,idIndex} = hash;
+            
+            % Update PetroModId
+            petroModIds = obj.getPetroModId();
+            NewPetroModId =  obj.getNewPetroModId(petroModIds);
+            newCurve{:,petroModIdIndex} = num2str(NewPetroModId);
             
             % Add the new curve
             obj.curveGroups(end+1,:) = newCurve;
@@ -137,7 +143,17 @@ classdef Curve < handle
            ids = cellstr(ids);
        end
        % =========================================================   
-
+       function petroModIds = getPetroModId(obj)
+           petroModIdIndex   = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'PetroModId'));
+           petroModIds = unique(obj.curveGroups(:,petroModIdIndex)); 
+           petroModIds = cell2mat(cellfun(@str2num, petroModIds, 'UniformOutput', false));
+       end
+       
+       function NewPetroModId =  getNewPetroModId(obj, oldPetroModIds)
+           sortedIds = sort(oldPetroModIds);
+           NewPetroModId = sortedIds(find(diff(sortedIds)>1,1,'first'))+1;
+       end
+       % =========================================================   
        
    end
    

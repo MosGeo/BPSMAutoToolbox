@@ -229,13 +229,36 @@ classdef Lithology < handle
        end
        
        function [] = dublicateLithology(obj, sourceLithoName, distLithoName, hash)
-           lithologyIndex = obj.getLithologyIndex(sourceLithoName);
-           newLithology = obj.lithology(lithologyIndex,:);
+           
+           % Indecies
            idIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Id'));         
            nameIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Name'));         
+           petroModIdIndex   = 2*numel(obj.lithologyGroupTitles) +  find(ismember(obj.lithologyTitles, 'PetroModId'));
+
+           % Find source lithology
+           lithologyIndex = obj.getLithologyIndex(sourceLithoName);
+           
+           % Get new PetroModId
+           petroModIds = obj.getPetroModId();
+           NewPetroModId =  obj.getNewPetroModId(petroModIds);
+           
+           % Create new lithology
+           newLithology = obj.lithology(lithologyIndex,:);
            newLithology{:,idIndex} = hash;
            newLithology{:,nameIndex} = distLithoName;
+           newLithology{:,petroModIdIndex} = num2str(NewPetroModId);
            obj.lithology(end+1,:)= newLithology;
+       end
+       
+       function petroModIds = getPetroModId(obj)
+           petroModIdIndex   = 2*numel(obj.lithologyGroupTitles) +  find(ismember(obj.lithologyTitles, 'PetroModId'));
+           petroModIds = unique(obj.lithology(:,petroModIdIndex)); 
+           petroModIds = cell2mat(cellfun(@str2num, petroModIds, 'UniformOutput', false));
+       end
+       
+       function NewPetroModId =  getNewPetroModId(obj, oldPetroModIds)
+           sortedIds = sort(oldPetroModIds);
+           NewPetroModId = sortedIds(find(diff(sortedIds)>1,1,'first'))+1;
        end
        
    end

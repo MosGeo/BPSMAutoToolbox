@@ -30,7 +30,8 @@ PM.Litho.deleteLithology('Mos Lithology');
 PM.updateProject();
 
 % Curves
-curveTypes = PM.Litho.curve.getTypes()
+petroModIds = PM.Litho.curve.getPetroModId();
+
 
 % Create a new model and simulate
 PM.copyModel(templateModel, newModel, nDim);
