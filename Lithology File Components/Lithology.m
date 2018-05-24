@@ -183,12 +183,13 @@ classdef Lithology < handle
        
       % =========================================================   
        function obj = updateLithologyParametersValue(obj, lithologyName, id, value)
-           
+        
            if isa(value, 'double') == true; value = num2str(value); end 
            if iscell(value) == false; value = cellstr(value); end
            
-            idIndex    =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'MetaParameterId'));
-            valueIndex =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'Value'));
+           % Indicies
+           idIndex    =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'MetaParameterId'));
+           valueIndex =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'Value'));
                    
             lithologyIndex = obj.getLithologyIndex(lithologyName);
             lithologyParameters = obj.lithology{lithologyIndex, end};

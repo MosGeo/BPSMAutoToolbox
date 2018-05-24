@@ -93,20 +93,40 @@ classdef Curve < handle
    
    
    methods
-      
+       % =========================================================   
        function matrix = getCurve(obj, curveId)
             idIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
             [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
             matrix = obj.curveGroups{Locb,end};
        end
-       
+       % =========================================================   
        function [] = updateCurve(obj, curveId, matrix)
             idIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
             [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
             matrix = cellfun(@(x) num2str(x), num2cell(matrix), 'UniformOutput', false);
             obj.curveGroups{Locb,end} = matrix;
        end
-              
+       % =========================================================   
+       function [] = duplicateCurve(obj, curveId, hash, LithoName)
+            idIndex   = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
+            nameIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Name'));
+            
+            [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
+            newCurve  = obj.curveGroups(Locb,:);
+            
+            % Update curve name
+            oldName = newCurve{:,nameIndex};
+            nameComponents = strsplit(oldName,'_');
+            newName = [nameComponents{1} '_' LithoName];
+            newCurve{:,nameIndex} = newName;
+
+            % Update curve id
+            newCurve{:,idIndex} = hash;
+            
+            % Add the new curve
+            obj.curveGroups(end+1,:) = newCurve;
+       end
+       % =========================================================                 
        function ids = getIds(obj)
            idIndex1  = find(ismember(obj.curveGroupTitles, 'Id'));
            idIndex2  = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'Id'));
@@ -116,6 +136,8 @@ classdef Curve < handle
            ids = unique(cell2mat(ids),'rows');
            ids = cellstr(ids);
        end
+       % =========================================================   
+
        
    end
    

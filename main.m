@@ -23,7 +23,7 @@ PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .9);
 PM.Litho.changeValue('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
 
 % Add and delete lithology
-PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology')
+PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology7')
 PM.Litho.deleteLithology('Mos Lithology');
 
 % Update lithology file 

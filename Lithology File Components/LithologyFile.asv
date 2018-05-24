@@ -12,14 +12,12 @@ classdef LithologyFile < handle
    methods
        
      %=====================================================
-
        function obj = LithologyFile(fileName)
             if exist('fileName','var') == true
                [obj.meta, obj.curve, obj.lithology, obj.xmlnsXsd, obj.xmlnsXsi, obj.xmlDoc]  = obj.readLithologyFile(fileName);
             end 
        end
     %=====================================================
-           
        function [meta, curve, lithology, xmlnsXsd, xmlnsXsi, xmlDoc]  = readLithologyFile(obj, lithoFileName)
             %READLITHOLOGYFILE Read lithology file
             %   read the lithology file and returns 
@@ -59,14 +57,25 @@ classdef LithologyFile < handle
        end
    %=====================================================
        function [] = changeCurve (obj, lithologyName, parameterName, matrix)
-           curveId = obj.getValue(lithologyName, parameterName);
+           id = obj.meta.getId(parameterName);
+           curveId = obj.lithology.getParameterValue(lithologyName, id);
            obj.curve.updateCurve(curveId, matrix);
+       end
+   %=====================================================
+       function [] = addCurve (obj, curveName, curveType, matrix)
+           allIds = obj.getIds();
+           hash = HashTools.getUniqueHash(allIds, distLithoName);
+           obj.curve.addCurve(curveName, curveType, matrix, hash)
        end
    %=====================================================
        function parameterValue = getValue (obj, lithologyName, parameterName)
            id = obj.meta.getId(parameterName);
            parameterValue = obj.lithology.getParameterValue(lithologyName, id);
-           if HashTools.isMD5
+           if HashTools.isHash(parameterValue)
+               parameterValue = obj.curve.getCurve(parameterValue);
+           end
+           parameterValue = cellfun(@str2num, parameterValue, 'UniformOutput', false);
+           parameterValue = cell2mat(parameterValue);
        end
    %=====================================================
        function obj = deleteLithology(obj, lithologyName)
@@ -133,9 +142,24 @@ classdef LithologyFile < handle
    end
    %=====================================================
    function [] = dublicateLithology(obj, sourceLithoName, distLithoName)
+        
+        % Copy lithology
         allIds = obj.getIds();
         hash = HashTools.getUniqueHash(allIds, distLithoName);
-        obj.lithology.dublicateLithology(sourceLithoName, distLithoName, hash)
+        obj.lithology.dublicateLithology(sourceLithoName, distLithoName, hash);
+        lithologyParameters = obj.lithology.getLithologyParameters(distLithoName);
+        
+        % Copy curves
+        for i =1:size(lithologyParameters,end)
+            parameterValue = lithologyParameters(i,end);
+            if HashTools.isHash(parameterValue) == true
+               allIds = obj.getIds();
+               hash = HashTools.getUniqueHash(allIds, [distLithoName parameterValue]);
+               obj.curveGroups.duplicateCurve(parameterValue, hash)
+               obj.lithology.updateLithologyParametersValue(distLithoName, lithologyParameters(i,end), hash);
+            end
+        end
+        
    end  
    %=====================================================
  
