@@ -1,0 +1,35 @@
+classdef StatsTools
+   
+    methods (Static)
+       
+        
+       % MEANS 
+       % =========================================================                 
+        function meanValue = mean(x, f)
+           if exist('f','var')  == false; f = ones(size(x)); end
+           if sum(f)  ~= 1; f = f; end
+
+           n = numel(x)
+           meanValue =  sum(x.*f);
+        end
+       % =========================================================                         
+        function meanValue = geomean(x, f)
+           if exist('f','var')  == false; f = ones(size(x)); end
+           n = numel(x);
+           meanValue =  1/n*prod(x.*f);
+        end
+       % =========================================================                 
+        function meanValue = harmmean(x, f)
+           if exist('f','var')  == false; f = ones(size(x)); end
+           n = numel(x);
+           meanValue =  n./sum(f./x);
+        end 
+       % =========================================================                 
+  
+        
+        
+        
+        
+    end
+    
+end
