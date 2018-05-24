@@ -15,7 +15,7 @@ A project is loaded into Matlab. Lithologies can be modified (addition of new li
 ## What is next?
 The basic framework is implemented now and is validated. The whole process can be automated in Matlab.  I am going to start focusing on specific things that are needed for some of my research:
 
-- The ability to add new lithologies. 
+- Lithology mixer.
 - The ability to define "main input" in 1D model.
 
 ## This is input, how about output?
