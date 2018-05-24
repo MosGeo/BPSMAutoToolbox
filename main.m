@@ -4,8 +4,8 @@ clear all
 petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2016.2\WIN64\bin';
 projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
 
-nDim = 2;   % is your model 1D, 2D, or 3D
-templateModel = 'LayerCake3';
+nDim = 1;   % is your model 1D, 2D, or 3D
+templateModel = 'M1D';
 newModel ='UpdatedModel';
 
 % Open the project
@@ -28,6 +28,9 @@ PM.Litho.deleteLithology('Mos Lithology');
 
 % Update lithology file 
 PM.updateProject();
+
+% Curves
+curveTypes = PM.Litho.curve.getTypes()
 
 % Create a new model and simulate
 PM.copyModel(templateModel, newModel, nDim);

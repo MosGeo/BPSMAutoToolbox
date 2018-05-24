@@ -25,9 +25,10 @@ classdef Curve < handle
        end
        
        % =========================================================   
-       function curveTypes = getTypes(obj)
+       function curveTypes = getCurveTypes(obj)
             nameIndex = find(ismember(obj.curveGroupTitles, 'Name'));
-            curveTypes = unique(obj.curveGroups(:,nameIndex));
+            curveTypes = unique(curveGroups(nameIndex,:))
+
        end
        
        % =========================================================   
