@@ -12,14 +12,12 @@ classdef LithologyFile < handle
    methods
        
      %=====================================================
-
        function obj = LithologyFile(fileName)
             if exist('fileName','var') == true
                [obj.meta, obj.curve, obj.lithology, obj.xmlnsXsd, obj.xmlnsXsi, obj.xmlDoc]  = obj.readLithologyFile(fileName);
             end 
        end
     %=====================================================
-           
        function [meta, curve, lithology, xmlnsXsd, xmlnsXsi, xmlDoc]  = readLithologyFile(obj, lithoFileName)
             %READLITHOLOGYFILE Read lithology file
             %   read the lithology file and returns 
@@ -62,6 +60,12 @@ classdef LithologyFile < handle
            id = obj.meta.getId(parameterName);
            curveId = obj.lithology.getParameterValue(lithologyName, id);
            obj.curve.updateCurve(curveId, matrix);
+       end
+   %=====================================================
+       function [] = addCurve (obj, curveName, curveType, matrix)
+           allIds = obj.getIds();
+           hash = HashTools.getUniqueHash(allIds, distLithoName);
+           obj.curve.addCurve(curveName, curveType, matrix, hash)
        end
    %=====================================================
        function parameterValue = getValue (obj, lithologyName, parameterName)
@@ -138,9 +142,24 @@ classdef LithologyFile < handle
    end
    %=====================================================
    function [] = dublicateLithology(obj, sourceLithoName, distLithoName)
+        
+        % Copy lithology
         allIds = obj.getIds();
         hash = HashTools.getUniqueHash(allIds, distLithoName);
-        obj.lithology.dublicateLithology(sourceLithoName, distLithoName, hash)
+        obj.lithology.dublicateLithology(sourceLithoName, distLithoName, hash);
+        lithologyParameters = obj.lithology.getLithologyParameters(distLithoName);
+        
+        % Copy curves
+        for i =1:size(lithologyParameters,1)
+            curveId = lithologyParameters(i,end);
+            if HashTools.isHash(curveId) == true
+               allIds = obj.getIds();
+               hash = HashTools.getUniqueHash(allIds, [distLithoName curveId]);
+               obj.curve.duplicateCurve(curveId, hash, distLithoName);
+               obj.lithology.updateLithologyParametersValue(distLithoName, lithologyParameters(i,end-1), hash);
+            end
+        end
+        
    end  
    %=====================================================
  
