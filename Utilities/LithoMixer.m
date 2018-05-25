@@ -25,7 +25,7 @@ classdef LithoMixer < handle
     methods
         
         % =========================================================
-        function obj = LithoMixer(obj, mixType)
+        function obj = LithoMixer(obj, type)
             % Constructor
             
             % Defaults
@@ -46,20 +46,30 @@ classdef LithoMixer < handle
        
     end
     
+    
     methods (Static)
        
-        function effectiveCurve = mixCurves(curves, fractions, mixType)
-            
-        end
-        
-        function effectiveScaler = mixScales(scalers, fractions, mixType)
-            
-        end
-        
       % =========================================================
-        function meanValue = mixVector(x,fractions,mixTypeIndex)
+        function effectiveCurve = mixCurves(curves, fractions, mixType)
+            nPoints = size(curves,1);
             
-            switch mixTypeIndex
+            effectiveCurve = zeros(nPoints,1);
+            for i = 1:nPoints
+                effectiveCurve(i) = LithoMixer.mixVector(curves(i,:),fractions,mixType);
+            end
+        end
+      % =========================================================       
+        function effectiveScaler = mixScalers(scalers, fractions, mixType)
+            effectiveScaler = LithoMixer.mixVector(scalers,fractions,mixType);
+        end
+      % =========================================================
+        function meanValue = mixVector(x,fractions,mixType)
+            
+            % Defaults
+            if exist('fractions','var')  == false; fractions = ones(size(x)); end
+            if exist('mixType','var')  == false; mixTypeIndex = 1; end
+          
+            switch mixType
                 case 1
                     meanValue = StatsTools.mean(x, fractions);
                 case 2
@@ -71,8 +81,6 @@ classdef LithoMixer < handle
         end
       % =========================================================
 
-        
-        
     end
     
 end

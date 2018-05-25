@@ -150,18 +150,89 @@ classdef LithologyFile < handle
         lithologyParameters = obj.lithology.getLithologyParameters(distLithoName);
         
         % Copy curves
-        for i =1:size(lithologyParameters,end)
-            parameterValue = lithologyParameters(i,end);
-            if HashTools.isHash(parameterValue) == true
+        for i =1:size(lithologyParameters,1)
+            curveId = lithologyParameters(i,end);
+            if HashTools.isHash(curveId) == true
                allIds = obj.getIds();
-               hash = HashTools.getUniqueHash(allIds, [distLithoName parameterValue]);
-               obj.curveGroups.duplicateCurve(parameterValue, hash)
-               obj.lithology.updateLithologyParametersValue(distLithoName, lithologyParameters(i,end), hash);
+               hash = HashTools.getUniqueHash(allIds, [distLithoName curveId]);
+               obj.curve.duplicateCurve(curveId, hash, distLithoName);
+               obj.lithology.updateLithologyParametersValue(distLithoName, lithologyParameters(i,end-1), hash);
             end
         end
         
    end  
    %=====================================================
+   function [] = mixLitholgies(obj, sourceLithologies, fractions,distLithoName, mixer)
+       
+       % Defaults
+       if exist('mixer','var')  == false; mixer = LithoMixer(); end
+       
+       % Dublicate lithology
+       obj.dublicateLithology(sourceLithologies{1}, distLithoName);
+       
+       % Get lithology information
+       nLithos = numel(sourceLithologies);
+       lithoInfos = cell(nLithos,1);
+       for i = 1:nLithos
+            lithoInfos{i} =  obj.lithology.getLithologyParameters(sourceLithologies{i});
+       end
+       
+       % Get the titles of the properties
+       lithoTitles = obj.getLithologyInfo(distLithoName);
+       lithoTitles = lithoTitles(:,1:end-1);
+
+       nParameters = size(lithoInfos{1}, 1);
+       for i = 1:nParameters
+           parameterGroupName = lithoTitles{i,1};
+           parameterName = lithoTitles{i,2};
+           
+           
+           % Get parameter values
+           lithoInfos{1}(i,end)
+           parameterType = HashTools.isHash(lithoInfos{1}(i,end));
+           parameterValues = {};
+           for j = 1:nLithos
+               parameterValue = lithoInfos{j}(i,end);
+               if parameterType == 1
+                    parameterValue = obj.curve.getCurve(parameterValue);
+                    parameterValue = parameterValue(:,2);
+                    xValues = obj.strcell2array(parameterValue(:,1));
+               end
+               parameterValues = [parameterValues, parameterValue];  
+           end
+           parameterValues = obj.strcell2array(parameterValues);
+           
+           % Decide on the mixing type
+           switch parameterGroupName      
+               case 'Thermal conductivity'
+                   mixType = mixer.thermalCondictivity(1);
+               case 'Permeability'
+                   mixType = mixer.permeability(1);
+               case 'Seal properties'
+                   mixType = mixer.capillaryPressure(1);
+               otherwise
+                   mixType = 1;
+           end
+           
+           % Mix
+           if parameterType == 0
+               effectiveValue = mixer.mixScalers(parameterValues, fractions, mixType);
+           else
+               effectiveValue = mixer.mixCurves(parameterValues, fractions, mixType);
+               effectiveValue = [xValues, effectiveValue]
+           end
+           
+           % Update the lithology
+           obj.changeValue(distLithoName, parameterName, effectiveValue);
+
+       end
+
+   end
+   %=====================================================
+   function outputArray = strcell2array(obj, strcell)
+         outputArray = cellfun(@str2num, strcell, 'UniformOutput', false);
+         outputArray = cell2mat(outputArray);
+   end
  
     
    end

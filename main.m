@@ -23,15 +23,19 @@ PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .7);
 PM.Litho.changeValue('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
 
 % Add and delete lithology
-PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology7')
+PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology')
 PM.Litho.deleteLithology('Mos Lithology');
+
+% Create a lithology mix
+PM.Litho.deleteLithology('MosMix');
+mixer = LithoMixer('H');
+sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
+fractions         = [.3, .7];
+PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer)
+
 
 % Update lithology file 
 PM.updateProject();
-
-% Curves
-petroModIds = PM.Litho.curve.getPetroModId();
-
 
 % Create a new model and simulate
 PM.copyModel(templateModel, newModel, nDim);

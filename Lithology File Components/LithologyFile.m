@@ -162,6 +162,78 @@ classdef LithologyFile < handle
         
    end  
    %=====================================================
+   function [] = mixLitholgies(obj, sourceLithologies, fractions,distLithoName, mixer)
+       
+       % Defaults
+       if exist('mixer','var')  == false; mixer = LithoMixer(); end
+       
+       % Dublicate lithology
+       obj.dublicateLithology(sourceLithologies{1}, distLithoName);
+       
+       % Get lithology information
+       nLithos = numel(sourceLithologies);
+       lithoInfos = cell(nLithos,1);
+       for i = 1:nLithos
+            lithoInfos{i} =  obj.lithology.getLithologyParameters(sourceLithologies{i});
+       end
+       
+       % Get the titles of the properties
+       lithoTitles = obj.getLithologyInfo(distLithoName);
+       lithoTitles = lithoTitles(:,1:end-1);
+
+       nParameters = size(lithoInfos{1}, 1);
+       for i = 1:nParameters
+           parameterGroupName = lithoTitles{i,1};
+           parameterName = lithoTitles{i,2};
+           
+           % Get parameter values
+           parameterType = HashTools.isHash(lithoInfos{1}(i,end));
+           parameterId = lithoInfos{1}(i,end-1);
+
+           parameterValues = {};
+           for j = 1:nLithos
+               [~, paramInd] = (ismember(parameterId,lithoInfos{j}(:,end-1)));
+               parameterValue = lithoInfos{j}(paramInd,end);
+               if parameterType == 1
+                    parameterValue = obj.curve.getCurve(parameterValue);
+                    parameterValue = parameterValue(:,2);
+                    xValues = obj.strcell2array(parameterValue(:,1));
+               end
+               parameterValues = [parameterValues, parameterValue];  
+           end
+           parameterValues = obj.strcell2array(parameterValues);
+           
+           % Decide on the mixing type
+           switch parameterGroupName      
+               case 'Thermal conductivity'
+                   mixType = mixer.thermalCondictivity(1);
+               case 'Permeability'
+                   mixType = mixer.permeability(1);
+               case 'Seal properties'
+                   mixType = mixer.capillaryPressure(1);
+               otherwise
+                   mixType = 1;
+           end
+           
+           % Mix
+           if parameterType == 0
+               effectiveValue = mixer.mixScalers(parameterValues, fractions, mixType);
+           else
+               effectiveValue = mixer.mixCurves(parameterValues, fractions, mixType);
+               effectiveValue = [xValues, effectiveValue];
+           end
+           
+           % Update the lithology
+           obj.changeValue(distLithoName, parameterName, effectiveValue);
+
+       end
+
+   end
+   %=====================================================
+   function outputArray = strcell2array(obj, strcell)
+         outputArray = cellfun(@str2num, strcell, 'UniformOutput', false);
+         outputArray = cell2mat(outputArray);
+   end
  
     
    end
