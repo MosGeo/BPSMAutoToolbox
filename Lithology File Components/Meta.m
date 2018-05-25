@@ -208,12 +208,15 @@ classdef Meta < handle
             id = obj.meta(ind,idIndex);
        end
        
-       function [names] = getParameterNames(obj,ids)
+       function [names, type] = getParameterNames(obj,ids)
           idIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));
           nameIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Name'));
+          typeIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'ValueType'));
+
           groupNameIndex  = ismember(obj.metaParameterGroupTitles, 'Name');
           [~,Locb] = ismember(ids,obj.meta(:,idIndex));
           names = [obj.meta(Locb,groupNameIndex), obj.meta(Locb,nameIndex)];
+          type = obj.meta(Locb,typeIndex);
        end
        
        function ids = getIds(obj)
