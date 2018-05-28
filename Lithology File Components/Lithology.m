@@ -182,7 +182,7 @@ classdef Lithology < handle
         end
        
       % =========================================================   
-       function obj = updateLithologyParametersValue(obj, lithologyName, id, value)
+       function [] = updateLithologyParametersValue(obj, lithologyName, id, value)
         
            if isa(value, 'double') == true; value = num2str(value); end 
            if iscell(value) == false; value = cellstr(value); end
@@ -199,8 +199,11 @@ classdef Lithology < handle
 
             obj.lithology{lithologyIndex, end} = lithologyParameters;
        end
-       
-       
+       % =========================================================   
+       function [] = updateLithologyParamters(obj, lithologyName, parameters)
+           lithologyIndex = obj.getLithologyIndex(lithologyName);
+           obj.lithology{lithologyIndex, end} = parameters;
+       end
        % =========================================================   
        function parameterValue = getParameterValue(obj, lithologyName, id)
             idIndex    =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'MetaParameterId'));
@@ -228,6 +231,7 @@ classdef Lithology < handle
            ids = cellstr(ids);
        end
        
+       % =========================================================   
        function [] = dublicateLithology(obj, sourceLithoName, distLithoName, hash)
            
            % Indecies
@@ -250,15 +254,59 @@ classdef Lithology < handle
            obj.lithology(end+1,:)= newLithology;
        end
        
+       % =========================================================          
        function petroModIds = getPetroModId(obj)
            petroModIdIndex   = 2*numel(obj.lithologyGroupTitles) +  find(ismember(obj.lithologyTitles, 'PetroModId'));
            petroModIds = unique(obj.lithology(:,petroModIdIndex)); 
            petroModIds = cell2mat(cellfun(@str2num, petroModIds, 'UniformOutput', false));
        end
        
+       % =========================================================          
        function NewPetroModId =  getNewPetroModId(obj, oldPetroModIds)
            sortedIds = sort(oldPetroModIds);
            NewPetroModId = sortedIds(find(diff(sortedIds)>1,1,'first'))+1;
+       end
+       % =========================================================          
+       function [] = updateReadOnly(obj, lithologyName, trueFalseValue)
+           readOnlyIndex   = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'ReadOnly'));
+           lithologyIndex = obj.getLithologyIndex(lithologyName);
+           
+           switch trueFalseValue
+               case true
+                   value = 'true';
+               case false
+                   value = 'false';
+           end
+ 
+           obj.lithology{lithologyIndex, readOnlyIndex} = value;
+       end
+       
+       % =========================================================          
+       function [] = updateCreator(obj, lithologyName, creatorName)
+           creatorIndex   = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Creator'));
+           lithologyIndex = obj.getLithologyIndex(lithologyName);
+           obj.lithology{lithologyIndex, creatorIndex} = creatorName;
+       end
+       
+       % =========================================================   
+       function [] = updateMix(obj, lithologyName, sourceLithologies, fractions, mixer)
+           mixIndex   = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Mixing'));
+           idIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Id'));         
+
+           nSourceLitho = numel(sourceLithologies);
+           mixerMatrix  = cell(nSourceLitho,2);
+           for i = 1:nSourceLitho
+                lithologyIndex = obj.getLithologyIndex(sourceLithologies{i});
+                mixerMatrix{i,1} = obj.lithology{lithologyIndex, idIndex};
+                mixerMatrix{i,2} = num2str(fractions(i));
+           end
+           
+           lithologyIndex = obj.getLithologyIndex(lithologyName);
+           mixString = mixer.getMixerString();
+           
+           mixValue = {mixerMatrix, mixString{1}, mixString{2}, mixString{3}, 'false'};
+           obj.lithology{lithologyIndex, mixIndex}= mixValue;
+
        end
        
    end

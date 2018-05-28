@@ -1,8 +1,7 @@
 classdef LithoMixer < handle
    
     properties
-        
-        
+        mixerText = {'Arithmetic', 'Geometric', 'Harmonic'}
        % 1: arithmatic, 2: Geometric, 3: harmonic
        thermalCondictivity = [2, 2]
        permeability = [2, 2]
@@ -43,7 +42,12 @@ classdef LithoMixer < handle
             end            
         end
       % =========================================================
-       
+      function currentMixer = getMixerString(obj)
+         currentMixer{1} = [obj.mixerText{obj.thermalCondictivity(1)} obj.mixerText{obj.thermalCondictivity(2)}];
+         currentMixer{2} = [obj.mixerText{obj.permeability(1)} obj.mixerText{obj.permeability(2)}];
+         currentMixer{3} = [obj.mixerText{obj.capillaryPressure(1)} obj.mixerText{obj.capillaryPressure(2)}];
+      end
+      
     end
     
     
@@ -79,7 +83,7 @@ classdef LithoMixer < handle
             end
             
         end
-      % =========================================================
+
 
     end
     

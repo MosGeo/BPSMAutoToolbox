@@ -97,7 +97,11 @@ classdef Curve < handle
        function matrix = getCurve(obj, curveId)
             idIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
             [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
-            matrix = obj.curveGroups{Locb,end};
+            if any(Locb)==true
+                matrix = obj.curveGroups{Locb,end};
+            else
+                matrix = [];
+            end
        end
        % =========================================================   
        function [] = updateCurve(obj, curveId, matrix)
@@ -148,7 +152,13 @@ classdef Curve < handle
            petroModIds = unique(obj.curveGroups(:,petroModIdIndex)); 
            petroModIds = cell2mat(cellfun(@str2num, petroModIds, 'UniformOutput', false));
        end
-       
+       % =========================================================                 
+       function [] = deleteCurve(obj, curveId)
+            idIndex   = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
+            [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
+            obj.curveGroups(Locb,:) = [];
+       end
+       % =========================================================                       
        function NewPetroModId =  getNewPetroModId(obj, oldPetroModIds)
            sortedIds = sort(oldPetroModIds);
            NewPetroModId = sortedIds(find(diff(sortedIds)>1,1,'first'))+1;

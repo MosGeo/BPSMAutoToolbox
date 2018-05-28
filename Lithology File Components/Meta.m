@@ -177,8 +177,8 @@ classdef Meta < handle
        end    
 
        
-       
-       % Retrieve the metaParameterGroups
+      % =========================================================                 
+      % Retrieve the metaParameterGroups
        function [info, nRecords] = getMetaParameterGroup(obj)
            startIndex = 1;
            endIndex   = numel(obj.metaParameterGroupTitles);  
@@ -187,7 +187,7 @@ classdef Meta < handle
            nRecords = numel(ia);
            info =  obj.meta(ia,startIndex:endIndex);
        end
-       
+        % =========================================================                       
        function [info, nRecords] = getMetaParameterGroup2(obj, metaParameterGroupId)
            startIndex = numel(obj.metaParameterGroupTitles)+1;
            endIndex   = startIndex+numel(obj.metaParameterGroupTitles)-1;  
@@ -200,14 +200,17 @@ classdef Meta < handle
            nRecords = numel(ia);
            info =  meta(ia,startIndex:endIndex);
        end
-       
-       function [id] = getId(obj,parameterName)
-            nameIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Name'));
-            idIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));
+       % =========================================================                 
+       function [id,groupId] = getId(obj,parameterName)
+            nameIndex    = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Name'));
+            idIndex      = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));
+            groupIdIndex =  find(ismember(obj.metaParameterGroupTitles, 'Id'));
             ind = ismember(obj.meta(:,nameIndex), parameterName);
             id = obj.meta(ind,idIndex);
+            groupId = obj.meta(ind,groupIdIndex);
        end
        
+        % =========================================================                       
        function [names, type] = getParameterNames(obj,ids)
           idIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));
           nameIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Name'));
@@ -218,7 +221,7 @@ classdef Meta < handle
           names = [obj.meta(Locb,groupNameIndex), obj.meta(Locb,nameIndex)];
           type = obj.meta(Locb,typeIndex);
        end
-       
+       % =========================================================                        
        function ids = getIds(obj)
            idIndex1  = find(ismember(obj.metaParameterGroupTitles, 'Id'));
            idIndex2  = numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterGroupTitles, 'Id'));
@@ -229,6 +232,8 @@ classdef Meta < handle
            ids = unique(cell2mat(ids),'rows');
            ids = cellstr(ids);
        end
+      % =========================================================                 
+
        
    end
     
