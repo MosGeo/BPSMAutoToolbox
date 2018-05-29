@@ -12,7 +12,7 @@ newModel ='UpdatedModel';
 PM = PetroMod(petroModFolder, projectFolder);
 
 % Check the current parameter of the lithology (curves are showed as id)
-lithoInfo = PM.Litho.getLithologyInfo('Sandstone (clay rich)')
+lithoInfo = PM.Litho.getLithologyInfo('Shale (typical)')
 
 % Get some parameters (works on both scaler and curve)
 athysFactor = PM.Litho.getValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)')
@@ -31,7 +31,7 @@ PM.Litho.deleteLithology('MosMix');
 mixer = LithoMixer('H');
 sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
 fractions         = [.5, .5];
-PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer)
+PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
 
 % Update lithology file 
 PM.updateProject();

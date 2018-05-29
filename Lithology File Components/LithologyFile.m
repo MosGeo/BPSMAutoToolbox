@@ -44,10 +44,10 @@ classdef LithologyFile < handle
        end
    %=====================================================
    function [] = changeValue(obj, lithologyName, parameterName, value)
-       if isscalar(value)==true
-           obj.changeScaler(lithologyName, parameterName, value)
+       if isscalar(value)==true || ischar(value)==true
+           obj.changeScaler(lithologyName, parameterName, value);
        elseif ismatrix(value)==true
-           obj.changeCurve(lithologyName, parameterName, value)
+           obj.changeCurve(lithologyName, parameterName, value);
        end
    end
    %=====================================================
@@ -217,8 +217,7 @@ classdef LithologyFile < handle
        
        % Get the titles of the properties
 
-       nParameters = size(parameterIds, 1)
-       newParameters = cell(nParameters,3);
+       nParameters = size(parameterIds, 1);
        for i = 1:nParameters
            
            % Get parameter information
@@ -229,18 +228,19 @@ classdef LithologyFile < handle
            parameterId   = parameterIds{i,2};
 
            parameterValues = {};
+           curves = {};
            for j = 1:nLithos
                [~, paramInd] = (ismember(parameterId,lithoInfos{j}(:,end-1)));
                if any(paramInd)==false;  continue; end
                parameterValue = lithoInfos{j}(paramInd,end);
-               if strcmp(parameterType, 'Reference')
-                    parameterValue = obj.curve.getCurve(parameterValue);
-                    parameterValue = parameterValue(:,2);
-                    xValues = obj.strcell2array(parameterValue(:,1));
-               end
                parameterValues = [parameterValues, parameterValue];
+               if strcmp(parameterType, 'Reference')
+                    curveValue = obj.curve.getCurve(parameterValue);
+                    curves{end+1} = obj.strcell2array(curveValue);
+               end
            end
-           parameterValues = obj.strcell2array(parameterValues);
+           parameterType
+           parameterValues           
            
            % Decide on the mixing type
            switch parameterGroupName      
@@ -255,18 +255,19 @@ classdef LithologyFile < handle
            end
            
            % Mix
-           parameterValues
-           if isempty(parameterValues)==false
+
+           if isempty(parameterValues)==false || isempty(curves)==false
            switch parameterType
                case 'Decimal'
+                  parameterValues = obj.strcell2array(parameterValues);
                   effectiveValue = mixer.mixScalers(parameterValues, fractions, mixType);
                case 'Reference'
-                  effectiveValue = mixer.mixCurves(parameterValues, fractions, mixType);
-                  effectiveValue = [xValues, effectiveValue];
+                  effectiveValue = mixer.mixCurves(curves, fractions, mixType);
                case 'Integer'
+                  parameterValues = obj.strcell2array(parameterValues);
                   effectiveValue =  parameterValues(1);
                case 'Bool'
-                  effectiveValue =  max(parameterValues(1));
+                  effectiveValue = mixer.mixBooleans(parameterValues, @any);
                case 'string'
                   effectiveValue =  parameterValues(1);
            end
@@ -275,8 +276,6 @@ classdef LithologyFile < handle
            end
        
        % Update the lithology
-       parameterName
-       effectiveValue
        obj.changeValue(distLithoName, parameterName, effectiveValue);
 
        end

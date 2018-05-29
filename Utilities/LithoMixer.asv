@@ -92,6 +92,7 @@ classdef LithoMixer < handle
           end
           
           effectiveValue = mixFunc(boolsValues);
+       
           switch effectiveValue
               case 1
                  effectiveBool = 'True';
