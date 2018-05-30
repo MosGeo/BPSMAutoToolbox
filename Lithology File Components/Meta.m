@@ -209,7 +209,6 @@ classdef Meta < handle
             id = obj.meta(ind,idIndex);
             groupId = obj.meta(ind,groupIdIndex);
        end
-       
         % =========================================================                       
        function [names, type] = getParameterNames(obj,ids)
           idIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));
@@ -233,7 +232,12 @@ classdef Meta < handle
            ids = cellstr(ids);
        end
       % =========================================================                 
-
+       function defaultValue = getDefaultValue(obj, parameterId)
+           idIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));         
+           defaultValueIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'DefaultValue'));         
+           [~,Locb] = ismember(parameterId,obj.meta(:,idIndex));
+           defaultValue = obj.meta(Locb, defaultValueIndex);
+       end
        
    end
     

@@ -28,10 +28,11 @@ PM.Litho.deleteLithology('Mos Lithology');
 
 % Create a lithology mix
 PM.Litho.deleteLithology('MosMix');
-mixer = LithoMixer('H');
+mixer = LithoMixer('V');
 sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
 fractions         = [.5, .5];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
+lithoInfo = PM.Litho.getLithologyInfo('MosMix')
 
 % Update lithology file 
 PM.updateProject();

@@ -69,7 +69,9 @@ classdef LithoMixer < handle
             for i = 1:nCurves
                 x = curves{i}(:,1);
                 y = curves{i}(:,2);
-                curvesMatrix(:,i) = interp1(x,y, xFinal, 'linear', 'extrap');
+                newY = interp1(x,y, xFinal, 'linear', 'extrap');
+                newY(isnan(new)
+                curvesMatrix(:,i) = newY;
             end
             
             effectiveY= zeros(nPoints,1);
@@ -92,7 +94,6 @@ classdef LithoMixer < handle
           end
           
           effectiveValue = mixFunc(boolsValues);
-       
           switch effectiveValue
               case 1
                  effectiveBool = 'True';

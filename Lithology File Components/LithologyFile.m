@@ -52,8 +52,8 @@ classdef LithologyFile < handle
    end
    %=====================================================
        function [] = changeScaler(obj, lithologyName, parameterName, scaler)
-           id = obj.meta.getId(parameterName);
-           obj.lithology.updateLithologyParametersValue(lithologyName, id, scaler);
+           [id, groupId] = obj.meta.getId(parameterName);
+           obj.lithology.updateLithologyParametersValue(lithologyName, groupId, id, scaler);
        end
    %=====================================================
        function [] = changeCurve (obj, lithologyName, parameterName, matrix)
@@ -180,7 +180,7 @@ classdef LithologyFile < handle
                allIds = obj.getIds();
                hash = HashTools.getUniqueHash(allIds, [distLithoName curveId]);
                obj.curve.duplicateCurve(curveId, hash, distLithoName);
-               obj.lithology.updateLithologyParametersValue(distLithoName, lithologyParameters(i,end-1), hash);
+               obj.lithology.updateLithologyParametersValue(distLithoName, lithologyParameters(i,1), lithologyParameters(i,end-1), hash);
             end
         end
         
@@ -231,16 +231,20 @@ classdef LithologyFile < handle
            curves = {};
            for j = 1:nLithos
                [~, paramInd] = (ismember(parameterId,lithoInfos{j}(:,end-1)));
-               if any(paramInd)==false;  continue; end
-               parameterValue = lithoInfos{j}(paramInd,end);
+               if any(paramInd)==true
+                    parameterValue = lithoInfos{j}(paramInd,end);
+               else
+                   parameterValue = obj.meta.getDefaultValue(parameterId);
+                   %continue; 
+               end
                parameterValues = [parameterValues, parameterValue];
                if strcmp(parameterType, 'Reference')
                     curveValue = obj.curve.getCurve(parameterValue);
                     curves{end+1} = obj.strcell2array(curveValue);
                end
            end
-           parameterType
-           parameterValues           
+           %parameterType
+           %parameterValues           
            
            % Decide on the mixing type
            switch parameterGroupName      
@@ -253,6 +257,16 @@ classdef LithologyFile < handle
                otherwise
                    mixType = 1;
            end
+           
+           % Decide on the mixing type
+           switch parameterName      
+               case 'Anisotropy Factor Permeability'
+                   mixType = 1;
+               case 'Depositional Anisotropy'
+                   mixType = mixer.thermalCondictivity(2);
+           end
+           
+           
            
            % Mix
 

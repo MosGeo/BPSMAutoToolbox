@@ -182,11 +182,12 @@ classdef Lithology < handle
         end
        
       % =========================================================   
-       function [status] = updateLithologyParametersValue(obj, lithologyName, groupId, id, value)
+       function [status] = updateLithologyParametersValue(obj, lithologyName, groupId, id, value, isAdd)
         
            if isa(value, 'double') == true; value = num2str(value); end 
            if iscell(value) == false; value = cellstr(value); end
-           if exist('isAdd','var') == true; isAdd = false;  end 
+           if iscell(value) == false; value = cellstr(value); end
+
            
            % Indicies
            groupIdIndex    =   1;
@@ -195,19 +196,37 @@ classdef Lithology < handle
                    
             lithologyIndex = obj.getLithologyIndex(lithologyName);
             lithologyParameters = obj.lithology{lithologyIndex, end};
-            lithologyParameters(:,idIndex);
             parameterIndex = ismember(lithologyParameters(:,idIndex),id);
-
+            
             if any(parameterIndex) == true
                 lithologyParameters(parameterIndex,valueIndex) =  value;
+                obj.lithology{lithologyIndex, end} = lithologyParameters;
                 status = true;
-            elseif  any(parameterIndex) == false
-                 lithologyParameters(end+1,groupIdIndex) =  groupId;
-                 lithologyParameters(end,valueIndex) =  value;
-                 lithologyParameters(end,idIndex) =  id;
-                 status = true;
+            else
+                status = false;
             end
-              obj.lithology{lithologyIndex, end} = lithologyParameters;
+
+       end
+       % =========================================================   
+       function [] = addParameter(obj, lithologyName, groupId, id, value)
+           
+           if isa(value, 'double') == true; value = num2str(value); end 
+           if iscell(value) == false; value = cellstr(value); end
+           
+           % Indicies
+           groupIdIndex    =   1;
+           idIndex    =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'MetaParameterId'));
+           valueIndex =   numel(obj.parameterGroupTitles)+find(ismember(obj.parameterTitles, 'Value'));
+           
+           lithologyIndex = obj.getLithologyIndex(lithologyName);
+           lithologyParameters = obj.lithology{lithologyIndex, valueIndex};
+           
+           lithologyParameters(end+1,valueIndex) =  value;
+           lithologyParameters(end+1,groupIdIndex) =  groupId;
+           lithologyParameters(end+1,idIndex) =  id;
+           
+           obj.lithology{lithologyIndex, end} = lithologyParameters;
+           
        end
        % =========================================================   
        function [] = updateLithologyParamters(obj, lithologyName, parameters)

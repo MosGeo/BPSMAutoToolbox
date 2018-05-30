@@ -24,12 +24,12 @@ classdef LithoMixer < handle
     methods
         
         % =========================================================
-        function obj = LithoMixer(obj, type)
+        function obj = LithoMixer(type)
             % Constructor
             
             % Defaults
             if exist('type','var')  == false; type = 'H'; end
-    
+
             switch upper(type(1))
                 case 'H'
                     obj.thermalCondictivity = [2, 2];
@@ -69,7 +69,10 @@ classdef LithoMixer < handle
             for i = 1:nCurves
                 x = curves{i}(:,1);
                 y = curves{i}(:,2);
-                curvesMatrix(:,i) = interp1(x,y, xFinal, 'linear', 'extrap');
+                newY = interp1(x,y, xFinal, 'linear', nan);
+                newY(xFinal > max(x)) = max(y);
+                newY(xFinal < min(x)) = min(y);
+                curvesMatrix(:,i) = newY;
             end
             
             effectiveY= zeros(nPoints,1);
@@ -117,7 +120,7 @@ classdef LithoMixer < handle
                 case 2
                     meanValue = StatsTools.geomean(x, fractions);
                 case 3
-                    meanValue = StatsTools.harmman(x, fractions); 
+                    meanValue = StatsTools.harmmean(x, fractions); 
             end
             
         end

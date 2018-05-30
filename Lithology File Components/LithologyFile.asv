@@ -44,16 +44,16 @@ classdef LithologyFile < handle
        end
    %=====================================================
    function [] = changeValue(obj, lithologyName, parameterName, value)
-       if isscalar(value)==true
-           obj.changeScaler(lithologyName, parameterName, value)
+       if isscalar(value)==true || ischar(value)==true
+           obj.changeScaler(lithologyName, parameterName, value);
        elseif ismatrix(value)==true
-           obj.changeCurve(lithologyName, parameterName, value)
+           obj.changeCurve(lithologyName, parameterName, value);
        end
    end
    %=====================================================
        function [] = changeScaler(obj, lithologyName, parameterName, scaler)
-           id = obj.meta.getId(parameterName);
-           obj.lithology.updateLithologyParametersValue(lithologyName, id, scaler);
+           [id, groupId] = obj.meta.getId(parameterName);
+           obj.lithology.updateLithologyParametersValue(lithologyName, groupId, id, scaler);
        end
    %=====================================================
        function [] = changeCurve (obj, lithologyName, parameterName, matrix)
@@ -63,17 +63,15 @@ classdef LithologyFile < handle
        end
    %=====================================================
        function [] = addValue(obj, lithologyName, parameterName, value)
-
-         [parameterId, parameterGroupId] = obj.meta.getId(parameterName);  
-         
+         [parameterId, parameterGroupId] = obj.meta.getId(parameterName);     
          if isscalar(value)==true || isstring(value)==true
-               obj.changeScaler(lithologyName, parameterName, value)
+               obj.lithology.addParameter(distLithoName, parameterGroupId, parameterId, value);
          elseif ismatrix(value)==true
                allIds = obj.getIds();
                hash = HashTools.getUniqueHash(allIds, [lithologyName num2str(rand(100,1))]);
                obj.curve.duplicateCurve(curveId, hash, distLithoName);
-               obj.lithology.addParameter(distLithoName, parameterGroupId, parameterId, hash);
                obj.curve.updateCurve(hash, value);
+               obj.lithology.addParameter(distLithoName, parameterGroupId, parameterId, hash);
          end
        end
    %=====================================================
@@ -177,7 +175,7 @@ classdef LithologyFile < handle
         % Copy curves
         lithologyParameters = obj.lithology.getLithologyParameters(distLithoName);
         for i =1:size(lithologyParameters,1)
-            curveId = lithologyParameters(i,end);
+            [curveId, groupId = lithologyParameters(i,end);
             if HashTools.isHash(curveId) == true
                allIds = obj.getIds();
                hash = HashTools.getUniqueHash(allIds, [distLithoName curveId]);
@@ -188,7 +186,7 @@ classdef LithologyFile < handle
         
    end  
    %=====================================================
-   function [] = mixLitholgies(obj, sourceLithologies, fractions, distLithoName, mixer)
+   function [parameterIds] = mixLitholgies(obj, sourceLithologies, fractions, distLithoName, mixer)
        
        % Defaults
        if exist('mixer','var')  == false; mixer = LithoMixer(); end
@@ -211,7 +209,7 @@ classdef LithologyFile < handle
             parameterIds   = [parameterIds; lithoInfos{i}(:,1:2)];
        end
        
-        [~, ~,ib]        = unique(parameterIds(:,2));
+        [~, ib,~]        = unique(parameterIds(:,2));
         parameterNames   = parameterNames(ib,:);
         parameterTypes   = parameterTypes(ib,:);
         parameterIds     = parameterIds(ib,:);
@@ -219,8 +217,7 @@ classdef LithologyFile < handle
        
        % Get the titles of the properties
 
-       nParameters = size(lithoInfos{1}, 1);
-       newParameters = cell(nParameters,3);
+       nParameters = size(parameterIds, 1);
        for i = 1:nParameters
            
            % Get parameter information
@@ -231,18 +228,19 @@ classdef LithologyFile < handle
            parameterId   = parameterIds{i,2};
 
            parameterValues = {};
+           curves = {};
            for j = 1:nLithos
                [~, paramInd] = (ismember(parameterId,lithoInfos{j}(:,end-1)));
                if any(paramInd)==false;  continue; end
                parameterValue = lithoInfos{j}(paramInd,end);
-               if strcmp(parameterType, 'Reference')
-                    parameterValue = obj.curve.getCurve(parameterValue);
-                    parameterValue = parameterValue(:,2);
-                    xValues = obj.strcell2array(parameterValue(:,1));
-               end
                parameterValues = [parameterValues, parameterValue];
+               if strcmp(parameterType, 'Reference')
+                    curveValue = obj.curve.getCurve(parameterValue);
+                    curves{end+1} = obj.strcell2array(curveValue);
+               end
            end
-           parameterValues = obj.strcell2array(parameterValues);
+           parameterType
+           parameterValues           
            
            % Decide on the mixing type
            switch parameterGroupName      
@@ -257,17 +255,19 @@ classdef LithologyFile < handle
            end
            
            % Mix
-           if isempty(parameterValues)==false
+
+           if isempty(parameterValues)==false || isempty(curves)==false
            switch parameterType
                case 'Decimal'
+                  parameterValues = obj.strcell2array(parameterValues);
                   effectiveValue = mixer.mixScalers(parameterValues, fractions, mixType);
                case 'Reference'
-                  effectiveValue = mixer.mixCurves(parameterValues, fractions, mixType);
-                  effectiveValue = [xValues, effectiveValue];
+                  effectiveValue = mixer.mixCurves(curves, fractions, mixType);
                case 'Integer'
+                  parameterValues = obj.strcell2array(parameterValues);
                   effectiveValue =  parameterValues(1);
                case 'Bool'
-                  effectiveValue =  max(parameterValues(1));
+                  effectiveValue = mixer.mixBooleans(parameterValues, @any);
                case 'string'
                   effectiveValue =  parameterValues(1);
            end
@@ -276,7 +276,7 @@ classdef LithologyFile < handle
            end
        
        % Update the lithology
-       %obj.lithology.changeValue(distLithoName, parameterName, effectiveValue);
+       obj.changeValue(distLithoName, parameterName, effectiveValue);
 
        end
           
