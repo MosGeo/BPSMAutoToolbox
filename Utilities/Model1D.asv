@@ -1,0 +1,19 @@
+classdef Model1D
+   
+   properties
+        modelName = '';
+   end
+   
+   
+   methods
+        function obj = Model1D(model)
+            if exist('curveGroupNodes','var') == true
+                obj.curveGroups = obj.analyzeCurveGroupNodes(curveGroupNodes);  
+            end
+       end
+       
+       
+       
+   end
+    
+end

@@ -32,7 +32,7 @@ mixer = LithoMixer('V');
 sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
 fractions         = [.5, .5];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
-lithoInfo = PM.Litho.getLithologyInfo('MosMix')
+lithoInfo = PM.Litho.getLithologyInfo('MosMix');
 
 % Update lithology file 
 PM.updateProject();
@@ -43,3 +43,5 @@ PM.copyModel(templateModel, newModel, nDim);
 
 % Restore lithology file (does not restore models)
 PM.restoreProject();
+
+%%
