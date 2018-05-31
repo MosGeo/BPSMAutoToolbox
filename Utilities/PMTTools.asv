@@ -20,7 +20,16 @@ classdef PMTTools
         end
         % =========================================================
         function status = writePMTFile(pmt, pmtFileName)
-            rawText = reconstructPMTfile(pmt)
+            % Write PMT file
+            rawText = PMTTools.reconstructPMTfile(pmt);
+            fileID = fopen(pmtFileName,'w');
+            for i = 1:numel(rawText)
+                currentLine = rawText{i};
+                currentLine = strrep(currentLine,'%','%%');
+                fprintf(fileID, currentLine, '%s');
+                fprintf(fileID, '\n');
+            end
+            fclose(fileID);
             status = true;
         end
         % =========================================================
@@ -74,15 +83,66 @@ classdef PMTTools
         end
        % =========================================================
        function data = getData(pmt)
-          data = [];
+          data = {};
           for i = 1:numel(pmt.Data.raw)
              currentLine = pmt.Data.raw{i};
              currentLine = regexp(currentLine,'\|.*\|','match');
-             currentLine{1}(2:end-1);
-             strsplit(currentLine{1}(2:end-1), '|')    
+             currentLine = strtrim(currentLine{1});
+             currentLine = currentLine(2:end-1);
+             currentLine = strsplit(currentLine, '|');
+             data(i,:) = cellfun(@(x) PMTTools.attemptStr2double(strtrim(x)),currentLine, 'UniformOutput', false);  
+          end
+          
+          try
+          data = cell2mat(data);
           end
        end
        % =========================================================
+       function pmt = updateData(pmt, data)
+           
+           if isnumeric(data) == true; data = num2cell(data); end
+           formatString = repmat(PMTTools.getFormat(pmt), size(data,1), 1);
+                  
+           if iscell(data)==true; data = arrayfun(@(x) attemptdouble2str(x),data,'UniformOutput',false); end
+           
+           % Update data in the PMT
+           pmt.Data.raw = {};
+           for i = 1:size(data,1)
+              dataString = strjoin(data(i,:),' | ');
+              dataString = ['Data | ' dataString ' |'];
+              pmt.Data.raw{end+1} = dataString;
+          end
+          pmt.Data.line = min(pmt.Data.line): min(pmt.Data.line)+size(data,1)-1;    
+       end
+       % =========================================================
+       function [] = printPMT(pmt)
+            rawText = PMTTools.reconstructPMTfile(pmt);
+            for i = 1:numel(rawText)
+                disp(rawText{i})
+            end
+       end 
+       % =========================================================  
+       function [value, status] = attemptStr2double (value)
+           [num, status] = str2num(value);
+           if status == 1; value = num; end
+       end
+       
+       function [value, status] = attemptdouble2str (value, f)
+           [num, status] = str2num(value);
+           if status == 1; value = num; end
+       end
+       
+       
+       % =========================================================  
+       function formatString = getFormat(pmt)
+           formatString = pmt.Format.raw{1};
+           formatString = regexp(formatString,'\|.*\|','match');
+           formatString = strtrim(formatString{1});
+           formatString = formatString(2:end-1);
+           formatString = strsplit(formatString, '|');
+           formatString = cellfun(@strtrim, formatString, 'UniformOutput', false);  
+       end
+
 
 
         

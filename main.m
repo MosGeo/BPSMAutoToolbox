@@ -34,7 +34,7 @@ fractions         = [.5, .5];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
 lithoInfo = PM.Litho.getLithologyInfo('MosMix');
 
-% Update lithology file 
+% Update lithology file (needed if you change the lithology file)
 PM.updateProject();
 
 % Create a new model and simulate
@@ -44,8 +44,26 @@ PM.copyModel(templateModel, newModel, nDim);
 % Restore lithology file (does not restore models)
 PM.restoreProject();
 
-%% Update 1D model
-model = Model1D(templateModel, projectFolder)
-pmt = PMTTools.readPMTFile(fullfile(model.modelFolder, 'in', 'swio.pmt'))
-PMTTools.writePMTFile(pmt, 'test.pmt')
-x = PMTTools.getData(pmt)
+%% Load Model
+model = Model1D(templateModel, projectFolder);
+
+% Get the names of data tables
+tableNames = model.getTableNames()
+
+% Print whole table
+model.printTable('Heat Flow');
+
+% Update the some table data (matrix table) and check if it is updated
+data = model.getData('Heat Flow')
+data(1,2) = 300;
+model.updateData('Heat Flow', data);
+data = model.getData('Heat Flow')
+
+% Update some other table data (cell table)
+data = model.getData('Tools')
+data{1,2} = 0
+model.updateData('Tools', data);
+data = model.getData('Tools')
+
+model.updateModel();
+
