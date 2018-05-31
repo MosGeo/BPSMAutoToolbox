@@ -46,6 +46,8 @@ PM.restoreProject();
 
 %% Update 1D model
 model = Model1D(templateModel, projectFolder)
-pmt = PMTTools.readPMTFile(fullfile(model.modelFolder, 'in', 'swio.pmt'))
-PMTTools.writePMTFile(pmt, 'test.pmt')
-x = PMTTools.getData(pmt)
+
+pmtFile = 'swio.pmt'
+PMTTools.readPMTFile(fullfile(model.modelFolder, 'in', pmtFile))
+
+

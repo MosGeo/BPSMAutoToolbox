@@ -2,15 +2,27 @@ classdef Model1D
    
    properties
         modelName = '';
+        dim = 1;
    end
    
    
    methods
-        function obj = Model1D(model)
-            if exist('curveGroupNodes','var') == true
-                obj.curveGroups = obj.analyzeCurveGroupNodes(curveGroupNodes);  
-            end
-       end
+       
+        % =========================================================          
+        function obj = Model1D(modelName)
+            obj.modelName = modelName;
+        end
+        % =========================================================   
+        function [] = updateMainTable()
+            
+        end
+        % =========================================================
+        function modelDirectory = getModelDirectory()
+            
+        end
+
+        
+        
        
        
        

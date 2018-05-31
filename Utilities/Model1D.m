@@ -2,6 +2,7 @@ classdef Model1D
    
    properties
         modelName = '';
+        modelFolder= '';
         dim = 1;
    end
    
@@ -9,11 +10,18 @@ classdef Model1D
    methods
        
         % =========================================================          
-        function obj = Model1D(modelName)
+        function obj = Model1D(modelName, PMProjectDirectory)
             obj.modelName = modelName;
+            obj.modelFolder = fullfile(PMProjectDirectory,['pm', num2str(obj.dim), 'd'], modelName);
         end
         % =========================================================   
-        function [] updateLithology()
+        function [] = updateMainTable()
+            
+        end
+        % =========================================================
+
+        
+        
        
        
        
