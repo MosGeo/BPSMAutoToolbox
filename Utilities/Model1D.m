@@ -53,7 +53,6 @@ classdef Model1D < handle
          % =========================================================                 
         function [] = printTable(obj, title)
            PMTTools.printPMT(obj.pmts(title));
-           PMTTools.getFormat(obj.pmts(title)) 
         end
       
        

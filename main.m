@@ -39,31 +39,37 @@ PM.updateProject();
 
 % Create a new model and simulate
 PM.copyModel(templateModel, newModel, nDim);
+
+% Update model
+% - See below
+
+% Simulate model
 [output] = PM.simModel(newModel, nDim, true);
 
 % Restore lithology file (does not restore models)
 PM.restoreProject();
 
-%% Load Model
-model = Model1D(templateModel, projectFolder);
+%% Model operations
+
+% Load Model
+model = Model1D(newModel, projectFolder);
 
 % Get the names of data tables
 tableNames = model.getTableNames()
 
-% Print whole table
+% Update the some table data (matrix table) and check if it is updated
+model.printTable('Heat Flow');
+data = model.getData('Heat Flow');
+data(:,2) = data(:,2)*2;
+model.updateData('Heat Flow', data);
 model.printTable('Heat Flow');
 
-% Update the some table data (matrix table) and check if it is updated
-data = model.getData('Heat Flow')
-data(1,2) = 300;
-model.updateData('Heat Flow', data);
-data = model.getData('Heat Flow')
-
-% Update some other table data (cell table)
-data = model.getData('Tools')
-data{1,2} = 0
+% Update some other table data (cell table) and check if it is updated
+model.printTable('Tools')
+data = model.getData('Tools');
+data{1,2} = 0;
 model.updateData('Tools', data);
-data = model.getData('Tools')
+model.printTable('Tools')
 
 model.updateModel();
 
