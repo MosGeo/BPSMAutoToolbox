@@ -38,7 +38,7 @@ lithoInfo = PM.Litho.getLithologyInfo('MosMix');
 PM.updateProject();
 
 % Create a new model and delete model
-PM.copyModel(templateModel, newModel, nDim);
+PM.dublicateModel(templateModel, newModel, nDim);
 
 % Update model
 % - See below

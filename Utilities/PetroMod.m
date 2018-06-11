@@ -57,7 +57,7 @@ classdef PetroMod < handle
     end
     
     % =====================================================
-    function [status,msg] = copyModel(obj, sourceModel, distModel, dimension, isOverwrite)
+    function [status,msg] = dublicateModel(obj, sourceModel, distModel, dimension, isOverwrite)
     % copyModel  Duplicate a model from source name to destination.
 
        if exist('isOverwrite', 'var') == false; isOverwrite = true; end
