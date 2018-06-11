@@ -19,7 +19,7 @@ athysFactor = PM.Litho.getValue('Sandstone (clay rich)', 'Athy''s Factor k (dept
 heatCapacityCurve = PM.Litho.getValue('Sandstone (clay rich)', 'Heat Capacity Curve')
 
 % Change some parameters (one scaler, and one curve)
-PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .7);
+PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .4);
 PM.Litho.changeValue('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
 
 % Add and delete lithology
@@ -28,11 +28,16 @@ PM.Litho.deleteLithology('Mos Lithology');
 
 % Create a lithology mix
 PM.Litho.deleteLithology('MosMix');
-mixer = LithoMixer('H');
-sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
-fractions         = [.5, .5];
+mixer = LithoMixer('V');
+%sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
+sourceLithologies = {'SandstoneMos','ShaleMos'};
+fractions         = [.4, .6];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
-lithoInfo = PM.Litho.getLithologyInfo('MosMix');
+
+lithoInfo = PM.Litho.getLithologyInfo('SandstoneMos')
+lithoInfo = PM.Litho.getLithologyInfo('ShaleMos')
+
+lithoInfo = PM.Litho.getLithologyInfo('MosMix')
 
 % Update lithology file (needed if you change the lithology file)
 PM.updateProject();

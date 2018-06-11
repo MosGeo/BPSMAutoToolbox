@@ -263,13 +263,20 @@ classdef LithologyFile < handle
            end
            
            % Decide on the mixing type
-           switch parameterName      
+           switch parameterName   
+               case 'Thermal Expansion Coefficient'
+                   mixType = 1;
                case 'Anisotropy Factor Permeability'
                    mixType = 1;
                case 'Depositional Anisotropy'
                    mixType = mixer.thermalCondictivity(2);
+               case 'Horizontal Upscaling Factor'
+                   mixType = 1;
+               case 'Vertical Upscaling Factor'
+                   mixType = mixer.permeability(2);
+               %case 'Maximum Permeability Shift'
+               %    mixType = mixer.permeability(2);
            end
-           
            
            
            % Mix

@@ -2,7 +2,7 @@ clear all
 
 % Define parameters
 petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2017.1\WIN64\bin';
-projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
+projectFolder = 'C:\Users\malibrah\Desktop\T17';
 
 nDim = 1;   % is your model 1D, 2D, or 3D
 templateModel = 'M1DEmpty';
@@ -19,7 +19,7 @@ athysFactor = PM.Litho.getValue('Sandstone (clay rich)', 'Athy''s Factor k (dept
 heatCapacityCurve = PM.Litho.getValue('Sandstone (clay rich)', 'Heat Capacity Curve')
 
 % Change some parameters (one scaler, and one curve)
-PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .7);
+PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .4);
 PM.Litho.changeValue('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
 
 % Add and delete lithology
@@ -29,8 +29,9 @@ PM.Litho.deleteLithology('Mos Lithology');
 % Create a lithology mix
 PM.Litho.deleteLithology('MosMix');
 mixer = LithoMixer('H');
-sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
-fractions         = [.5, .5];
+%sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
+sourceLithologies = {'SandstoneMos','ShaleMos'};
+fractions         = [.4, .6];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
 lithoInfo = PM.Litho.getLithologyInfo('MosMix');
 
@@ -38,7 +39,7 @@ lithoInfo = PM.Litho.getLithologyInfo('MosMix');
 PM.updateProject();
 
 % Create a new model and delete model
-PM.copyModel(templateModel, newModel, nDim);
+PM.dublicateModel(templateModel, newModel, nDim);
 
 % Update model
 % - See below
@@ -49,7 +50,6 @@ PM.copyModel(templateModel, newModel, nDim);
 % Restore lithology file (does not restore models)
 PM.restoreProject();
 PM.deleteModel(newModel, nDim);
-
 
 %% Model operations
 
