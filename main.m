@@ -69,13 +69,10 @@ model.printTable('Heat Flow');
 % (title) of the updated value to update it. Or you can get all the data
 % and update it manually and then pass it without the key as above
 model.printTable('Simulation');
-data = model.getData('Simulation')
+model.updateData('Simulation', [20 10], 'Oeve');
+model.printTable('Simulation');
 
-model.updateData('Tools', 1, 'salt');
-model.printTable('Tools');
-
-
-% Update the model
+% Update the model and to the files
 model.updateModel();
 
 

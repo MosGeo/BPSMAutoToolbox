@@ -51,7 +51,7 @@ classdef PMATools
            nLines = numel(pma.titles);
            rawText = cell(nLines,1);
            for i = 1:nLines
-               rawText{i} = [pma.titles{i} ' ' pma.values{i}];
+               rawText{i} = sprintf([pma.titles{i} '\t' pma.values{i}]);
            end
         end
         % =========================================================
