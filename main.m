@@ -1,8 +1,8 @@
 clear all
 
 % Define parameters
-petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2016.2\WIN64\bin';
-projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
+petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2017.1\WIN64\bin';
+projectFolder = 'C:\Users\malibrah\Desktop\T17';
 
 nDim = 1;   % is your model 1D, 2D, or 3D
 templateModel = 'M1DEmpty';
@@ -39,7 +39,6 @@ PM.updateProject();
 
 % Create a new model and delete model
 PM.copyModel(templateModel, newModel, nDim);
-PM.deleteModel(newModel, nDim);
 
 % Update model
 % - See below
@@ -49,6 +48,7 @@ PM.deleteModel(newModel, nDim);
 
 % Restore lithology file (does not restore models)
 PM.restoreProject();
+PM.deleteModel(newModel, nDim);
 
 %% Model operations
 

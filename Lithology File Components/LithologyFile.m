@@ -7,6 +7,7 @@ classdef LithologyFile < handle
        xmlnsXsd
        xmlnsXsi
        xmlDoc
+       version
    end
    
    methods
@@ -29,6 +30,9 @@ classdef LithologyFile < handle
             [docNode, xmlDoc]  = XMLTools.readXML(lithoFileName);
             xmlnsXsd = docNode.getAttribute('xmlns:xsd');
             xmlnsXsi = docNode.getAttribute('xmlns:xsi');
+            
+            % Get file version
+            obj.version = char(docNode.getElementsByTagName('Version').item(0).getFirstChild.getData);
 
             % META
             metaNode = XMLTools.getElementsByTagName(docNode, 'Meta', true);
@@ -138,7 +142,7 @@ classdef LithologyFile < handle
        XMLTools.setAttribute(docNode, 'xmlns:xsd', obj.xmlnsXsd);
        XMLTools.setAttribute(docNode, 'xmlns:xsi', obj.xmlnsXsi);
        XMLTools.addElement(docNode, 'Name', 'Lithology catalog');
-       XMLTools.addElement(docNode, 'Version', '2.1');
+       XMLTools.addElement(docNode, 'Version', obj.version);
        XMLTools.addElement(docNode, 'ReadOnly', 'false');
        obj.meta.writeMetaNode( docNode);
        obj.curve.writeCurveNode(docNode);

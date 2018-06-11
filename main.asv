@@ -1,11 +1,11 @@
 clear all
 
 % Define parameters
-petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2016.2\WIN64\bin';
+petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2017.1\WIN64\bin';
 projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
 
 nDim = 1;   % is your model 1D, 2D, or 3D
-templateModel = 'M1D';
+templateModel = 'M1DEmpty';
 newModel ='UpdatedModel';
 
 % Open the project
@@ -37,7 +37,7 @@ lithoInfo = PM.Litho.getLithologyInfo('MosMix');
 % Update lithology file (needed if you change the lithology file)
 PM.updateProject();
 
-% Create a new model and simulate
+% Create a new model and delete model
 PM.copyModel(templateModel, newModel, nDim);
 
 % Update model
@@ -48,6 +48,8 @@ PM.copyModel(templateModel, newModel, nDim);
 
 % Restore lithology file (does not restore models)
 PM.restoreProject();
+PM.deleteModel(newModel, nDim);
+
 
 %% Model operations
 
@@ -55,7 +57,7 @@ PM.restoreProject();
 model = Model1D(newModel, projectFolder);
 
 % Get the names of data tables
-tableNames = model.getTableNames();
+model.getTableNames()
 
 % Update the some table data (matrix table) and check if it is updated
 model.printTable('Heat Flow');
@@ -67,27 +69,11 @@ model.printTable('Heat Flow');
 % Some tables have some titles, you can just give the update data the key
 % (title) of the updated value to update it. Or you can get all the data
 % and update it manually and then pass it without the key as above
-model.printTable('Tools');
-model.updateData('Tools', 1, 'salt');
-model.printTable('Tools');
-
-% The other way to do
-model.printTable('Tools');
-data = model.getData('Tools');
-data{1,2} = 1;
-model.updateData('Tools', data);
-model.printTable('Tools');
-
-% Simulation table has a different format
 model.printTable('Simulation');
-data = model.getData('Simulation');
-data{1,2} = 10;
-
-model.updateData('Simulation', data);
+model.updateData('Simulation', [20 10], 'Oeve');
 model.printTable('Simulation');
 
-
-% Update the model
+% Update the model and to the files
 model.updateModel();
 
 
