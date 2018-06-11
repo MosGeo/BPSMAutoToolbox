@@ -39,31 +39,57 @@ PM.updateProject();
 
 % Create a new model and simulate
 PM.copyModel(templateModel, newModel, nDim);
+
+% Update model
+% - See below
+
+% Simulate model
 [output] = PM.simModel(newModel, nDim, true);
 
 % Restore lithology file (does not restore models)
 PM.restoreProject();
 
-%% Load Model
-model = Model1D(templateModel, projectFolder);
+%% Model operations
+
+% Load Model
+model = Model1D(newModel, projectFolder);
 
 % Get the names of data tables
-tableNames = model.getTableNames()
-
-% Retrive some data 
-model.printTable('Heat Flow');
-data = model.getData('Heat Flow')
+tableNames = model.getTableNames();
 
 % Update the some table data (matrix table) and check if it is updated
-data(1,2) = 300;
+model.printTable('Heat Flow');
+data = model.getData('Heat Flow');
+data(:,2) = data(:,2)*2;
 model.updateData('Heat Flow', data);
-data = model.getData('Heat Flow')
+model.printTable('Heat Flow');
 
-% Update some other table data (cell table)
-data = model.getData('Tools')
-data{1,2} = 0
+% Some tables have some titles, you can just give the update data the key
+% (title) of the updated value to update it. Or you can get all the data
+% and update it manually and then pass it without the key as above
+model.printTable('Tools');
+model.updateData('Tools', 1, 'salt');
+model.printTable('Tools');
+
+% The other way to do
+model.printTable('Tools');
+data = model.getData('Tools');
+data{1,2} = 1;
 model.updateData('Tools', data);
-data = model.getData('Tools')
+model.printTable('Tools');
 
+% Simulation table has a different format
+model.printTable('Simulation');
+data = model.getData('Simulation');
+data{1,2} = 10;
+
+model.updateData('Simulation', data);
+model.printTable('Simulation');
+
+
+% Update the model
 model.updateModel();
+
+
+
 

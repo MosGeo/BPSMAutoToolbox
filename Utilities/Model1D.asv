@@ -1,13 +1,16 @@
-classdef Model1D
+classdef Model1D < handle
    
    properties
         modelName = '';
         modelFolder= '';
         dim = 1;
-        pmts = [];
-        pmtFileNames = {'in1d_hf',   'in1d_pwd',    'ggxy'        , 'in1d_swit', 'main1d', 'swio'     , 'tool' , fullfile('mckenzie', 'riftphases')       }
-        pmtNames     = {'Heat Flow', 'Paleo Water', 'Coordinates' , 'SWIT'     , 'Main'  , 'Auto SWIT', 'Tools', 'Mckenzie'      }
+        tables = {};
         
+        tableFileNames = {'in1d_hf',   'in1d_pwd',    'ggxy'        , 'in1d_swit', 'main1d', 'swio'     , 'tool' , fullfile('mckenzie', 'riftphases'), 'proj', 'mckenziehf_opts'}
+        tableNames     = {'Heat Flow', 'Paleo Water', 'Coordinates' , 'SWIT'     , 'Main'  , 'Auto SWIT', 'Tools', 'Rifting'                         , 'Simulation', 'Mckenzie'}      
+        tableTypes     = {'pmt'      , 'pmt'        , 'pmt'         , 'pmt'      , 'pmt'   , 'pmt'      , 'pmt'  , 'pmt'                             , 'pma'       , 'pma'}
+        nTables = 0;
+
    end
    
    
@@ -19,37 +22,88 @@ classdef Model1D
             obj.modelFolder = fullfile(PMProjectDirectory,['pm', num2str(obj.dim), 'd'], modelName);
             
             % Sorting for conveniance
-            [obj.pmtNames,I] = sort(obj.pmtNames);
-            obj.pmtFileNames = obj.pmtFileNames(I);
+            [obj.tableNames,I] = sort(obj.tableNames);
+            obj.tableFileNames = obj.tableFileNames(I);
+            obj.tableTypes     = obj.tableTypes(I);
             
-            % Loading all files
-            obj.pmts = containers.Map;
-            for i = 1:numel(obj.pmtNames)
-                obj.pmts(obj.pmtNames{i}) = PMTTools.readPMTFile(obj.getInputFileName(obj.pmtFileNames{i}));               
-            end         
+            % Loading all model files
+            obj.nTables = numel(obj.tableNames);
+
+            for i = 1:obj.nTables
+                tableType     = obj.tableTypes{i};
+                tableFileName = obj.tableFileNames{i};
+                switch tableType
+                    case 'pmt'
+                      obj.tables{i} = PMTTools.readPMTFile(obj.getModelInputFileName(tableFileName));               
+                    case 'pma'
+                      obj.tables{i} = PMATools.readPMAFile(obj.getSimInputFileName(tableFileName));               
+                end
+            end
+            
         end
         % =========================================================
-        function inputFileName = getInputFileName(obj, title)
+        function inputFileName = getModelInputFileName(obj, title)
            inputFileName = fullfile(obj.modelFolder, 'in', [title '.pmt']); 
         end   
-        % =========================================================          
+        % =========================================================
+        function inputFileName = getSimInputFileName(obj, title)
+           inputFileName = fullfile(obj.modelFolder, 'def', [title '.pma']); 
+        end   
+        % =========================================================  
         function [] = updateModel(obj)
-            for i = 1:numel(obj.pmtNames)
-                PMTTools.writePMTFile(obj.pmts(obj.pmtNames{i}), obj.getInputFileName(obj.pmtFileNames{i}));               
-            end     
+
+           for i = 1:obj.nTables
+                tableType     = obj.tableTypes{i};
+                tableFileName = obj.tableFileNames{i};
+                table         = obj.tables{i};
+                switch tableType
+                    case 'pmt'
+                      PMTTools.writePMTFile(table, obj.getModelInputFileName(tableFileName));               
+                    case 'pma'
+                      PMATools.writePMAFile(table, obj.getSimInputFileName(tableFileName));               
+                end
+            end
+            
         end
         % =========================================================          
         function data = getData(obj, title)
-           data = PMTTools.getData(obj.pmts(title)); 
+           table = obj.getTable(title);
+           switch table.type
+               case 'pmt'
+                   data = PMTTools.extractMainData(table.data);
+               case 'pma'
+                   data = PMATools.extractMainData(table.data);
+           end
         end
         % =========================================================          
         function [] = updateData(obj, title, data)
-           PMTTools.updateData(obj.pmts(title), data); 
+           
+           obj.pmts(title) = PMTTools.updateData(obj.pmts(title), data); 
         end
         % =========================================================          
-        function tableNames = getTableNames(obj, title, data)
-           PMTTools.updateData(obj.pmts(title), data); 
+        function tableNames = getTableNames(obj)
+           tableNames = obj.tableNames;
         end
+         % =========================================================                 
+        function [] = printTable(obj, title)
+            table = obj.getTable(title);
+            switch table.type
+                case 'pmt'
+                  PMTTools.printPMT(table.data);              
+                case 'pma'
+                  PMTTools.printPMA(table.data);              
+            end
+        end
+        
+        % =========================================================                 
+        function tableInfo = getTable(obj, title)
+             [~,i]  = ismember(title, obj.tableNames);
+             tableInfo.name = obj.tableNames{i};
+             tableInfo.fileName = obj.tableFileNames{i};
+             tableInfo.type = obj.tableTypes{i};
+             tableInfo.data = obj.tables{i};
+        end
+      
        
        
        

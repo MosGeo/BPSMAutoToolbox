@@ -82,7 +82,7 @@ classdef PMTTools
             rawText = rawText(I);   
         end
        % =========================================================
-       function data = getData(pmt)
+       function data = extractMainData(pmt)
           data = {};
           for i = 1:numel(pmt.Data.raw)
              currentLine = pmt.Data.raw{i};
@@ -98,12 +98,17 @@ classdef PMTTools
           end
        end
        % =========================================================
-       function pmt = updateData(pmt, data)
+       function pmt = updateData(pmt, data, key)
+           
+           if isempty
+           modifiedData = data;
+           key   
+           
            
            if isnumeric(data) == true; data = num2cell(data); end
            formatString = repmat(PMTTools.getFormat(pmt), size(data,1), 1);
                   
-           if iscell(data)==true; data = arrayfun(@(x) attemptdouble2str(x),data,'UniformOutput',false); end
+           if iscell(data)==true; data = arrayfun(@(x,f) sprintf(f{1},x{1}),data, formatString,'UniformOutput',false); end
            
            % Update data in the PMT
            pmt.Data.raw = {};
@@ -127,10 +132,6 @@ classdef PMTTools
            if status == 1; value = num; end
        end
        
-       function [value, status] = attemptdouble2str (value, f)
-           [num, status] = str2num(value);
-           if status == 1; value = num; end
-       end
        
        
        % =========================================================  

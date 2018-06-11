@@ -82,7 +82,7 @@ classdef PMTTools
             rawText = rawText(I);   
         end
        % =========================================================
-       function data = getData(pmt)
+       function data = extractMainData(pmt)
           data = {};
           for i = 1:numel(pmt.Data.raw)
              currentLine = pmt.Data.raw{i};
@@ -98,7 +98,17 @@ classdef PMTTools
           end
        end
        % =========================================================
-       function pmt = updateData(pmt, data)
+       function pmt = updateData(pmt, data, key)
+           
+           if exist('key', 'var')
+               if isempty(key) == false
+                    oneValueData = data;
+                    data = PMTTools.extractMainData(pmt);
+                    [~,i] = ismember(key, data(:,1));
+                    data{i,2} = oneValueData;
+               end
+           end
+           
            
            if isnumeric(data) == true; data = num2cell(data); end
            formatString = repmat(PMTTools.getFormat(pmt), size(data,1), 1);

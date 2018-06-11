@@ -56,7 +56,7 @@ classdef PetroMod < handle
            end
     end
     
-    % =====================================================
+    %=====================================================
     function [status,msg] = copyModel(obj, sourceModel, distModel, dimension, isOverwrite)
     % copyModel  Duplicate a model from source name to destination.
 
@@ -73,11 +73,19 @@ classdef PetroMod < handle
     end
     
     % =====================================================
-    function [status, message, messageid] = deleteModel(obj, model, dimension)
-    % deleteModel  Deletes a model
+    function [status,msg] = copyModel(obj, sourceModel, distModel, dimension, isOverwrite)
+    % copyModel  Duplicate a model from source name to destination.
 
-       modelFolder   = fullfile(obj.PMProjectDirectory,['pm', num2str(dimension), 'd'], model); 
-       [status, message, messageid] = rmdir(modelFolder, 's');
+       if exist('isOverwrite', 'var') == false; isOverwrite = true; end
+               
+       sourceFolder   = fullfile(obj.PMProjectDirectory,['pm', num2str(dimension), 'd'], sourceModel);
+       distFolder   = fullfile(obj.PMProjectDirectory,['pm', num2str(dimension), 'd'], distModel);
+       
+      if isOverwrite == true && exist('distFolder', 'file') == 7
+            [status, message, messageid] = rmdir(distFolder);
+      end
+
+       [status,msg] = copyfile(sourceFolder, distFolder);
     end
     
     

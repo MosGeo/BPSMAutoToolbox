@@ -5,7 +5,7 @@ petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2016.2\WIN64\bin';
 projectFolder = 'C:\Users\malibrah\Desktop\TestPetromod2';
 
 nDim = 1;   % is your model 1D, 2D, or 3D
-templateModel = 'M1D';
+templateModel = 'M1DEmpty';
 newModel ='UpdatedModel';
 
 % Open the project
@@ -37,8 +37,9 @@ lithoInfo = PM.Litho.getLithologyInfo('MosMix');
 % Update lithology file (needed if you change the lithology file)
 PM.updateProject();
 
-% Create a new model and simulate
+% Create a new model and delete model
 PM.copyModel(templateModel, newModel, nDim);
+PM.deleteModel(newModel, nDim);
 
 % Update model
 % - See below
@@ -55,7 +56,7 @@ PM.restoreProject();
 model = Model1D(newModel, projectFolder);
 
 % Get the names of data tables
-tableNames = model.getTableNames()
+tableNames = model.getTableNames();
 
 % Update the some table data (matrix table) and check if it is updated
 model.printTable('Heat Flow');
@@ -64,12 +65,17 @@ data(:,2) = data(:,2)*2;
 model.updateData('Heat Flow', data);
 model.printTable('Heat Flow');
 
-% Update some other table data (cell table) and check if it is updated
-model.printTable('Tools')
-data = model.getData('Tools');
-data{1,2} = 0;
-model.updateData('Tools', data);
-model.printTable('Tools')
+% Some tables have some titles, you can just give the update data the key
+% (title) of the updated value to update it. Or you can get all the data
+% and update it manually and then pass it without the key as above
+model.printTable('Tools');
+model.updateData('Tools', 1, 'salt');
+model.printTable('Tools');
 
+
+% Update the model
 model.updateModel();
+
+
+
 

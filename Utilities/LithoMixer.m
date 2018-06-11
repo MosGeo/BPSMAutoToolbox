@@ -109,7 +109,6 @@ classdef LithoMixer < handle
         end
       % =========================================================
         function meanValue = mixVector(x,fractions,mixType)
-            
             % Defaults
             if exist('fractions','var')  == false; fractions = ones(size(x)); end
             if exist('mixType','var')  == false; mixTypeIndex = 1; end
@@ -121,9 +120,10 @@ classdef LithoMixer < handle
                     meanValue = StatsTools.geomean(x, fractions);
                 case 3
                     meanValue = StatsTools.harmmean(x, fractions); 
-            end
-            
+            end            
         end
+        % =========================================================
+
 
 
     end
