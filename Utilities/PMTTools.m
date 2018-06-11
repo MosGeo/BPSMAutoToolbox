@@ -78,7 +78,7 @@ classdef PMTTools
              % Reorder raw text correctly
              lineNumber = [pmt.Comments.line,  pmt.Header.line,  pmt.Key.line...
                  pmt.Stop.line, pmt.Format.line, pmt.Data.line];
-            [lineNumber,I] = sort(lineNumber);
+            [~,I] = sort(lineNumber);
             rawText = rawText(I);   
         end
        % =========================================================

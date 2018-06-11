@@ -56,7 +56,7 @@ PM.restoreProject();
 model = Model1D(newModel, projectFolder);
 
 % Get the names of data tables
-tableNames = model.getTableNames();
+model.getTableNames()
 
 % Update the some table data (matrix table) and check if it is updated
 model.printTable('Heat Flow');
@@ -68,7 +68,9 @@ model.printTable('Heat Flow');
 % Some tables have some titles, you can just give the update data the key
 % (title) of the updated value to update it. Or you can get all the data
 % and update it manually and then pass it without the key as above
-model.printTable('Tools');
+model.printTable('Simulation');
+data = model.getData('Simulation')
+
 model.updateData('Tools', 1, 'salt');
 model.printTable('Tools');
 

@@ -42,7 +42,7 @@ classdef PMATools
                splittedText = strsplit(rawText{lineNumber});
                if numel(splittedText) > 0
                  pma.titles{end+1} = splittedText{1};
-                 pma.values{end+1} = splittedText{2:end};
+                 pma.values{end+1} = strjoin(splittedText(2:end),' ');
                end
            end
         end
@@ -56,9 +56,8 @@ classdef PMATools
         end
         % =========================================================
         function data = extractMainData(pma)
-          data = [pma.titles',pma.values'];
+          data  = [pma.titles',pma.values'];
           data(:,2) = cellfun(@(x) PMATools.attemptStr2double(strtrim(x)),data(:,2), 'UniformOutput', false); 
-
         end
         % =========================================================
        function [] = printPMA(pma)
@@ -73,7 +72,6 @@ classdef PMATools
        end
        
         % =========================================================
-
         function pma = updateData(pma, data, key)
            
            if exist('key', 'var')

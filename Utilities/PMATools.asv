@@ -40,9 +40,10 @@ classdef PMATools
            pma.values = [];
            for lineNumber = 1:nLines
                splittedText = strsplit(rawText{lineNumber});
+               splittedText(2:end)
                if numel(splittedText) > 0
                  pma.titles{end+1} = splittedText{1};
-                 pma.values{end+1} = splittedText{2:end};
+                 pma.values{end+1} = cellsplittedText(2:end);
                end
            end
         end
@@ -73,25 +74,23 @@ classdef PMATools
        end
        
         % =========================================================
-
         function pma = updateData(pma, data, key)
            
            if exist('key', 'var')
                if isempty(key) == false
                     oneValueData = data;
-                    data = PMTTools.extractMainData(pma);
+                    data = PMATools.extractMainData(pma);
                     [~,i] = ismember(key, data(:,1));
                     data{i,2} = oneValueData;
                end
            end
            
+           test = data(:,2);
+           data(:,2) = arrayfun(@(x) num2str(x{1}) ,data(:,2),'UniformOutput',false);
            
-           if isnumeric(data) == true; data = num2cell(data); end
-           formatString = repmat(PMTTools.getFormat(pmt), size(data,1), 1);
-                  
-           if iscell(data)==true; data = arrayfun(@(x,f) sprintf(f{1},x{1}),data, formatString,'UniformOutput',false); end
-
-          pmt.Data.line = min(pmt.Data.line): min(pmt.Data.line)+size(data,1)-1;    
+           pma.titles = transpose(data(:,1));
+           pma.values = transpose(data(:,2));
+           
         end
        
        % =========================================================
