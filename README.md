@@ -14,6 +14,7 @@ A project is loaded into Matlab. Lithologies can be modified (addition of new li
 
 ## Tips
 - It is better to create all the required lithologies in one go before updating the project as writing the lithology files takes relatively long time (a couple of seconds), i.e., do not update the project in a for loop.
+- If you are using lithology mixing, it is better to make sure everything is consistant by create the some mixes manually and comparing it to the mixes created by Matlab.
 
 ## What is next?
 The basic framework is implemented now and is validated. The whole process can be automated in Matlab.  I am going to start focusing on specific things that are needed for some of my research:
