@@ -12,6 +12,9 @@ A project is loaded into Matlab. Lithologies can be modified (addition of new li
 - Simulate your template project and make sure everything works.
 - See the "main.m" for the procedure to load your template project in Matlab, modify parameters, duplicate models and simulate them in Matlab.
 
+## Tips
+- It is better to create all the required lithologies in one go before updating the project as writing the lithology files takes relatively long time (a couple of seconds), i.e., do not update the project in a for loop.
+
 ## What is next?
 The basic framework is implemented now and is validated. The whole process can be automated in Matlab.  I am going to start focusing on specific things that are needed for some of my research:
 
