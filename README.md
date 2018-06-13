@@ -4,7 +4,10 @@ This is an effort to automate creation and modification of models used in the Sc
 Currently, it is focused on modifying the lithologies.
 
 ## What has been done?
-A project is loaded into Matlab. Lithologies can be modified (addition of new lithologies will be implemented next). Lithology mixer is mostly working. Models can be duplicated, deleted, and simulated directly from Matlab. 1D models can be modified.
+- A project is loaded into Matlab. 
+- Lithologies can be modified (addition of new lithologies will be implemented next). Lithology mixer is mostly working. 
+- Models can be duplicated, deleted, and simulated directly from Matlab. 
+- 1D models can be modified.
 
 ## How to start
 - Create your PetroMod 2017.1 "template project" (2016.2 should also work but I swtiched to testing on 2017.1 to increase the probablity of future compatiblity).
