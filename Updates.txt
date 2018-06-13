@@ -6,3 +6,4 @@ New features since last Email update:
 - Ability to get values of parameters for a specific lithology
 - Ability to mix lithologies
 - 1D Model loading, changing and saving
+- Run open simulator scripts
