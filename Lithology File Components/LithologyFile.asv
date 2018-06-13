@@ -189,13 +189,8 @@ classdef LithologyFile < handle
        allIds = [obj.meta.getIds(); obj.curve.getIds(); obj.lithology.getIds()];
    end
    %=====================================================
-   function [] = dublicateLithology(obj, sourceLithoName, distLithoName , mainGroupName, subGroupName, isOverwrite)
+   function [] = dublicateLithology(obj, sourceLithoName, distLithoName , mainGroupName, subGroupName)
        
-       % Defaults
-       if ~exist('isOverwrite', 'var'); isOverwrite = true; end
-       
-       % Assertions
-       assert(ischar(sourceLithoName) && ischar(distLithoName), 'Sournce and distination lithologies should be strings');
        
        % Main
        if obj.isLithologyExist(distLithoName) && ~isOverwrite
@@ -204,8 +199,9 @@ classdef LithologyFile < handle
        
        % Delete lithology if overwrite is turned on
        if obj.isLithologyExist(distLithoName) && isOverwrite
-           obj.deleteLithology(distLithoName);
+           obj.lithology.deleteLithology(distLithoName);
        end
+       
        
        
         % Copy lithology
@@ -235,9 +231,9 @@ classdef LithologyFile < handle
    function [] = changeLithologyGroup(obj, lithologyName, mainGroupName, subGroupName)
        
        % Assertions
-       assert(exist('mainGroupName', 'var') && exist('subGroupName', 'var'), 'Provide all group names');
-       assert(ischar(mainGroupName) && ischar(subGroupName), 'Group names have to be strings');
-       assert(~isempty(mainGroupName) && ~isempty(mainGroupName), 'Group names have to contain a non-empty strings');
+       assert(exist('mainGroupName', 'var') && exist('subGroupName', 'var'), 'Provide all group names!');
+       assert(ischar(mainGroupName) && ischar(subGroupName), 'Group names have to be strings!');
+       assert(~isempty(mainGroupName) && ~isempty(mainGroupName), 'Group names have to contain a non-empty strings!');
 
        % Main group
        mainGroupId = obj.lithology.getGroupId(mainGroupName);
@@ -272,11 +268,12 @@ classdef LithologyFile < handle
        assert(all(cellfun(@ischar, sourceLithologies)), 'Cell in source lithologies must contain strings');
        assert(isnumeric(fractions), 'Fractions must be a numeric vector');
        assert(sum(fractions)==1, 'Fractions must add up to 1');
+       assert(isnumeric(sourceLithologies), 'Fractions must be a numeric vector');
        assert(size(sourceLithologies,1) == 1 && size(fractions,1) == 1, 'Source lithologies and fractions should be rows');
        assert(size(sourceLithologies,2) ==  size(fractions,2) , 'Source lithologies and fractions should be the same size');
        assert(ischar(distLithoName) , 'Distination lithology should be a string');
-       assert(isa(mixer, 'LithoMixer'), 'Mixer should be a LithoMixer class');
-       assert(isa(isOverwrite, 'logical'), 'Overwrite should be a boolean');
+       assert(class(mixer) == 'LithoMixer', 'Mixer should be a LithoMixer class');
+       assert(is(isOverwrite, 'logical'), 'Overwrite should be a boolean');
 
        % Main
        if obj.isLithologyExist(distLithoName) && ~isOverwrite
@@ -285,7 +282,7 @@ classdef LithologyFile < handle
        
        % Delete lithology if overwrite is turned on
        if obj.isLithologyExist(distLithoName) && isOverwrite
-           obj.deleteLithology(distLithoName);
+           obj.lithology.deleteLithology(distLithoName);
        end
        
        % Dublicate lithology and insert mix information
