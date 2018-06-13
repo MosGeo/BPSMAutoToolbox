@@ -35,6 +35,10 @@ classdef PetroMod < handle
     function [cmdout, status] = simModel (obj, modelName, dimension, isDisplayOutput, isSaveOutput)
     % simModel  Changes a parameter value giving a lithology name, the 
     % parameter name and its new value.
+        
+        % Defaults
+        if exist('isDisplayOutput', 'var') == false; isDisplayOutput = false; end
+        if exist('isSaveOutput', 'var') == false; isSaveOutput = true; end
     
         % Assertions
         assert(ischar(modelName), 'Model name needs to be a string')
@@ -43,9 +47,6 @@ classdef PetroMod < handle
            
         % Main
         if obj.isReady == 1
-           
-               if exist('isDisplayOutput', 'var') == false; isDisplayOutput = false; end
-               if exist('isSaveOutput', 'var') == false; isSaveOutput = true; end
 
                hermesFileName  = fullfile(obj.PMDirectory, 'hermes.exe');
                modelFolder     = obj.getModelFolder(modelName, dimension);
@@ -106,7 +107,7 @@ classdef PetroMod < handle
            end
     end
     % =====================================================
-    function [status, message, messageid] = deleteModel(obj, model, dimension)
+    function [status, message, messageid] = deleteModel(obj, modelName, dimension)
     % deleteModel  Deletes a model
         
         % Assertions
@@ -114,7 +115,7 @@ classdef PetroMod < handle
         assert(isa(dimension, 'double') && ismember(dimension,1:3) , 'Dimensions need to be 1, 2, or 3')
 
         % Main
-        modelFolder   = fullfile(obj.PMProjectDirectory,['pm', num2str(dimension), 'd'], model); 
+        modelFolder   = fullfile(obj.PMProjectDirectory,['pm', num2str(dimension), 'd'], modelName); 
         [status, message, messageid] = rmdir(modelFolder, 's');
     end
     
