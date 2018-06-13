@@ -1,6 +1,6 @@
 clear all
 
-% Define parameters (NEED TO BE UPDATED TO MATCH YOUR PC LOCATION)
+% Define parameters
 PMDirectory = 'C:\Program Files\Schlumberger\PetroMod 2017.1\WIN64\bin';
 PMProjectDirectory = 'C:\Users\malibrah\Desktop\T17';
 
@@ -11,7 +11,7 @@ newModel ='UpdatedModel';
 % Open the project
 PM = PetroMod(PMDirectory, PMProjectDirectory);
 
-% Check the current parameter of the lithology
+% Check the current parameter of the lithology (curves are showed as id)
 lithoInfo = PM.Litho.getLithologyInfo('Shale (typical)')
 
 % Get some parameters (works on both scaler and curve)
@@ -22,13 +22,9 @@ heatCapacityCurve = PM.Litho.getValue('Sandstone (clay rich)', 'Heat Capacity Cu
 PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .4);
 PM.Litho.changeValue('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
 
-% Dublicate lithology
+% Add and delete lithology
 PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology', 'MainGroup', 'SubGroup')
-
-% Change lithology group of an existing lithology
-PM.Litho.changeLithologyGroup('Mos Lithology', 'MainGroup', 'SubGroup')
-
-% Delete lithology
+PM.Litho.changeLithologyGroup('Mos Lithology', 'MainGroup', 'Test')
 PM.Litho.deleteLithology('Mos Lithology');
 
 % Create a lithology mix
@@ -44,24 +40,20 @@ PM.updateProject();
 PM.dublicateModel(templateModel, newModel, nDim);
 
 % Update model
-% - See below (next cell)
+% - See below
 
 % Simulate model
 [output] = PM.simModel(newModel, nDim, true);
 
-% Run a DEMO script on the output
+% Run a custom script on the output
 [cmdout, status] = PM.runScript(newModel, nDim, 'demo_opensim_output_3rd_party_format', '4', true);
-
-% Run a custom script on the output (not working; need license)
 [cmdout, status] = PM.runScript(newModel, nDim, 'demo_ExtractOutput', '1', true);
-
-% Delete model
-PM.deleteModel(newModel, nDim);
 
 % Restore lithology file (does not restore models)
 PM.restoreProject();
+PM.deleteModel(newModel, nDim);
 
-%% Model Operations
+%% Model operations
 
 % Load Model
 model = Model1D(newModel, PMProjectDirectory);
