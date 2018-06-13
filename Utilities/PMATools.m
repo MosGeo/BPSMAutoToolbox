@@ -74,16 +74,13 @@ classdef PMATools
         % =========================================================
         function pma = updateData(pma, data, key)
            
-           if exist('key', 'var')
-               if isempty(key) == false
+           if exist('key', 'var') && isempty(key) == false
                     oneValueData = data;
                     data = PMATools.extractMainData(pma);
                     [~,i] = ismember(key, data(:,1));
                     data{i,2} = oneValueData;
-               end
            end
            
-           test = data(:,2);
            data(:,2) = arrayfun(@(x) num2str(x{1}) ,data(:,2),'UniformOutput',false);
            
            pma.titles = transpose(data(:,1));

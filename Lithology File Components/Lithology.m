@@ -223,7 +223,6 @@ classdef Lithology < handle
             parameterIndex = ismember(lithologyParameters(:,idIndex),id);
             parameterValue = lithologyParameters(parameterIndex,valueIndex);
        end
-       
        % =========================================================   
        function lithologyIndex = getLithologyIndex(obj, lithologyName)
           nameIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Name'));
@@ -290,14 +289,51 @@ classdef Lithology < handle
  
            obj.lithology{lithologyIndex, readOnlyIndex} = value;
        end
-       
+       % =========================================================          
+       function [] = updateGroups(obj, lithologyName, groupId, groupName, level, isReadOnly)
+          % Defaults
+          if ~(exist('level', 'var')); level = 1; end
+          if ~(exist('isReadOnly', 'var')); isReadOnly = false; end
+          
+          
+          % Main
+          groupIdIndex   = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Id'));
+          groupNameIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Name'));
+          readOnlyIndex  = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'ReadOnly'));
+          
+          lithologyIndex = obj.getLithologyIndex(lithologyName);
+          
+          obj.lithology{lithologyIndex, groupIdIndex} = groupId;
+          obj.lithology{lithologyIndex, groupNameIndex} = groupName;
+          obj.lithology{lithologyIndex, groupIdIndex} = groupId;
+          obj.lithology{lithologyIndex, readOnlyIndex} = obj.bool2string(isReadOnly);
+       end
+       % ========================================================= 
+       function groupId = getGroupId(obj, groupName, level)
+          
+           % Defaults
+          if ~(exist('level', 'var')); level = 1; end
+          
+          % Main
+          groupIdIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Id'));
+          groupNameIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Name'));
+
+          groupIds = unique(obj.lithology(:,groupIdIndex));
+          groupNames = unique(obj.lithology(:,groupNameIndex));
+
+          [~, Locb] = ismember(groupName, groupNames);
+          if Locb>0
+            groupId   = groupIds{Locb};
+          else
+              groupId = '';
+          end     
+       end
        % =========================================================          
        function [] = updateCreator(obj, lithologyName, creatorName)
            creatorIndex   = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Creator'));
            lithologyIndex = obj.getLithologyIndex(lithologyName);
            obj.lithology{lithologyIndex, creatorIndex} = creatorName;
        end
-       
        % =========================================================   
        function [] = updateMix(obj, lithologyName, sourceLithologies, fractions, mixer)
            mixIndex   = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Mixing'));
@@ -318,6 +354,14 @@ classdef Lithology < handle
            obj.lithology{lithologyIndex, mixIndex}= mixValue;
 
        end
+       % =========================================================   
+       function boolString = bool2string(obj, bool)
+           if bool == true
+               boolString = 'true';
+           else
+               boolString = 'false';
+           end
+       end 
        
    end
     

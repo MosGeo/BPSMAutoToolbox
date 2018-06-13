@@ -100,13 +100,11 @@ classdef PMTTools
        % =========================================================
        function pmt = updateData(pmt, data, key)
            
-           if exist('key', 'var')
-               if isempty(key) == false
+           if exist('key', 'var') && isempty(key) == false
                     oneValueData = data;
                     data = PMTTools.extractMainData(pmt);
                     [~,i] = ismember(key, data(:,1));
-                    data{i,2} = oneValueData;
-               end
+                    data{i,2} = oneValueData;               
            end
            
            

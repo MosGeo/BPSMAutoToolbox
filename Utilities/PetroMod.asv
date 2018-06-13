@@ -78,7 +78,7 @@ classdef PetroMod < handle
     end
     
     % ===================================================== 
-    function [cmdout, status] = runScript(obj, modelName, dimension, scriptName, scriptArg, isDisplayOutput, isSaveOutput, scriptFolder)
+    function [cmdout, status] = runScript(obj, modelName, dimension, scriptName, scriptArg, scriptFolder, isDisplayOutput, isSaveOutput)
     % RUNSCRIPT runs a open simulator script
     
            % Defaults
@@ -98,6 +98,7 @@ classdef PetroMod < handle
            pmpyFileName  = fullfile(obj.PMDirectory, 'runpmpy.exe');
            modelFolder = obj.getModelFolder(modelName, dimension);
            
+           isDisplayOutput = true
            [cmdout, status] = PetroMod.runPmpy(PMmainDirectory, pmpyFileName, modelFolder, scriptFileName, scriptArg, isDisplayOutput);
            
            if isSaveOutput == true
@@ -197,6 +198,15 @@ classdef PetroMod < handle
            assert(isa(isDisplayOutput, 'logical'), 'Display output needs to be booleans')
            
            % Build the command
+           scriptName = 'demo_opensim_output_3rd_party_format'
+           scriptFileName  = fullfile(scriptFolder, [scriptName '.py']);
+           PMmainDirectory = FileTools.getParentDirectory(PMDirectory,2);
+           pmpyFileName  = fullfile(PMDirectory, 'runpmpy.exe');
+           modelFolder   = fullfile(PMProjectDirectory,['pm', num2str(nDim), 'd'], model); 
+
+           modelFolder = obj.getModelFolder(newModel, nDim);
+           
+           
            scriptDir = 'none'; % 'pmhome' or 'none'
            commandToRun    = ['"' pmpyFileName '" -h "' PMmainDirectory '" -m "' modelFolder '" --scriptdir ' scriptDir ' --script "' scriptFileName '" ' scriptArg];        
 

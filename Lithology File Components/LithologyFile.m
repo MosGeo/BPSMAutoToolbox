@@ -166,8 +166,9 @@ classdef LithologyFile < handle
        allIds = [obj.meta.getIds(); obj.curve.getIds(); obj.lithology.getIds()];
    end
    %=====================================================
-   function [] = dublicateLithology(obj, sourceLithoName, distLithoName)
+   function [] = dublicateLithology(obj, sourceLithoName, distLithoName , mainGroupName, subGroupName)
         
+       
         % Copy lithology
         allIds = obj.getIds();
         hash = HashTools.getUniqueHash(allIds, distLithoName);
@@ -175,6 +176,9 @@ classdef LithologyFile < handle
         obj.lithology.updateReadOnly(distLithoName, false);
         obj.lithology.updateCreator(distLithoName, 'PetroMod');
         
+        if exist('mainGroupName', 'var') && exist('subGroupName', 'var')
+            obj.changeLithologyGroup(distLithoName, mainGroupName, subGroupName)
+        end
         
         % Copy curves
         lithologyParameters = obj.lithology.getLithologyParameters(distLithoName);
@@ -187,8 +191,27 @@ classdef LithologyFile < handle
                obj.lithology.updateLithologyParametersValue(distLithoName, lithologyParameters(i,1), lithologyParameters(i,end-1), hash);
             end
         end
-        
-   end  
+   end
+   %=====================================================
+   function [] = changeLithologyGroup(obj, lithologyName, mainGroupName, subGroupName)
+       
+       % Assertions
+       assert(exist('mainGroupName', 'var') && exist('subGroupName', 'var'), 'Provide all group names!');
+       assert(ischar(mainGroupName) && ischar(subGroupName), 'Group names have to be strings!');
+       assert(~isempty(mainGroupName) && ~isempty(mainGroupName), 'Group names have to contain a non-empty strings!');
+
+       % Main group
+       mainGroupId = obj.lithology.getGroupId(mainGroupName);
+       if isempty(mainGroupId); mainGroupId = HashTools.getUniqueHash(obj.getIds(), mainGroupName); end
+       obj.lithology.updateGroups(lithologyName, mainGroupId, mainGroupName, 1)
+       
+       % Sub group
+       subGroupId = obj.lithology.getGroupId(subGroupName);
+       if isempty(subGroupId); subGroupId = HashTools.getUniqueHash(obj.getIds(), subGroupName); end
+       obj.lithology.updateGroups(lithologyName, subGroupId, subGroupName, 2)
+
+
+   end
    %=====================================================
    function [parameterIds] = mixLitholgies(obj, sourceLithologies, fractions, distLithoName, mixer)
        
@@ -218,7 +241,7 @@ classdef LithologyFile < handle
         parameterTypes   = parameterTypes(ib,:);
         parameterIds     = parameterIds(ib,:);
 
-       
+       isLogValue = false;
        % Get the titles of the properties
 
        nParameters = size(parameterIds, 1);
@@ -236,19 +259,18 @@ classdef LithologyFile < handle
            for j = 1:nLithos
                [~, paramInd] = (ismember(parameterId,lithoInfos{j}(:,end-1)));
                if any(paramInd)==true
-                    parameterValue = lithoInfos{j}(paramInd,end);
+                   parameterValue = lithoInfos{j}(paramInd,end);
                else
                    parameterValue = obj.meta.getDefaultValue(parameterId);
-                   %continue; 
                end
+               
+               
                parameterValues = [parameterValues, parameterValue];
                if strcmp(parameterType, 'Reference')
                     curveValue = obj.curve.getCurve(parameterValue);
                     curves{end+1} = obj.strcell2array(curveValue);
                end
-           end
-           %parameterType
-           %parameterValues           
+           end         
            
            % Decide on the mixing type
            switch parameterGroupName      
@@ -271,16 +293,17 @@ classdef LithologyFile < handle
                case 'Depositional Anisotropy'
                    mixType = mixer.thermalCondictivity(2);
                case 'Horizontal Upscaling Factor'
-                   mixType = 1;
+                   mixType = mixer.permeability(2);
                case 'Vertical Upscaling Factor'
                    mixType = mixer.permeability(2);
-               %case 'Maximum Permeability Shift'
-               %    mixType = mixer.permeability(2);
+               case 'Maximum Permeability Shift'
+                   mixType = 2;
+               %case 'Anisotropy Factor Thermal Conduct.'
+                   %mixType = 1;
            end
            
            
            % Mix
-
            if isempty(parameterValues)==false || isempty(curves)==false
            switch parameterType
                case 'Decimal'
@@ -299,11 +322,14 @@ classdef LithologyFile < handle
            else
               effectiveValue = '';
            end
+         
        
        % Update the lithology
        obj.changeValue(distLithoName, parameterName, effectiveValue);
 
        end
+       
+       
           
 
    end

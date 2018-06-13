@@ -1,15 +1,15 @@
 clear all
 
 % Define parameters
-petroModFolder = 'C:\Program Files\Schlumberger\PetroMod 2017.1\WIN64\bin';
-projectFolder = 'C:\Users\malibrah\Desktop\T17';
+PMDirectory = 'C:\Program Files\Schlumberger\PetroMod 2017.1\WIN64\bin';
+PMProjectDirectory = 'C:\Users\malibrah\Desktop\T17';
 
 nDim = 1;   % is your model 1D, 2D, or 3D
 templateModel = 'M1DEmpty';
 newModel ='UpdatedModel';
 
 % Open the project
-PM = PetroMod(petroModFolder, projectFolder);
+PM = PetroMod(PMDirectory, PMProjectDirectory);
 
 % Check the current parameter of the lithology (curves are showed as id)
 lithoInfo = PM.Litho.getLithologyInfo('Shale (typical)')
@@ -23,21 +23,18 @@ PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .4);
 PM.Litho.changeValue('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
 
 % Add and delete lithology
-PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology')
+PM.Litho.deleteLithology('Mos Lithology');
+PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology', 'MainGroup', 'SubGroup')
+PM.Litho.changeLithologyGroup('Mos Lithology', 'MainGroup', 'Test')
 PM.Litho.deleteLithology('Mos Lithology');
 
 % Create a lithology mix
 PM.Litho.deleteLithology('MosMix');
 mixer = LithoMixer('V');
-%sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
-sourceLithologies = {'SandstoneMos','ShaleMos'};
-fractions         = [.4, .6];
+sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
+%sourceLithologies = {'SandstoneMos','ShaleMos'};
+fractions         = [.5, .5];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
-
-lithoInfo = PM.Litho.getLithologyInfo('SandstoneMos')
-lithoInfo = PM.Litho.getLithologyInfo('ShaleMos')
-
-lithoInfo = PM.Litho.getLithologyInfo('MosMix')
 
 % Update lithology file (needed if you change the lithology file)
 PM.updateProject();
@@ -51,6 +48,10 @@ PM.dublicateModel(templateModel, newModel, nDim);
 % Simulate model
 [output] = PM.simModel(newModel, nDim, true);
 
+% Run a custom script on the output
+[cmdout, status] = PM.runScript(newModel, nDim, 'demo_opensim_output_3rd_party_format', '4', true);
+[cmdout, status] = PM.runScript(newModel, nDim, 'demo_ExtractOutput', '1');
+
 % Restore lithology file (does not restore models)
 PM.restoreProject();
 PM.deleteModel(newModel, nDim);
@@ -58,7 +59,7 @@ PM.deleteModel(newModel, nDim);
 %% Model operations
 
 % Load Model
-model = Model1D(newModel, projectFolder);
+model = Model1D(newModel, PMProjectDirectory);
 
 % Get the names of data tables
 model.getTableNames()
