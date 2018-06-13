@@ -13,6 +13,7 @@ A project is loaded into Matlab. Lithologies can be modified (addition of new li
 - See the "main.m" for the procedure to load your template project in Matlab, modify parameters, duplicate models and simulate them in Matlab.
 
 ## Tips
+- Save your PetroMod project in a folder that does not require administrator privileges.
 - It is better to create all the required lithologies in one go before updating the project as writing the lithology files takes relatively long time (a couple of seconds), i.e., do not update the project in a for loop.
 - If you are using lithology mixing, it is better to make sure everything is consistant by create the some mixes manually and comparing it to the mixes created by Matlab.
 
