@@ -19,6 +19,7 @@ Currently, it is focused on modifying the lithologies.
 - Save your PetroMod project in a folder that does not require administrator privileges.
 - It is better to create all the required lithologies in one go before updating the project as writing the lithology files takes relatively long time (a couple of seconds), i.e., do not update the project in a for loop.
 - If you are using lithology mixing, it is better to make sure everything is consistant by create the some mixes manually and comparing it to the mixes created by Matlab.
+- Some parameters are internally saved with different unit than the one that is displayed in PetroMod
 
 ## What is next?
 The basic framework is implemented now and is validated. The whole process can be automated in Matlab.  I am going to start focusing on specific things that are needed for some of my research:
