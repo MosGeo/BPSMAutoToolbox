@@ -253,7 +253,8 @@ classdef LithologyFile < handle
    end
    %=====================================================
    function isExist = isLithologyExist(obj, lithologyName)
-      % Asserttions 
+      % Asserttions
+      assert(exist('lithologyName', 'var') , 'Lithology name must be provided');
       assert(ischar(lithologyName) , 'Lithology name should be a string');
       
       % Main
@@ -332,8 +333,7 @@ classdef LithologyFile < handle
                    parameterValue = lithoInfos{j}(paramInd,end);
                else
                    parameterValue = obj.meta.getDefaultValue(parameterId);
-               end
-               
+               end      
                
                parameterValues = [parameterValues, parameterValue];
                if strcmp(parameterType, 'Reference')
