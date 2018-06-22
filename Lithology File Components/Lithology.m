@@ -221,7 +221,12 @@ classdef Lithology < handle
             lithologyIndex = obj.getLithologyIndex(lithologyName);
             lithologyParameters = obj.lithology{lithologyIndex, end};
             parameterIndex = ismember(lithologyParameters(:,idIndex),id);
-            parameterValue = lithologyParameters(parameterIndex,valueIndex);
+            
+            if any(parameterIndex) 
+               parameterValue = lithologyParameters(parameterIndex,valueIndex);
+            else
+               parameterValue = nan;
+            end   
        end
        % =========================================================   
        function lithologyIndex = getLithologyIndex(obj, lithologyName)

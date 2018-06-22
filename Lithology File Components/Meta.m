@@ -238,6 +238,27 @@ classdef Meta < handle
            [~,Locb] = ismember(parameterId,obj.meta(:,idIndex));
            defaultValue = obj.meta(Locb, defaultValueIndex);
        end
+      % =========================================================                 
+      function parameterNames = getPramaterNamesFromGroup(obj, parameterGroupName1, parameterGroupName2)
+          % Defaults
+          if(~exist('parameterGroupName2', 'var')); parameterGroupName2 = ''; end
+          
+          % Assertions
+          assert(ischar(parameterGroupName1) & ischar(parameterGroupName2), 'parameterGroupName1 and parameterGroupName2 must be strings');
+         
+          % Main
+          groupName1Index  = find(ismember(obj.metaParameterGroupTitles, 'Name'));
+          groupName2Index  = numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterGroupTitles, 'Name'));
+          nameIndex  = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Name'));
+
+          groupNames1 = obj.meta(:,groupName1Index);
+          groupNames2 = obj.meta(:,groupName2Index);
+          groupNames2 = cellfun(@num2str, groupNames2, 'UniformOutput', false);
+          parametersIndex = ismember(groupNames1, {parameterGroupName1}) & ismember(groupNames2, {parameterGroupName2});
+          
+          parameterNames = obj.meta(parametersIndex,nameIndex);     
+          
+      end
        
    end
     

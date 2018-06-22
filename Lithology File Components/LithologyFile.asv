@@ -427,17 +427,13 @@ classdef LithologyFile < handle
        condHor  = zeros(1,nLithos);
        for i = 1:nLithos
         condVert20   = obj.getValue(sourceLithologies{i}, 'Thermal Conduct. at 20°C');
-        depAnisotropy= obj.getValue(sourceLithologies{i}, 'Anisotropy Factor Thermal Conduct.');
+        depAnisotropy= obj.getValue(sourceLithologies{i}, 'Depositional Anisotropy');
         condVert100  = ThermalModels.sekiguchi(condVert20, 100, 'C');
-        condVert(i)     = mean([condVert20, condVert100]);
-        condHor(i)      = mean([condVert20, condVert100]*depAnisotropy);
+        condVert(i)     = mixer.mixScalers([condVert20, condVert100])
+        condHor(i)      = mixer.mixScalers([condVert20, condVert100]*depAnisotropy, [.5, .5], mixer.thermalCondictivity(2));
        end
-
-       effectiveVert = mixer.mixScalers(condVert, fractions, mixer.thermalCondictivity(1));
-       effectivehor = mixer.mixScalers(condHor, fractions, mixer.thermalCondictivity(2));
-       effectiveDepAnisotropy = effectivehor/effectiveVert;
-       obj.changeValue(distLithoName, parameterName, effectiveDepAnisotropy);
-
+       condVert
+       condHor
           
 
    end

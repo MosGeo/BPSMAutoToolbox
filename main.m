@@ -34,7 +34,7 @@ PM.Litho.deleteLithology('Mos Lithology');
 % Create a lithology mix
 mixer = LithoMixer('H');
 sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
-fractions         = [.5, .5];
+fractions         = [.6, .4];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
 
 % Update lithology file (needed if you change the lithology file)
@@ -80,7 +80,7 @@ model.printTable('Heat Flow');
 % (title) of the updated value to update it. Or you can get all the data
 % and update it manually and then pass it without the key as above
 model.printTable('Simulation');
-model.updateData('Simulation', [20 10], 'Oeve');
+model.updateData('Simulation', [20 30], 'Oeve');
 model.printTable('Simulation');
 
 % Update the model and to the files

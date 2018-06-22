@@ -47,6 +47,9 @@ classdef LithoMixer < handle
          currentMixer{2} = [obj.mixerText{obj.permeability(1)} obj.mixerText{obj.permeability(2)}];
          currentMixer{3} = [obj.mixerText{obj.capillaryPressure(1)} obj.mixerText{obj.capillaryPressure(2)}];
       end
+      % =========================================================
+          
+  
       
     end
     
