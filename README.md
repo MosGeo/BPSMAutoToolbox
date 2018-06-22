@@ -25,9 +25,10 @@ This is an effort to automate creation and modification of models used in the Sc
 The basic framework is implemented now. The whole process can be automated in Matlab. Feature addition is on hold for now. I a going to focus on using the framework for my research. At the same time, I will be cleaning, organizing, refactoring, and commenting the code. 
 
 ## This is input, how about output?
+NOTE: current Stanford license does not support custom scripts.
 - Check out scripts folder in PetroMod 2016.2 (e.g., "C:\Program Files\Schlumberger\PetroMod 2016.2\scripts"). You will need to write your own scripts that export your specific needed data automatically after the simulator.
-- To activate your script, in the Simulator window, choose "Output", "Open Simulator" and select your script. Make sure your script run in the template project.
-- Save the simulator window.
+- To activate your script, in the Simulator window, choose "Output", "Open Simulator" and select your script. Make sure your script run in the template project. Save the simulator window.
+- Another option is to run the written script directly from matlab as given in the example file.
 
 ## Are you using this code?
 I would love to hear from you. What are the functionalities that you use the most? What are the things that you cannot do with it? Do you have a bug to report? You can create an Issue on GitHub or reach me directly at Mustafa.Geoscientist@outlook.com
