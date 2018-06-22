@@ -22,9 +22,7 @@ This is an effort to automate creation and modification of models used in the Sc
 - Some parameters are internally saved with different unit than the one that is displayed in PetroMod
 
 ## What is next?
-The basic framework is implemented now and is validated. The whole process can be automated in Matlab.  I am going to start focusing on specific things that are needed for some of my research:
-
-- Lithology mixer (mostly done)
+The basic framework is implemented now. The whole process can be automated in Matlab. Feature addition is on hold for now. I a going to focus on using the framework for my research. At the same time, I will be cleaning, organizing, refactoring, and commenting the code. 
 
 ## This is input, how about output?
 - Check out scripts folder in PetroMod 2016.2 (e.g., "C:\Program Files\Schlumberger\PetroMod 2016.2\scripts"). You will need to write your own scripts that export your specific needed data automatically after the simulator.
