@@ -23,10 +23,12 @@ PM.Litho.changeValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)', .4);
 PM.Litho.changeValue('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 100]);
 
 % Dublicate lithology
-PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology', 'MainGroup', 'SubGroup')
+%PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology', 'MainGroup', 'SubGroup')
+PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology')
+
 
 % Change lithology group of an existing lithology
-PM.Litho.changeLithologyGroup('Mos Lithology', 'MainGroup', 'SubGroup')
+%PM.Litho.changeLithologyGroup('Mos Lithology', 'MainGroup', 'SubGroup')
 
 % Delete lithology
 PM.Litho.deleteLithology('Mos Lithology');
@@ -86,6 +88,22 @@ model.printTable('Simulation');
 % Update the model and to the files
 model.updateModel();
 
+model.printTable('Main')
+data = model.getData('Main')
 
+%% Model Operations (2D)
 
+PMProjectDirectory = 'C:\Users\malibrah\Desktop\PM_Inline';
 
+% Load Model
+model = Model2D('NewModel_1', PMProjectDirectory);
+
+% Get the names of data tables
+model.getTableNames()
+
+% Update the some table data (matrix table) and check if it is updated
+model.printTable('SWIT');
+data = model.getData('SWIT');
+data(:,2) = data(:,2)*2;
+model.updateData('SWIT', data);
+model.printTable('SWIT');
