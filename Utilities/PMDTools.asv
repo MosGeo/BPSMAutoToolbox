@@ -1,0 +1,61 @@
+classdef PMDTools
+    
+    properties
+       machineFormat = 'ieee-be';
+       precision     = 'float32';
+       versions      = {'1.0'};
+    end
+    
+    
+    methods (Static)
+        
+         % =========================================================   
+         function pmd = readPMAFile(pmdFileName)
+                % Read PMD file
+               fileID     = fopen(pmdFileName,'r');
+               rawText = fscanf(fileID,'%s');
+               fclose (fileID);
+               
+               pmd = deconstructPMDfile(rawText);
+         end
+        % =========================================================
+        function pmd = deconstructPMDfile(rawText)
+            % find the version number
+            regExpPatter = 'Version=[0-9]\.[0-9]';
+            [startIndex,endIndex] = regexp(rawText, regExpPatter);
+            versionString = rawText(startIndex:endIndex);
+            versionString = strsplit(versionString, '=');
+            version  = versionString{2};
+
+            % Make sure version is compatible
+            if ismember(version, obj.versions)
+                pmd = [];
+                error('PMD file version incompatible');
+                return;
+            end
+            
+            regExpPatter = 'Version=[0-9]\.[0-9]';
+            [startIndex,endIndex] = regexp(stringData, regExpPatter);
+
+            
+            dataStartIndex = endIndex+1;
+            headerString = stringData(1:endIndex);
+            dataString = stringData(dataStartIndex:end);
+
+            fseek(fileID, dataStartIndex, 'bof');
+            data = fread(fileID, Inf, 'float32', 0, 'ieee-be');
+            
+            pma.header = headerString;
+            pma.header = headerString;
+
+        end
+        % =========================================================
+    
+    
+
+
+    end
+    
+    
+    
+end
