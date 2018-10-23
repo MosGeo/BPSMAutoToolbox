@@ -3,7 +3,7 @@ classdef PMATools
     methods (Static)
         
         % =========================================================          
-        function pma = readPMAFile(pmaFileName)   
+        function pma = readFile(pmaFileName)   
             % Read PMT file
             fileID = fopen(pmaFileName,'r');
             rawText = textscan(fileID, '%s', 'Delimiter','\n');
@@ -16,12 +16,12 @@ classdef PMATools
                indToRemove(i) = isempty(rawText{i}); 
             end
             rawText(indToRemove) = [];
-            pma = PMATools.deconstructPMAfile(rawText);
+            pma = PMATools.deconstructfile(rawText);
         end
         % =========================================================
-        function status = writePMAFile(pma, pmaFileName)
+        function status = writeFile(pma, pmaFileName)
             % Write PMT file
-            rawText = PMATools.reconstructPMAfile(pma);
+            rawText = PMATools.reconstructfile(pma);
             fileID = fopen(pmaFileName,'w');
             for i = 1:numel(rawText)
                 currentLine = rawText{i};
@@ -33,7 +33,7 @@ classdef PMATools
             status = true;
         end
         % =========================================================
-        function pma = deconstructPMAfile(rawText)
+        function pma = deconstructfile(rawText)
            nLines = numel(rawText);
            pma = [];
            pma.titles = [];
@@ -47,7 +47,7 @@ classdef PMATools
            end
         end
         % =========================================================
-        function rawText = reconstructPMAfile(pma)
+        function rawText = reconstructfile(pma)
            nLines = numel(pma.titles);
            rawText = cell(nLines,1);
            for i = 1:nLines
@@ -60,7 +60,7 @@ classdef PMATools
           data(:,2) = cellfun(@(x) PMATools.attemptStr2double(strtrim(x)),data(:,2), 'UniformOutput', false); 
         end
         % =========================================================
-       function [] = printPMA(pma)
+       function [] = print(pma)
             T = table(pma.titles',pma.values', 'VariableNames', {'Title', 'Value'});
             disp(T)
        end 
