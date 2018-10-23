@@ -6,7 +6,7 @@ classdef Model2D < handle
         dim = 2;
         tables = {};
         
-        tableFileNames = {'swit', 'heat', 'palg'}
+        tableFileNames = {'swit', 'hflt', 'palg'}
         tableNames     = {'SWIT', 'Heat Flow', 'Paleo Water'}      
         tableTypes     = {'pmt', 'pmt', 'pmt'}
         nTables = 0;
