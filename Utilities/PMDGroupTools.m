@@ -50,6 +50,10 @@ classdef PMDGroupTools
             end
         end
         % =========================================================
+        function [] = print(pmdGroup)
+            PMTTools.print(pmdGroup.pmt);
+        end
+        
 
     end
     
