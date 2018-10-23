@@ -6,7 +6,7 @@ PMProjectDirectory = 'C:\Users\malibrah\Desktop\T17';
 
 nDim = 1;   % is your model 1D, 2D, or 3D
 templateModel = 'M1DEmpty';
-newModel ='UpdatedModel';
+newModel      = 'UpdatedModel';
 
 % Open the project
 PM = PetroMod(PMDirectory, PMProjectDirectory);

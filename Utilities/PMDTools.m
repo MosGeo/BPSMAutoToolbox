@@ -44,7 +44,7 @@ classdef PMDTools
             fprintf(fileID, pmd.header, '%s');
             
             % Write data
-            fwrite(fileID, data, PMDTools.precision, 0, PMDTools.machineFormat);
+            fwrite(fileID, pmd.data, PMDTools.precision, 0, PMDTools.machineFormat);
             fclose(fileID);
             
             status = true;  
