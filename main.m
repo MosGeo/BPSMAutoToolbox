@@ -28,7 +28,7 @@ PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology')
 
 
 % Change lithology group of an existing lithology
-%PM.Litho.changeLithologyGroup('Mos Lithology', 'MainGroup', 'SubGroup')
+PM.Litho.changeLithologyGroup('Mos Lithology', 'MainGroup', 'SubGroup')
 
 % Delete lithology
 PM.Litho.deleteLithology('Mos Lithology');
