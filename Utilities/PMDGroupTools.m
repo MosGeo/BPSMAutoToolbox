@@ -7,15 +7,15 @@ classdef PMDGroupTools
             
             [folderName] = fileparts(pmdGroupFileName);
             % Load the pmt file
-            mainFile = PMTTools.readPMTFile(pmdGroupFileName);
-            pmtData = PMTTools.extractMainData(mainFile);
+            mainFile = PMTTools.readFile(pmdGroupFileName);
+            pmtData = PMTTools.getData(mainFile);
             pmdFileNumbers = cell2mat(pmtData(:,1));
 
             pmdGroup.pmds = [];
             % Load all pmd files
             for i = 1:numel(pmdFileNumbers)
                 pmdFileName = fullfile(folderName, [num2str(pmdFileNumbers(i)) '.pmd']);
-                pmdGroup.pmds{i} = PMDTools.readPMDFile(pmdFileName);
+                pmdGroup.pmds{i} = PMDTools.readFile(pmdFileName);
             end 
             
             pmdGroup.pmt  = mainFile;
@@ -26,12 +26,12 @@ classdef PMDGroupTools
         function status = writeFile(pmdGroup, pmdGroupFileName)
             [folderName] = fileparts(pmdGroupFileName);
             % Write pmt file
-            PMTTools.writePMTFile(pmdGroup.pmt, pmdGroupFileName);
+            PMTTools.writeFile(pmdGroup.pmt, pmdGroupFileName);
             
             % Write pmd files
             for i = 1:numel(pmdGroup.Ids)
                pmdFileName = fullfile(folderName, [num2str(pmdGroup.Ids (i)) '.pmd']);
-               PMDTools.writePMDFile(pmdGroup.pmds{i}, pmdFileName);
+               PMDTools.writeFile(pmdGroup.pmds{i}, pmdFileName);
             end
             
             status = true;
@@ -44,7 +44,7 @@ classdef PMDGroupTools
             end
         end
         % =========================================================
-        function [] = updateData(pmdGroup, data)
+        function pmdGroup = updateData(pmdGroup, data)
             for i = 1:numel(pmdGroup.Ids)
                 pmdGroup.pmds{i}.data = data(i,:); 
             end

@@ -9,7 +9,7 @@ classdef PMDTools
     methods (Static)
         
          % =========================================================   
-         function pmd = readPMDFile(pmdFileName)
+         function pmd = readFile(pmdFileName)
             % Read PMD file
             fileID     = fopen(pmdFileName,'r');
             rawText = fscanf(fileID,'%s');
@@ -36,7 +36,7 @@ classdef PMDTools
             pmd.data   = data;        
          end
         % =========================================================
-         function status = writePMDFile(pmd, pmdFileName)
+         function status = writeFile(pmd, pmdFileName)
             % Write PMD file
             fileID = fopen(pmdFileName,'w');
             
