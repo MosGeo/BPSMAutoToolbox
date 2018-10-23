@@ -10,18 +10,18 @@ classdef PMTTools
     methods (Static)
        
         % =========================================================          
-        function pmt = readPMTFile(pmtFileName)   
+        function pmt = readFile(pmtFileName)   
             % Read PMT file
             fileID = fopen(pmtFileName,'r');
             rawText = textscan(fileID, '%s', 'Delimiter','\n');
             rawText = rawText{1};
             fclose(fileID);   
-            pmt = PMTTools.deconstructPMTfile(rawText);
+            pmt = PMTTools.deconstructFile(rawText);
         end
         % =========================================================
-        function status = writePMTFile(pmt, pmtFileName)
+        function status = writeFile(pmt, pmtFileName)
             % Write PMT file
-            rawText = PMTTools.reconstructPMTfile(pmt);
+            rawText = PMTTools.reconstructFile(pmt);
             fileID = fopen(pmtFileName,'w');
             for i = 1:numel(rawText)
                 currentLine = rawText{i};
@@ -33,7 +33,7 @@ classdef PMTTools
             status = true;
         end
         % =========================================================
-        function pmt = initializePMT()
+        function pmt = initialize()
             pmt.Comments.raw = []; pmt.Comments.line = [];
             pmt.Header.raw   = []; pmt.Header.line   = [];
             pmt.Key.raw      = []; pmt.Key.line      = [];
@@ -42,9 +42,9 @@ classdef PMTTools
             pmt.Data.raw     = []; pmt.Data.line     = [];
         end   
         % =========================================================
-        function pmt = deconstructPMTfile(rawText)
+        function pmt = deconstructFile(rawText)
              % Scan and return data
-            pmt = PMTTools.initializePMT();
+            pmt = PMTTools.initialize();
             nLines = numel(rawText);
             for lineNumber = 1:nLines
                 currentLine = strtrim(rawText{lineNumber});
@@ -71,7 +71,7 @@ classdef PMTTools
             end  
         end
         % =========================================================
-        function rawText = reconstructPMTfile(pmt)
+        function rawText = reconstructFile(pmt)
             rawText = [pmt.Comments.raw,  pmt.Header.raw,  pmt.Key.raw...
                  pmt.Stop.raw, pmt.Format.raw, pmt.Data.raw]';
             
@@ -82,7 +82,7 @@ classdef PMTTools
             rawText = rawText(I);   
         end
        % =========================================================
-       function data = extractMainData(pmt)
+       function data = getData(pmt)
           data = {};
           for i = 1:numel(pmt.Data.raw)
              currentLine = pmt.Data.raw{i};
@@ -123,8 +123,8 @@ classdef PMTTools
           pmt.Data.line = min(pmt.Data.line): min(pmt.Data.line)+size(data,1)-1;    
        end
        % =========================================================
-       function [] = printPMT(pmt)
-            rawText = PMTTools.reconstructPMTfile(pmt);
+       function [] = print(pmt)
+            rawText = PMTTools.reconstructFile(pmt);
             for i = 1:numel(rawText)
                 disp(rawText{i})
             end
