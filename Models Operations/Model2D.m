@@ -6,21 +6,20 @@ classdef Model2D < handle
         dim = 2;
         tables = {};
         
-        tableFileNames = {'swit', 'hflt', 'palg'}
-        tableNames     = {'SWIT', 'Heat Flow', 'Paleo Water'}      
-        tableTypes     = {'pmt', 'pmt', 'pmt'}
+        tableFileNames = {'in/swit', 'in/hflt', 'in/palg', 'in/hf_m/cont', 'in/swi_m/cont'}
+        tableNames     = {'SWIT', 'Heat Flow Table', 'Paleo Water Table', 'Heat Flow Map', 'Paleo Water Map'}      
+        tableTypes     = {'pmt', 'pmt', 'pmt', 'pmdGroup', 'pmdGroup'}
         nTables = 0;
 
    end
    
-   
-   methods
+      methods
        
         % =========================================================          
         function obj = Model2D(modelName, PMProjectDirectory)
             obj.modelName = modelName;
             obj.modelFolder = fullfile(PMProjectDirectory,['pm', num2str(obj.dim), 'd'], modelName);
-
+            
             % Sorting for conveniance
             [obj.tableNames,I] = sort(obj.tableNames);
             obj.tableFileNames = obj.tableFileNames(I);
@@ -34,20 +33,18 @@ classdef Model2D < handle
                 tableFileName = obj.tableFileNames{i};
                 switch tableType
                     case 'pmt'
-                      obj.tables{i} = PMTTools.readPMTFile(obj.getModelInputFileName(tableFileName));               
+                      obj.tables{i} = PMTTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));               
                     case 'pma'
-                      obj.tables{i} = PMATools.readPMAFile(obj.getSimInputFileName(tableFileName));               
+                      obj.tables{i} = PMATools.readFile(obj.getInputFileName(tableFileName, 'pma'));               
+                    case 'pmdGroup'
+                      obj.tables{i} = PMDGroupTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));
                 end
             end
             
         end
         % =========================================================
-        function inputFileName = getModelInputFileName(obj, title)
-           inputFileName = fullfile(obj.modelFolder, 'in', [title '.pmt']); 
-        end   
-        % =========================================================
-        function inputFileName = getSimInputFileName(obj, title)
-           inputFileName = fullfile(obj.modelFolder, 'def', [title '.pma']); 
+        function inputFileName = getInputFileName(obj, title, ext)
+           inputFileName = fullfile(obj.modelFolder, [title, '.', ext]); 
         end   
         % =========================================================  
         function [] = updateModel(obj)
@@ -58,9 +55,11 @@ classdef Model2D < handle
                 table         = obj.tables{i};
                 switch tableType
                     case 'pmt'
-                      PMTTools.writePMTFile(table, obj.getModelInputFileName(tableFileName));               
+                      PMTTools.writeFile(table, obj.getInputFileName(tableFileName, 'pmt'));               
                     case 'pma'
-                      PMATools.writePMAFile(table, obj.getSimInputFileName(tableFileName));               
+                      PMATools.writeFile(table, obj.getInputFileName(tableFileName, 'pma'));
+                    case 'pmdGroup'
+                      PMDGroupTools.writeFile(table, obj.getInputFileName(tableFileName, 'pmdGroup'));          
                 end
             end
             
@@ -70,9 +69,11 @@ classdef Model2D < handle
            table = obj.getTable(title);
            switch table.type
                case 'pmt'
-                   data = PMTTools.extractMainData(table.data);
+                   data = PMTTools.getData(table.data);
                case 'pma'
-                   data = PMATools.extractMainData(table.data);
+                   data = PMATools.getData(table.data);
+               case 'pmdGroup'
+                   data = PMDGroupTools.getData(table.data);
            end
         end
         % =========================================================          
@@ -81,7 +82,6 @@ classdef Model2D < handle
            % Defaults
            if ~exist('key', 'var'); key = []; end
            
-
            % Main
            table = obj.getTable(title);
            switch table.type
@@ -89,6 +89,8 @@ classdef Model2D < handle
                     obj.tables{table.index} = PMTTools.updateData(table.data, data, key);
                 case 'pma'
                     obj.tables{table.index} = PMATools.updateData(table.data, data, key);
+                case 'pmdGroup'
+                    obj.tables{table.index} = PMDGroupTools.updateData(table.data, data);
            end
         end
         % =========================================================          
@@ -100,9 +102,11 @@ classdef Model2D < handle
             table = obj.getTable(title);
             switch table.type
                 case 'pmt'
-                  PMTTools.printPMT(table.data);              
+                  PMTTools.print(table.data);              
                 case 'pma'
-                  PMATools.printPMA(table.data);              
+                  PMATools.print(table.data);
+                case 'pmdGroup'
+                  PMDGroupTools.print(table.data);  
             end
         end
         
@@ -115,10 +119,7 @@ classdef Model2D < handle
              tableInfo.data = obj.tables{i};
              tableInfo.index = i;
         end
-      
-       
-       
-       
+        
    end
     
 end

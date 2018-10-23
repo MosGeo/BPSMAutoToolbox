@@ -6,12 +6,13 @@ classdef Model1D < handle
         dim = 1;
         tables = {};
         
-        tableFileNames = {'in/in1d_hf',   'in/in1d_pwd',    'in/ggxy'   , 'in/in1d_swit', 'in/main1d', 'in/swio'     , 'in/tool' , 'in/mckenzie/riftphases', 'def/proj', 'def/mckenziehf_opts'}
+        tableFileNames = {'in/in1d_hf',   'in/in1d_pwd',    'in/ggxy'   , 'in/in1d_swit', 'in/main1d', 'in/swio'     , 'in/tool' , fullfile('in/mckenzie', 'riftphases'), 'def/proj', 'def/mckenziehf_opts'}
         tableNames     = {'Heat Flow', 'Paleo Water', 'Coordinates' , 'SWIT'     , 'Main'  , 'Auto SWIT', 'Tools', 'Rifting'                         , 'Simulation', 'Mckenzie'}      
         tableTypes     = {'pmt'      , 'pmt'        , 'pmt'         , 'pmt'      , 'pmt'   , 'pmt'      , 'pmt'  , 'pmt'                             , 'pma'       , 'pma'}
         nTables = 0;
 
    end
+   
    
    methods
        
@@ -36,8 +37,6 @@ classdef Model1D < handle
                       obj.tables{i} = PMTTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));               
                     case 'pma'
                       obj.tables{i} = PMATools.readFile(obj.getInputFileName(tableFileName, 'pma'));               
-                    case 'pmdGroup'
-                      obj.tables{i} = PMDTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));
                 end
             end
             
@@ -45,6 +44,7 @@ classdef Model1D < handle
         % =========================================================
         function inputFileName = getInputFileName(obj, title, ext)
            inputFileName = fullfile(obj.modelFolder, [title, '.', ext]); 
+           inputFileName
         end   
         % =========================================================  
         function [] = updateModel(obj)
@@ -55,11 +55,9 @@ classdef Model1D < handle
                 table         = obj.tables{i};
                 switch tableType
                     case 'pmt'
-                      PMTTools.writeFile(table, obj.getInputFileName(tableFileName, 'pmt'));               
+                      PMTTools.writeFile(table, obj.getModelInputFileName(tableFileName));               
                     case 'pma'
-                      PMATools.writeFile(table, obj.getInputFileName(tableFileName, 'pma'));
-                    case 'pmdGroup'
-                      PMDGroupTools.writeFile(table, obj.getInputFileName(tableFileName, 'pmdGroup'));          
+                      PMATools.writeFile(table, obj.getSimInputFileName(tableFileName));               
                 end
             end
             
@@ -72,8 +70,6 @@ classdef Model1D < handle
                    data = PMTTools.getData(table.data);
                case 'pma'
                    data = PMATools.getData(table.data);
-               case 'pmdGroup'
-                   data = PMDGroupTools.getData(table.data);
            end
         end
         % =========================================================          
@@ -89,8 +85,6 @@ classdef Model1D < handle
                     obj.tables{table.index} = PMTTools.updateData(table.data, data, key);
                 case 'pma'
                     obj.tables{table.index} = PMATools.updateData(table.data, data, key);
-                case 'pmdGroup'
-                    obj.tables{table.index} = PMDGroupTools.updateData(table.data, data);
            end
         end
         % =========================================================          
@@ -104,9 +98,7 @@ classdef Model1D < handle
                 case 'pmt'
                   PMTTools.print(table.data);              
                 case 'pma'
-                  PMATools.print(table.data);
-                case 'pmdGroup'
-                  PMDGroupTools.print(table.data);  
+                  PMATools.print(table.data);              
             end
         end
         
@@ -119,7 +111,10 @@ classdef Model1D < handle
              tableInfo.data = obj.tables{i};
              tableInfo.index = i;
         end
-        
+      
+       
+       
+       
    end
     
 end
