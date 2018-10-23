@@ -63,7 +63,7 @@ PM.deleteModel(newModel, nDim);
 % Restore lithology file (does not restore models)
 PM.restoreProject();
 
-%% Model Operations
+%% Model Operations (1D)
 
 % Load Model
 model = Model1D(newModel, PMProjectDirectory);
@@ -107,3 +107,11 @@ data = model.getData('SWIT');
 data(:,2) = data(:,2)*2;
 model.updateData('SWIT', data);
 model.printTable('SWIT');
+
+% Maps
+data = model.getData('Heat Flow Map');
+model.updateData('Heat Flow Map', data);
+
+% Update the model and to the files
+model.updateModel();
+
