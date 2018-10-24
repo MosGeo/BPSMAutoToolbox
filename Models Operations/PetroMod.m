@@ -37,8 +37,8 @@ classdef PetroMod < handle
     % parameter name and its new value.
         
         % Defaults
-        if exist('isDisplayOutput', 'var') == false; isDisplayOutput = false; end
-        if exist('isSaveOutput', 'var') == false; isSaveOutput = true; end
+        if ~exist('isDisplayOutput', 'var'); isDisplayOutput = false; end
+        if ~exist('isSaveOutput', 'var'); isSaveOutput = true; end
     
         % Assertions
         assert(ischar(modelName), 'Model name needs to be a string')
@@ -65,8 +65,9 @@ classdef PetroMod < handle
     % =====================================================
     function [status,msg] = dublicateModel(obj, sourceModel, distModel, dimension, isOverwrite)
     % copyModel  Duplicate a model from source name to destination.
-
-       if exist('isOverwrite', 'var') == false; isOverwrite = true; end
+        
+        % Defaults
+        if ~exist('isOverwrite', 'var'); isOverwrite = true; end
                
        sourceFolder   = fullfile(obj.PMProjectDirectory,['pm', num2str(dimension), 'd'], sourceModel);
        distFolder   = fullfile(obj.PMProjectDirectory,['pm', num2str(dimension), 'd'], distModel);
