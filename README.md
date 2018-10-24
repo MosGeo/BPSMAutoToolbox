@@ -4,7 +4,7 @@ This is an effort to automate creation and modification of models used in the Sc
 
 ## What has been done?
 - A project is loaded into Matlab. 
-- Lithologies can be duplicated, modified, and deleted. Lithology mixer is mostly working. 
+- Lithologies can be duplicated, mixed, modified, and deleted. 
 - Models can be duplicated, deleted, and simulated directly from Matlab. 
 - 1D models can be modified.
 - 2D models can be modified (initial support with limited tables, i.e. not all parameters can be modified).
