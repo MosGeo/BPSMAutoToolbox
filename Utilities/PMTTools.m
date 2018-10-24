@@ -145,11 +145,7 @@ classdef PMTTools
            formatString = formatString(2:end-1);
            formatString = strsplit(formatString, '|');
            formatString = cellfun(@strtrim, formatString, 'UniformOutput', false);  
-       end
-
-
-
-        
+       end    
         
     end
 end
