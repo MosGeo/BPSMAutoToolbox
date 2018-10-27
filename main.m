@@ -12,6 +12,7 @@ newModel      = 'UpdatedModel';
 PM = PetroMod(PMDirectory, PMProjectDirectory);
 
 % Check the current parameter of the lithology
+PM.loadLithology()
 lithoInfo = PM.Litho.getLithologyInfo('Shale (typical)')
 
 % Get some parameters (works on both scaler and curve)

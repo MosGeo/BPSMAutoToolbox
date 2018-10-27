@@ -29,7 +29,7 @@ classdef PetroMod < handle
             end  
     end
     % =====================================================
-    function [] = loadLithology(obj)
+    function [] = loadLithology()
           lithologyFileName = fullfile(obj.PMProjectDirectory, 'geo', 'Lithologies.xml');
           obj.Litho = LithologyFile(lithologyFileName); 
     end
