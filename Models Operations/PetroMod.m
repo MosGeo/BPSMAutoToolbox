@@ -138,12 +138,18 @@ classdef PetroMod < handle
         % Main
         modelFolder   = fullfile(obj.PMProjectDirectory,['pm', num2str(dimension), 'd'], modelName);
     end
-
-    function [] =  updateProject(obj)
+    
+    function [] =  saveLithology(obj)
     % updateProject  updates the current project by writing the lithology 
     % file.
         lithologyFileName = fullfile(obj.PMProjectDirectory, 'geo', 'Lithologies.xml');
         obj.Litho.writeLithologyFile(lithologyFileName);
+    end
+
+    function [] =  updateProject(obj)
+    % updateProject  updates the current project by writing the lithology 
+    % file.
+        obj.saveLithology();
     end
     %=====================================================
     function [] =  restoreProject(obj)

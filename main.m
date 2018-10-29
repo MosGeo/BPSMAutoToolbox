@@ -14,7 +14,7 @@ PM = PetroMod(PMDirectory, PMProjectDirectory);
 % Check the current parameter of the lithology
 PM.loadLithology()
 lithoInfo = PM.Litho.getLithologyInfo('Shale (typical)');
-lithoID   = PM.Litho.getLithologyID('Shale (typical)');
+[PetroModId, id]   = PM.Litho.getLithologyID('Shale (typical)');
 
 % Get some parameters (works on both scaler and curve)
 athysFactor = PM.Litho.getValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)')
@@ -42,7 +42,7 @@ fractions         = [.6, .4];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
 
 % Update lithology file (needed if you change the lithology file)
-PM.updateProject();
+PM.saveLithology();
 
 % Create a new model and delete model
 PM.dublicateModel(templateModel, newModel, nDim);
