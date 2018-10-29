@@ -92,6 +92,7 @@ classdef LithologyFile < handle
        end
    %=====================================================
        function [parameterValues, defaults] = getValue(obj, lithologyName, parameterName)
+           
            % Asserttions 
            assert(ischar(parameterName) , 'Lithology and parameter name should be strings');
            assert(ischar(lithologyName) || iscell(lithologyName) , 'Lithology and parameter name should be cell of strings or one string');
@@ -146,7 +147,7 @@ classdef LithologyFile < handle
        end
    %=====================================================    
        function lithologyInfo = getLithologyInfo(obj, lithologyName)
-           % Asserttions 
+           % Assertions 
            assert(ischar(lithologyName) , 'Lithology name should be a string');
 
            % Main
@@ -155,6 +156,14 @@ classdef LithologyFile < handle
            [names] = obj.meta.getParameterNames(lithologyParameters(:,2));
            lithologyInfo = [names, lithologyParameters(:,end)];
            end
+       end
+   %=====================================================    
+       function id = getLithologyID(obj, lithologyName)
+          % Assertions 
+          assert(ischar(lithologyName) , 'Lithology name should be a string');
+          
+          % Main
+          id = obj.lithology.getLithologyId(lithologyName);
        end
    %=====================================================
    function [] = writeLithologyFile(obj, fileName, isOverwrite, isCreateBackup)

@@ -233,6 +233,13 @@ classdef Lithology < handle
           nameIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Name'));
           lithologyIndex = ismember(obj.lithology(:,nameIndex), lithologyName);
        end
+       
+       % =========================================================   
+       function lithologyId = getLithologyId(obj, lithologyName)
+           idIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Id'));
+           lithologyIndex = obj.getLithologyIndex(lithologyName);
+           lithologyId = obj.lithology{lithologyIndex, idIndex} ;
+       end
        % =========================================================   
        function ids = getIds(obj)
            idIndex1  = find(ismember(obj.lithologyGroupTitles, 'Id'));

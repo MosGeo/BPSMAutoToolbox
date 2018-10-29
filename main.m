@@ -13,7 +13,8 @@ PM = PetroMod(PMDirectory, PMProjectDirectory);
 
 % Check the current parameter of the lithology
 PM.loadLithology()
-lithoInfo = PM.Litho.getLithologyInfo('Shale (typical)')
+lithoInfo = PM.Litho.getLithologyInfo('Shale (typical)');
+lithoID   = PM.Litho.getLithologyID('Shale (typical)');
 
 % Get some parameters (works on both scaler and curve)
 athysFactor = PM.Litho.getValue('Sandstone (clay rich)', 'Athy''s Factor k (depth)')
