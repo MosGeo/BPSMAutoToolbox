@@ -158,7 +158,7 @@ classdef LithologyFile < handle
            end
        end
    %=====================================================    
-       function [PetroModId, id] = getLithologyID(obj, lithologyName)
+       function [PetroModId, id] = getLithologyId(obj, lithologyName)
           % Assertions 
           assert(ischar(lithologyName) , 'Lithology name should be a string');
           

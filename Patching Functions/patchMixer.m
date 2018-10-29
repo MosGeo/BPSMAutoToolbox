@@ -46,7 +46,7 @@ for i = 1:nRocks
   fractionsUsed = fractions(i,:)/ sum(fractions(i,:));
   PM.Litho.mixLitholgies(sourceLithologies, fractionsUsed, rockName , mixer);
   PM.Litho.changeLithologyGroup(rockName, groupName, subGroupName)
-  [PetroModId, id]   = PM.Litho.getLithologyID(rockName);
+  [PetroModId, id]   = PM.Litho.getLithologyId(rockName);
   petroModIds{i} = PetroModId;
   ids{i} = id;
   
