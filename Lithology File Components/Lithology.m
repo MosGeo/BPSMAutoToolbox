@@ -235,10 +235,14 @@ classdef Lithology < handle
        end
        
        % =========================================================   
-       function lithologyId = getLithologyId(obj, lithologyName)
+       function [PetroModId, id] = getLithologyId(obj, lithologyName)
            idIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Id'));
+           PetroModIdIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'PetroModId'));
            lithologyIndex = obj.getLithologyIndex(lithologyName);
-           lithologyId = obj.lithology{lithologyIndex, idIndex} ;
+
+           % Get ids
+           id         = obj.lithology{lithologyIndex, idIndex};
+           PetroModId = obj.lithology{lithologyIndex, PetroModIdIndex};
        end
        % =========================================================   
        function ids = getIds(obj)
@@ -327,13 +331,13 @@ classdef Lithology < handle
           if ~(exist('level', 'var')); level = 1; end
           
           % Main
-          groupIdIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Id'));
-          groupNameIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Name'));
+          groupIdIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyGroupTitles,'Id'));
+          groupNameIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyGroupTitles,'Name'));
 
-          groupIds = unique(obj.lithology(:,groupIdIndex));
-          groupNames = unique(obj.lithology(:,groupNameIndex));
+          [groupIds,ia]  = unique(obj.lithology(:,groupIdIndex));
+          groupNames = obj.lithology(ia,groupNameIndex);
 
-          [~, Locb] = ismember(groupName, groupNames);
+          [~, Locb] = ismember(groupName, groupNames);     
           if Locb>0
             groupId   = groupIds{Locb};
           else
@@ -376,7 +380,9 @@ classdef Lithology < handle
        end 
        
    end
-    
+ 
+% =========================================================   
+
  % Get methods for writing xml file
  methods
      

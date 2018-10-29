@@ -49,13 +49,13 @@ classdef LithologyFile < handle
             lithology = Lithology(lithologyGroupMainNodes);
        end
    %=====================================================
-   function [] = changeValue(obj, lithologyName, parameterName, value)
-       if isscalar(value)==true || ischar(value)==true
-           obj.changeScaler(lithologyName, parameterName, value);
-       elseif ismatrix(value)==true
-           obj.changeCurve(lithologyName, parameterName, value);
+       function [] = changeValue(obj, lithologyName, parameterName, value)
+           if isscalar(value)==true || ischar(value)==true
+               obj.changeScaler(lithologyName, parameterName, value);
+           elseif ismatrix(value)==true
+               obj.changeCurve(lithologyName, parameterName, value);
+           end
        end
-   end
    %=====================================================
        function [] = changeScaler(obj, lithologyName, parameterName, scaler)
            % Asserttions 
@@ -158,12 +158,12 @@ classdef LithologyFile < handle
            end
        end
    %=====================================================    
-       function id = getLithologyID(obj, lithologyName)
+       function [PetroModId, id] = getLithologyID(obj, lithologyName)
           % Assertions 
           assert(ischar(lithologyName) , 'Lithology name should be a string');
           
           % Main
-          id = obj.lithology.getLithologyId(lithologyName);
+          [PetroModId, id] = obj.lithology.getLithologyId(lithologyName);
        end
    %=====================================================
    function [] = writeLithologyFile(obj, fileName, isOverwrite, isCreateBackup)
@@ -276,7 +276,7 @@ classdef LithologyFile < handle
        obj.lithology.updateGroups(lithologyName, mainGroupId, mainGroupName, 1)
        
        % Sub group
-       subGroupId = obj.lithology.getGroupId(subGroupName);
+       subGroupId = obj.lithology.getGroupId(subGroupName,2);
        if isempty(subGroupId); subGroupId = HashTools.getUniqueHash(obj.getIds(), subGroupName); end
        obj.lithology.updateGroups(lithologyName, subGroupId, subGroupName, 2)
 
@@ -318,6 +318,7 @@ classdef LithologyFile < handle
        
        % Delete lithology if overwrite is turned on
        if obj.isLithologyExist(distLithoName) && isOverwrite
+           obj.isLithologyExist(distLithoName)
            obj.deleteLithology(distLithoName);
        end
        
