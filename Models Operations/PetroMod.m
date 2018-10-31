@@ -32,7 +32,7 @@ classdef PetroMod < handle
     function [] = loadLithology(obj)
     % Loads lithology file into the PM object.
           lithologyFileName = fullfile(obj.PMProjectDirectory, 'geo', 'Lithologies.xml');
-          if exist(lithologyFileName, 'file')==2
+          if exist(lithologyFileName, 'file') == 2
             obj.Litho = LithologyFile(lithologyFileName);
           else
              error('Cannot find lithology file');

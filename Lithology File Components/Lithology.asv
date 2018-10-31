@@ -290,8 +290,8 @@ classdef Lithology < handle
        function NewPetroModId =  getNewPetroModId(obj, petroModIds)
            sortedIds = sort(petroModIds);
            newList = (101:(max(petroModIds)+1))';
-           setDiffer = setdiff(newList, sortedIds);
-           NewPetroModId = setDiffer(1);
+           C = setdiff(newList, sortedIds)
+           NewPetroModId = sortedIds(find(diff(sortedIds)>1,1,'first'))+1;
        end
        % =========================================================          
        function [] = updateReadOnly(obj, lithologyName, trueFalseValue)
