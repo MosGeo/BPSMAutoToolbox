@@ -269,7 +269,7 @@ classdef Lithology < handle
            
            % Get new PetroModId
            petroModIds = obj.getPetroModId();
-           NewPetroModId =  obj.getNewPetroModId(petroModIds)
+           NewPetroModId =  obj.getNewPetroModId(petroModIds);
            
            % Create new lithology
            newLithology = obj.lithology(lithologyIndex,:);
