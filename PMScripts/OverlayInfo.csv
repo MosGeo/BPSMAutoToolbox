@@ -1,0 +1,18 @@
+﻿Number,Name,Note
+1,X,
+2,Y,
+3,Z,
+8,Depth,
+9,LithoPressureMud,"Lithostatic pressure, mud weight"
+10,LithoPressure,Lithostatic pressure
+11,HydroStaticMud,"Hydrostatic pressure, mud weight"
+14,PorePressure,
+37,Illite,
+41,EffectivePorosity,
+42,EffectivePorosityNode,
+31,Temperature,
+20,DepositionAge,
+38,LayerThickness,
+39,WaterDepth,
+40,BurialDepth,
+40,Lithology,
