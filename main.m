@@ -26,7 +26,7 @@ PM.Litho.changeValue('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 1
 
 % Dublicate lithology
 %PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology', 'MainGroup', 'SubGroup')
-PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology')
+PM.Litho.duplicateLithology('Sandstone (clay rich)', 'Mos Lithology')
 
 
 % Change lithology group of an existing lithology
