@@ -220,7 +220,7 @@ classdef LithologyFile < handle
        allIds = [obj.meta.getIds(); obj.curve.getIds(); obj.lithology.getIds()];
    end
    %=====================================================
-   function [] = dublicateLithology(obj, sourceLithoName, distLithoName , mainGroupName, subGroupName, isOverwrite)
+   function [] =  duplicateLithology(obj, sourceLithoName, distLithoName , mainGroupName, subGroupName, isOverwrite)
        
        % Defaults
        if ~exist('isOverwrite', 'var'); isOverwrite = true; end
@@ -242,7 +242,7 @@ classdef LithologyFile < handle
         % Copy lithology
         allIds = obj.getIds();
         hash = HashTools.getUniqueHash(allIds, distLithoName);
-        obj.lithology.dublicateLithology(sourceLithoName, distLithoName, hash);
+        obj.lithology.duplicateLithology(sourceLithoName, distLithoName, hash);
         obj.lithology.updateReadOnly(distLithoName, false);
         obj.lithology.updateCreator(distLithoName, 'PetroMod');
         
@@ -304,7 +304,7 @@ classdef LithologyFile < handle
        assert(iscell(sourceLithologies), 'Source lithologies has to be a cell');
        assert(all(cellfun(@ischar, sourceLithologies)), 'Cell in source lithologies must contain strings');
        assert(isnumeric(fractions), 'Fractions must be a numeric vector');
-       assert(sum(fractions)==1, 'Fractions must add up to 1');
+       assert(sum(fractions)-1 <= .001, 'Fractions must add up to 1');
        assert(size(sourceLithologies,1) == 1 && size(fractions,1) == 1, 'Source lithologies and fractions should be rows');
        assert(size(sourceLithologies,2) ==  size(fractions,2) , 'Source lithologies and fractions should be the same size');
        assert(ischar(distLithoName) , 'Distination lithology should be a string');
@@ -318,12 +318,11 @@ classdef LithologyFile < handle
        
        % Delete lithology if overwrite is turned on
        if obj.isLithologyExist(distLithoName) && isOverwrite
-           obj.isLithologyExist(distLithoName)
            obj.deleteLithology(distLithoName);
        end
        
        % Dublicate lithology and insert mix information
-       obj.dublicateLithology(sourceLithologies{1}, distLithoName);
+       obj.duplicateLithology(sourceLithologies{1}, distLithoName);
        obj.lithology.updateMix(distLithoName, sourceLithologies, fractions, mixer)
 
        % Get lithology information

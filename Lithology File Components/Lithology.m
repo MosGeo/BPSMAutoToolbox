@@ -257,7 +257,7 @@ classdef Lithology < handle
        end
        
        % =========================================================   
-       function [] = dublicateLithology(obj, sourceLithoName, distLithoName, hash)
+       function [] =  duplicateLithology(obj, sourceLithoName, distLithoName, hash)
            
            % Indecies
            idIndex  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Id'));         
@@ -269,7 +269,7 @@ classdef Lithology < handle
            
            % Get new PetroModId
            petroModIds = obj.getPetroModId();
-           NewPetroModId =  obj.getNewPetroModId(petroModIds);
+           NewPetroModId =  obj.getNewPetroModId(petroModIds)
            
            % Create new lithology
            newLithology = obj.lithology(lithologyIndex,:);
