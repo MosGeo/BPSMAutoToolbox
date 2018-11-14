@@ -1,6 +1,6 @@
 # The Stanford BPSM Petromod Toolbox
 
-This is an effort to automate creation and modification of models used in the Schlumberger PetroMod software.
+This is an effort to automate creation, modification, and running of models used in the Schlumberger PetroMod software.
 
 ## What has been done?
 - A project is loaded into Matlab. 
