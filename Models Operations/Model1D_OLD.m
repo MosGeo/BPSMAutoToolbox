@@ -1,22 +1,21 @@
-classdef Model2D < handle
+classdef Model1D < handle
    
    properties
         modelName = '';
         modelFolder= '';
-        dim = 2;
+        dim = 1;
         tables = {};
         
-        tableFileNames = {'in/swit', 'in/hflt', 'in/palg', 'in/hf_m/cont', 'in/swi_m/cont', 'in/faultpropdef'}
-        tableNames     = {'SWIT', 'Heat Flow Table', 'Paleo Water Table', 'Heat Flow Map', 'Paleo Water Map', 'Fault'}      
-        tableTypes     = {'pmt', 'pmt', 'pmt', 'pmdGroup', 'pmdGroup', 'pmt'}
+        tableFileNames = {'in/in1d_hf',   'in/in1d_pwd',    'in/ggxy'   , 'in/in1d_swit', 'in/main1d', 'in/swio'     , 'in/tool' , 'in/mckenzie/riftphases', 'def/proj', 'def/mckenziehf_opts'}
+        tableNames     = {'Heat Flow', 'Paleo Water', 'Coordinates' , 'SWIT'     , 'Main'  , 'Auto SWIT', 'Tools', 'Rifting'                         , 'Simulation', 'Mckenzie'}      
+        tableTypes     = {'pmt'      , 'pmt'        , 'pmt'         , 'pmt'      , 'pmt'   , 'pmt'      , 'pmt'  , 'pmt'                             , 'pma'       , 'pma'}
         nTables = 0;
-
    end
    
    methods
        
         % =========================================================          
-        function obj = Model2D(modelName, PMProjectDirectory)
+        function obj = Model1D(modelName, PMProjectDirectory)
             obj.modelName = modelName;
             obj.modelFolder = fullfile(PMProjectDirectory,['pm', num2str(obj.dim), 'd'], modelName);
             
@@ -28,30 +27,18 @@ classdef Model2D < handle
             % Loading all model files
             obj.nTables = numel(obj.tableNames);
 
-            readStatus = zeros(1,obj.nTables);
             for i = 1:obj.nTables
-                try
-                    tableType     = obj.tableTypes{i};
-                    tableFileName = obj.tableFileNames{i}
-                    switch tableType
-                        case 'pmt'
-                          obj.tables{i} = PMTTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));               
-                        case 'pma'
-                          obj.tables{i} = PMATools.readFile(obj.getInputFileName(tableFileName, 'pma'));               
-                        case 'pmdGroup'
-                          obj.tables{i} = PMDGroupTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));
-                    end
-                    readStatus(i) = 1;
-                catch
-                    readStatus(i) = 0;
-                end       
+                tableType     = obj.tableTypes{i};
+                tableFileName = obj.tableFileNames{i};
+                switch tableType
+                    case 'pmt'
+                      obj.tables{i} = PMTTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));               
+                    case 'pma'
+                      obj.tables{i} = PMATools.readFile(obj.getInputFileName(tableFileName, 'pma'));               
+                    case 'pmdGroup'
+                      obj.tables{i} = PMDTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));
+                end
             end
-            
-            % Update the tables
-            obj.tableFileNames = obj.tableFileNames{readStatus};
-            obj.tableNames     = obj.tableNames{readStatus};
-            obj.tableTypes     = obj.tableTypes{readStatus};
-            obj.nTables        = numel(obj.tableNames);
             
         end
         % =========================================================
@@ -71,7 +58,7 @@ classdef Model2D < handle
                     case 'pma'
                       PMATools.writeFile(table, obj.getInputFileName(tableFileName, 'pma'));
                     case 'pmdGroup'
-                      PMDGroupTools.writeFile(table, obj.getInputFileName(tableFileName, 'pmt'));          
+                      PMDGroupTools.writeFile(table, obj.getInputFileName(tableFileName, 'pmdGroup'));          
                 end
             end
             
