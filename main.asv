@@ -95,7 +95,7 @@ data = model.getData('Main')
 
 %% Model Operations (2D)
 
-PMProjectDirectory = 'C:\Users\malibrah\Desktop\Gulfaks_Petrel_model.psm';
+PMProjectDirectory = 'C:\Users\malibrah\Desktop\Alsaka BPSM.wdb';
 
 % Load Model
 model = Model2D('testPM_Y93_edited', PMProjectDirectory);

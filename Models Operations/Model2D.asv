@@ -28,11 +28,11 @@ classdef Model2D < handle
             % Loading all model files
             obj.nTables = numel(obj.tableNames);
 
-            readStatus = false(1,obj.nTables);
+            readStatus = zeros(1,obj.nTables);
             for i = 1:obj.nTables
                 try
                     tableType     = obj.tableTypes{i};
-                    tableFileName = obj.tableFileNames{i};
+                    tableFileName = obj.tableFileNames{i}
                     switch tableType
                         case 'pmt'
                           obj.tables{i} = PMTTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));               
@@ -41,18 +41,18 @@ classdef Model2D < handle
                         case 'pmdGroup'
                           obj.tables{i} = PMDGroupTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));
                     end
-                    readStatus(i) = true;
+                    readStatus(i) = 1;
                 catch
-                    readStatus(i) = false;
+                    readStatus(i) = 0;
                 end       
             end
             
             % Update the tables
-            obj.tableFileNames = obj.tableFileNames(readStatus);
-            obj.tableNames     = obj.tableNames(readStatus);
-            obj.tableTypes     = obj.tableTypes(readStatus);
+            obj.tableFileNames = obj.tableFileNames{readStatus};
+            obj.tableNames     = obj.tableNames{readStatus};
+            obj.tableTypes     = obj.tableTypes{readStatus};
             obj.nTables        = numel(obj.tableNames);
-                        
+            
         end
         % =========================================================
         function inputFileName = getInputFileName(obj, title, ext)
