@@ -57,6 +57,7 @@ classdef Model
             obj.tableFileNames = obj.tableFileNames(readStatus);
             obj.tableNames     = obj.tableNames(readStatus);
             obj.tableTypes     = obj.tableTypes(readStatus);
+            obj.tables         = obj.tables(readStatus);
             obj.nTables        = numel(obj.tableNames);
                            
         end
