@@ -1,7 +1,7 @@
 % A super class to all models (1D, 2D, and 3D). Provides interface with
 % different file types
 
-classdef Model
+classdef Model < handle
     
    properties
         modelName 
@@ -103,14 +103,14 @@ classdef Model
            if ~exist('key', 'var'); key = []; end
            
            % Main
-           table = obj.getTable(title);
-           switch table.type
+           tableInfo = obj.getTable(title);
+           switch tableInfo.type
                 case 'pmt'
-                    obj.tables{table.index} = PMTTools.updateData(table.data, data, key);
+                    obj.tables{tableInfo.index} = PMTTools.updateData(tableInfo.data, data, key);
                 case 'pma'
-                    obj.tables{table.index} = PMATools.updateData(table.data, data, key);
+                    obj.tables{tableInfo.index} = PMATools.updateData(tableInfo.data, data, key);
                 case 'pmdGroup'
-                    obj.tables{table.index} = PMDGroupTools.updateData(table.data, data);
+                    obj.tables{tableInfo.index} = PMDGroupTools.updateData(tableInfo.data, data);
            end
         end
         % =========================================================          
