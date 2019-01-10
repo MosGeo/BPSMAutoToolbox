@@ -1,65 +1,64 @@
-classdef Model2D < handle
-   
+classdef Model < handle
+    % Model A super class to all models (1D, 2D, and 3D). Provides interface with
+    % different file types
+    %
+    % Mustafa Al Ibrahim @ 2018
+    % Mustafa.Geoscientist@outlook.com
+    
    properties
-        modelName = '';
-        modelFolder= '';
-        dim = 2;
-        tables = {};
-        
-        tableFileNames = {'in/swit', 'in/hflt', 'in/palg', 'in/hf_m/cont', 'in/swi_m/cont', 'in/faultpropdef'}
-        tableNames     = {'SWIT', 'Heat Flow Table', 'Paleo Water Table', 'Heat Flow Map', 'Paleo Water Map', 'Fault'}      
-        tableTypes     = {'pmt', 'pmt', 'pmt', 'pmdGroup', 'pmdGroup', 'pmt'}
-        nTables = 0;
-
+        modelName 
+        modelFolder
+        dim
+        tables
    end
+   
    
    methods
        
-        % =========================================================          
-        function obj = Model2D(modelName, PMProjectDirectory)
+       function obj = Model(modelName, PMProjectDirectory, nDim, tables)
+           
+            % Constructor
             obj.modelName = modelName;
-            obj.modelFolder = fullfile(PMProjectDirectory,['pm', num2str(obj.dim), 'd'], modelName);
+            obj.modelFolder = fullfile(PMProjectDirectory,['pm', num2str(nDim), 'd'], modelName);
+            obj.dim = nDim;
+            obj.tables = containers.Map;
             
-            % Sorting for conveniance
-            [obj.tableNames,I] = sort(obj.tableNames);
-            obj.tableFileNames = obj.tableFileNames(I);
-            obj.tableTypes     = obj.tableTypes(I);
+            tableNames = keys(tables);
             
             % Loading all model files
-            obj.nTables = numel(obj.tableNames);
+            nTables = numel(tableNames);
 
-            readStatus = false(1,obj.nTables);
-            for i = 1:obj.nTables
+            readStatus = false(1,nTables);
+            for i = 1:nTables
                 try
-                    tableType     = obj.tableTypes{i};
-                    tableFileName = obj.tableFileNames{i};
+                    tableName = tableNames{i};
+                    tableInfo  = tables(tableName);
+                    tableType     = tableInfo{2};
+                    tableFileName = tableInfo{1};
                     switch tableType
                         case 'pmt'
-                          obj.tables{i} = PMTTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));               
+                          table = PMTTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));               
                         case 'pma'
-                          obj.tables{i} = PMATools.readFile(obj.getInputFileName(tableFileName, 'pma'));               
+                          table = PMATools.readFile(obj.getInputFileName(tableFileName, 'pma'));               
                         case 'pmdGroup'
-                          obj.tables{i} = PMDGroupTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));
+                          table = PMDGroupTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));
                     end
                     readStatus(i) = true;
+                    obj.tables(tableName) = {tableFileName, tableType, table};
                 catch
                     readStatus(i) = false;
                 end       
             end
-            
-            % Update the tables
-            obj.tableFileNames = obj.tableFileNames(readStatus);
-            obj.tableNames     = obj.tableNames(readStatus);
-            obj.tableTypes     = obj.tableTypes(readStatus);
-            obj.nTables        = numel(obj.tableNames);
-                        
+                                       
         end
+        
         % =========================================================
         function inputFileName = getInputFileName(obj, title, ext)
            inputFileName = fullfile(obj.modelFolder, [title, '.', ext]); 
-        end   
+        end
         % =========================================================  
         function [] = updateModel(obj)
+            % Writes the model data from matlab to the hard disk
 
            for i = 1:obj.nTables
                 tableType     = obj.tableTypes{i};
@@ -78,6 +77,7 @@ classdef Model2D < handle
         end
         % =========================================================          
         function data = getData(obj, title)
+            % Retrieves data from the model
            table = obj.getTable(title);
            switch table.type
                case 'pmt'
@@ -90,24 +90,25 @@ classdef Model2D < handle
         end
         % =========================================================          
         function [] = updateData(obj, title, data, key)
+            % Updates 
               
            % Defaults
            if ~exist('key', 'var'); key = []; end
            
            % Main
-           table = obj.getTable(title);
-           switch table.type
+           tableInfo = obj.getTable(title);
+           switch tableInfo.type
                 case 'pmt'
-                    obj.tables{table.index} = PMTTools.updateData(table.data, data, key);
+                    obj.tables{tableInfo.index} = PMTTools.updateData(tableInfo.data, data, key);
                 case 'pma'
-                    obj.tables{table.index} = PMATools.updateData(table.data, data, key);
+                    obj.tables{tableInfo.index} = PMATools.updateData(tableInfo.data, data, key);
                 case 'pmdGroup'
-                    obj.tables{table.index} = PMDGroupTools.updateData(table.data, data);
+                    obj.tables{tableInfo.index} = PMDGroupTools.updateData(tableInfo.data, data);
            end
         end
         % =========================================================          
         function tableNames = getTableNames(obj)
-           tableNames = obj.tableNames;
+           tableNames = keys(obj.tables);
         end
          % =========================================================                 
         function [] = printTable(obj, title)
@@ -122,16 +123,20 @@ classdef Model2D < handle
             end
         end
         
-        % =========================================================                 
+        % =========================================================              
         function tableInfo = getTable(obj, title)
-             [~,i]  = ismember(title, obj.tableNames);
-             tableInfo.name = obj.tableNames{i};
-             tableInfo.fileName = obj.tableFileNames{i};
-             tableInfo.type = obj.tableTypes{i};
-             tableInfo.data = obj.tables{i};
-             tableInfo.index = i;
+             TF = isKey(obj.tables,title);
+             
+             table = obj.tables(title); 
+             tableInfo.name = title;
+             tableInfo.fileName = table(1);
+             tableInfo.type = table(2);
+             tableInfo.data = table(3);
         end
-        
-   end
+        % =========================================================              
+
+          
+    end
+    
     
 end

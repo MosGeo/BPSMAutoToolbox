@@ -35,13 +35,8 @@ classdef Model2D < Model
                    blockName = blFolderNames{j};
                    blockName = [tsName ' Block ' blockName(3:end)];
                    
-                   depthName = [blockName, ' Depth'];
-                   depthFileName  = fullfile('in', tsFolderNames{i},  blFolderNames{j}, 'dpth_m', 'cont');
-                   faciesName = [blockName, ' Facies'];
-                   faciesFileName = fullfile('in', tsFolderNames{i},  blFolderNames{j}, 'faci_m', 'cont');
+                   depthFileName = fullfile(blDirectory,  blFolderNames{j}, dpth_m, 'cont')
                    
-                   tables(depthName) =  {depthFileName, 'pmdGroup'};
-                   tables(faciesName)= {faciesFileName, 'pmdGroup'};       
                 end
             end
             

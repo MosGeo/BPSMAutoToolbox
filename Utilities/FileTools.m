@@ -34,6 +34,20 @@ classdef FileTools
             end
         end
         %=====================================================
+        function folderNames = getFolderNames(folderName, regularExpression, isDir)        
+            
+            dirResults  = struct2cell(dir(folderName));
+            
+            if isDir
+                selectedDir = cell2mat(dirResults(5,:));
+                dirResults = dirResults(1,selectedDir);
+            end
+            
+            regExpResults = regexp(dirResults, regularExpression);
+            f = cell2mat(cellfun(@(x) ~isempty(x), regExpResults, 'UniformOutput' , false));
+            folderNames = dirResults(f);
+            
+        end
 
 
         

@@ -28,7 +28,6 @@ PM.Litho.changeValue('Sandstone (clay rich)', 'Heat Capacity Curve', [0 10; 10 1
 %PM.Litho.dublicateLithology('Sandstone (clay rich)', 'Mos Lithology', 'MainGroup', 'SubGroup')
 PM.Litho.duplicateLithology('Sandstone (clay rich)', 'Mos Lithology')
 
-
 % Change lithology group of an existing lithology
 PM.Litho.changeLithologyGroup('Mos Lithology', 'MainGroup', 'SubGroup')
 
@@ -95,10 +94,10 @@ data = model.getData('Main')
 
 %% Model Operations (2D)
 
-PMProjectDirectory = 'C:\Users\malibrah\Desktop\Gulfaks_Petrel_model.psm';
+PMProjectDirectory = 'C:\Users\malibrah\Desktop\PM_Inline_Uncertainty_NewHorizons-Copy2';
 
 % Load Model
-model = Model2D('testPM_Y93_edited', PMProjectDirectory);
+model = Model2D('NewModel_new', PMProjectDirectory);
 
 % Get the names of data tables
 model.getTableNames()

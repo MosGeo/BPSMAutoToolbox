@@ -1,65 +1,58 @@
-% A super class to all models (1D, 2D, and 3D). Provides interface with
-% different file types
-
 classdef Model < handle
+    % Model A super class to all models (1D, 2D, and 3D). Provides interface with
+    % different file types
+    %
+    % Mustafa Al Ibrahim @ 2018
+    % Mustafa.Geoscientist@outlook.com
     
    properties
         modelName 
         modelFolder
         dim
         tables
-        tableFileNames
-        tableNames    
-        tableTypes
-        nTables
    end
    
-    
-    methods
+   
+   methods
        
-        function obj = Model(modelName, PMProjectDirectory, nDim, tableFileNames, tableNames, tableTypes)
+       function obj = Model(modelName, PMProjectDirectory, nDim, tables)
            
+            % Constructor
             obj.modelName = modelName;
             obj.modelFolder = fullfile(PMProjectDirectory,['pm', num2str(nDim), 'd'], modelName);
             obj.dim = nDim;
-            obj.tableFileNames = tableFileNames;
-            obj.tableNames = tableNames;
-            obj.tableTypes = tableTypes;
+            obj.tables = containers.Map;
             
-            % Sorting for conveniance
-            [obj.tableNames,I] = sort(obj.tableNames);
-            obj.tableFileNames = obj.tableFileNames(I);
-            obj.tableTypes     = obj.tableTypes(I);
+            tableNames = keys(tables);
             
             % Loading all model files
-            obj.nTables = numel(obj.tableNames);
+            nTables = numel(tableNames);
 
-            readStatus = false(1,obj.nTables);
-            for i = 1:obj.nTables
+            readStatus = false(1,nTables);
+            for i = 1:nTables
                 try
-                    tableType     = obj.tableTypes{i};
-                    tableFileName = obj.tableFileNames{i};
+                    tableName = tableNames{i};
+                    tableInfo  = tables(tableName);
+                    tableType     = tableInfo{2};
+                    tableFileName = tableInfo{1};
                     switch tableType
                         case 'pmt'
-                          obj.tables{i} = PMTTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));               
+                          table.data = PMTTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));               
                         case 'pma'
-                          obj.tables{i} = PMATools.readFile(obj.getInputFileName(tableFileName, 'pma'));               
+                          table.data = PMATools.readFile(obj.getInputFileName(tableFileName, 'pma'));               
                         case 'pmdGroup'
-                          obj.tables{i} = PMDGroupTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));
+                          table.data = PMDGroupTools.readFile(obj.getInputFileName(tableFileName, 'pmt'));
                     end
                     readStatus(i) = true;
+                    table.fileName = tableFileName;
+                    table.type = tableType;
+                    table.name = tableName;
+                    obj.tables(tableName) = table;
                 catch
                     readStatus(i) = false;
                 end       
             end
-            
-            % Update the tables
-            obj.tableFileNames = obj.tableFileNames(readStatus);
-            obj.tableNames     = obj.tableNames(readStatus);
-            obj.tableTypes     = obj.tableTypes(readStatus);
-            obj.tables         = obj.tables(readStatus);
-            obj.nTables        = numel(obj.tableNames);
-                           
+                                       
         end
         
         % =========================================================
@@ -68,24 +61,28 @@ classdef Model < handle
         end
         % =========================================================  
         function [] = updateModel(obj)
+            % Writes the model data from matlab to the hard disk
 
-           for i = 1:obj.nTables
-                tableType     = obj.tableTypes{i};
-                tableFileName = obj.tableFileNames{i};
-                table         = obj.tables{i};
+           tableNames = keys(obj.tables);
+           for i = tableNames
+                table = obj.tables(i{1});
+                tableType     = table.type;
+                tableFileName = table.fileName;
+                data          = table.data;
                 switch tableType
                     case 'pmt'
-                      PMTTools.writeFile(table, obj.getInputFileName(tableFileName, 'pmt'));               
+                      PMTTools.writeFile(data, obj.getInputFileName(tableFileName, 'pmt'));               
                     case 'pma'
-                      PMATools.writeFile(table, obj.getInputFileName(tableFileName, 'pma'));
+                      PMATools.writeFile(data, obj.getInputFileName(tableFileName, 'pma'));
                     case 'pmdGroup'
-                      PMDGroupTools.writeFile(table, obj.getInputFileName(tableFileName, 'pmt'));          
+                      PMDGroupTools.writeFile(data, obj.getInputFileName(tableFileName, 'pmt'));          
                 end
             end
             
         end
         % =========================================================          
         function data = getData(obj, title)
+            % Retrieves data from the model
            table = obj.getTable(title);
            switch table.type
                case 'pmt'
@@ -98,24 +95,28 @@ classdef Model < handle
         end
         % =========================================================          
         function [] = updateData(obj, title, data, key)
+            % Updates 
               
            % Defaults
            if ~exist('key', 'var'); key = []; end
            
            % Main
-           tableInfo = obj.getTable(title);
-           switch tableInfo.type
+           table = obj.getTable(title);
+           switch table.type
                 case 'pmt'
-                    obj.tables{tableInfo.index} = PMTTools.updateData(tableInfo.data, data, key);
+                    table.data = PMTTools.updateData(table.data, data, key);
+                    obj.tables(table.name) =  table;
                 case 'pma'
-                    obj.tables{tableInfo.index} = PMATools.updateData(tableInfo.data, data, key);
+                    table.data = PMATools.updateData(table.data, data, key);
+                    obj.tables(table.name) = table;
                 case 'pmdGroup'
-                    obj.tables{tableInfo.index} = PMDGroupTools.updateData(tableInfo.data, data);
+                    table.data = PMDGroupTools.updateData(table.data, data);
+                    obj.tables(table.name) = table;
            end
         end
         % =========================================================          
         function tableNames = getTableNames(obj)
-           tableNames = obj.tableNames;
+           tableNames = keys(obj.tables);
         end
          % =========================================================                 
         function [] = printTable(obj, title)
@@ -130,21 +131,17 @@ classdef Model < handle
             end
         end
         
-        % =========================================================                 
-        function tableInfo = getTable(obj, title)
-             [~,i]  = ismember(title, obj.tableNames);
-             tableInfo.name = obj.tableNames{i};
-             tableInfo.fileName = obj.tableFileNames{i};
-             tableInfo.type = obj.tableTypes{i};
-             tableInfo.data = obj.tables{i};
-             tableInfo.index = i;
+        % =========================================================              
+        function table = getTable(obj, title)
+            table = []; 
+            isTable = isKey(obj.tables,title);
+            if isTable
+               table = obj.tables(title);
+            end
         end
-        
-        
-        
-        
-        
-        
+        % =========================================================              
+
+          
     end
     
     
