@@ -94,13 +94,15 @@ data = model.getData('Main')
 
 %% Model Operations (2D)
 
-PMProjectDirectory = 'C:\Users\malibrah\Desktop\PM_Inline_Uncertainty_NewHorizons-Copy2';
+PMProjectDirectory = 'C:\Users\malibrah\Desktop\Gulfaks_Petrel_model.psm';
 
 % Load Model
-model = Model2D('NewModel_new', PMProjectDirectory);
+model = Model2D('testPM_Y93_edited', PMProjectDirectory);
 
 % Get the names of data tables
 model.getTableNames()
+
+
 
 % Update the some table data (matrix table) and check if it is updated
 model.printTable('SWIT');
