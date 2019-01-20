@@ -94,22 +94,20 @@ data = model.getData('Main')
 
 %% Model Operations (2D)
 
-PMProjectDirectory = 'C:\Users\malibrah\Desktop\Gulfaks_Petrel_model.psm';
+PMProjectDirectory = 'C:\Users\malibrah\Desktop\PM_Inline_Uncertainty_NewHorizons-Copy2';
 
 % Load Model
-model = Model2D('testPM_Y93_edited', PMProjectDirectory);
+model = Model2D('NewModel_new', PMProjectDirectory);
 
 % Get the names of data tables
 model.getTableNames()
 
-
-
 % Update the some table data (matrix table) and check if it is updated
 model.printTable('SWIT');
 data = model.getData('SWIT');
-data(:,2) = data(:,2)*2;
-model.updateData('SWIT', data);
-model.printTable('SWIT');
+data(:,300:400) = data(:,300:400) + 500;
+model.updateData('TS 1 B 1 Depth', data);
+model.printTable('TS 1 B 1 Depth');
 
 % Maps
 data = model.getData('Heat Flow Map');

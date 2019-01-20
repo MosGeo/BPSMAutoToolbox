@@ -33,7 +33,7 @@ classdef Model2D < Model
                 
                 for j = 1:numel(blFolderNames)
                    blockName = blFolderNames{j};
-                   blockName = [tsName ' Block ' blockName(3:end)];
+                   blockName = [tsName ' B ' blockName(3:end)];
                    
                    depthName = [blockName, ' Depth'];
                    depthFileName  = fullfile('in', tsFolderNames{i},  blFolderNames{j}, 'dpth_m', 'cont');
