@@ -20,7 +20,9 @@ classdef Model2D < Model
             tables('Layers')            = {'in/layerdef', 'pmt'};
             tables('Facies')            = {'in/uni3', 'pmt'};
             tables('Grid')              = {'in/gref', 'pmt'};
-            
+            tables('Simulation')        = {'sim_def/proj', 'pma'};
+            tables('Mckenzie')          = {'def/mckenziehf_opts', 'pma'};
+
             % Model ts and blocks
             inDirectory = fullfile(PMProjectDirectory,['pm', num2str(2), 'd'], modelName, 'in');
             tsFolderNames = FileTools.getFolderNames(inDirectory, 'ts', true);
