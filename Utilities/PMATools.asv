@@ -72,7 +72,7 @@ classdef PMATools
        end
        
         % =========================================================
-        function pma = updateDataWithKey(pma, data, key)
+        function pma = updateData(pma, data, key)
            
            if exist('key', 'var') && isempty(key) == false
                     oneValueData = data;
@@ -85,19 +85,11 @@ classdef PMATools
            
            pma.titles = transpose(data(:,1));
            pma.values = transpose(data(:,2));
+           
         end 
-        % =========================================================
-        function data = getData(pma)
-          data  = [pma.titles',pma.values'];
-          data(:,2) = cellfun(@(x) PMATools.attemptStr2double(strtrim(x)),data(:,2), 'UniformOutput', false); 
-        end
-        % =========================================================
-        function pma = updateData(pma, data)
-           pma.titles = transpose(data(:,1));
-           pma.values = transpose(data(:,2));
-        end
-        % =========================================================
-
+       % =========================================================
+        data = extractMainData(pma)
+        
         
     end
     
