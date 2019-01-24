@@ -25,6 +25,4 @@ unit = unit{2};
 [id] = rawData.data(:,1);
 [value] = rawData.data(:,2);
 
-
-
 end
