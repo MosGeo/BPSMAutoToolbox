@@ -66,7 +66,7 @@ classdef LithologyFile < handle
            obj.lithology.updateLithologyParametersValue(lithologyName, groupId, id, scaler);
        end
    %=====================================================
-       function [] = changeCurve (obj, lithologyName, parameterName, matrix)
+       function [] = changeCurve(obj, lithologyName, parameterName, matrix)
            id = obj.meta.getId(parameterName);
            curveId = obj.lithology.getParameterValue(lithologyName, id);
            obj.curve.updateCurve(curveId, matrix);
@@ -164,6 +164,7 @@ classdef LithologyFile < handle
           
           % Main
           [PetroModId, id] = obj.lithology.getLithologyId(lithologyName);
+          PetroModId = eval(PetroModId);
        end
    %=====================================================
    function [] = writeLithologyFile(obj, fileName, isOverwrite, isCreateBackup)
@@ -249,7 +250,6 @@ classdef LithologyFile < handle
         if exist('mainGroupName', 'var') && exist('subGroupName', 'var')
             obj.changeLithologyGroup(distLithoName, mainGroupName, subGroupName)
         end
-        
         % Copy curves
         lithologyParameters = obj.lithology.getLithologyParameters(distLithoName);
         for i =1:size(lithologyParameters,1)
@@ -271,14 +271,22 @@ classdef LithologyFile < handle
        assert(~isempty(mainGroupName) && ~isempty(mainGroupName), 'Group names have to contain a non-empty strings');
 
        % Main group
-       mainGroupId = obj.lithology.getGroupId(mainGroupName);
-       if isempty(mainGroupId); mainGroupId = HashTools.getUniqueHash(obj.getIds(), mainGroupName); end
-       obj.lithology.updateGroups(lithologyName, mainGroupId, mainGroupName, 1)
+       [mainGroupId, mainGroupPetroModId] = obj.lithology.getGroupId(mainGroupName);
+       if isempty(mainGroupId)
+           mainGroupId = HashTools.getUniqueHash(obj.getIds(), mainGroupName);
+           petroModIds = obj.lithology.getPetroModIds();
+           mainGroupPetroModId = num2str(obj.lithology.getNewPetroModId(petroModIds));
+       end
+       obj.lithology.updateGroups(lithologyName, mainGroupId, mainGroupPetroModId, mainGroupName, 1)
        
        % Sub group
-       subGroupId = obj.lithology.getGroupId(subGroupName,2);
-       if isempty(subGroupId); subGroupId = HashTools.getUniqueHash(obj.getIds(), subGroupName); end
-       obj.lithology.updateGroups(lithologyName, subGroupId, subGroupName, 2)
+       [subGroupId, subGroupPetroModId] = obj.lithology.getGroupId(subGroupName,2);
+       if isempty(subGroupId)
+           subGroupId = HashTools.getUniqueHash(obj.getIds(), subGroupName); 
+            petroModIds = obj.lithology.getPetroModIds();
+           subGroupPetroModId = num2str(obj.lithology.getNewPetroModId(petroModIds));
+       end
+       obj.lithology.updateGroups(lithologyName, subGroupId, subGroupPetroModId, subGroupName, 2)
 
 
    end

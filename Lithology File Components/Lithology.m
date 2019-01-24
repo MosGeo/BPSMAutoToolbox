@@ -245,7 +245,7 @@ classdef Lithology < handle
            PetroModId = obj.lithology{lithologyIndex, PetroModIdIndex};
        end
        % =========================================================   
-       function ids = getIds(obj)
+       function [ids] = getIds(obj)
            idIndex1  = find(ismember(obj.lithologyGroupTitles, 'Id'));
            idIndex2  = numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyGroupTitles, 'Id'));
            idIndex3  = 2*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles, 'Id'));         
@@ -268,7 +268,7 @@ classdef Lithology < handle
            lithologyIndex = obj.getLithologyIndex(sourceLithoName);
            
            % Get new PetroModId
-           petroModIds = obj.getPetroModId();
+           petroModIds = obj.getPetroModIds();
            NewPetroModId =  obj.getNewPetroModId(petroModIds);
            
            % Create new lithology
@@ -280,9 +280,16 @@ classdef Lithology < handle
        end
        
        % =========================================================          
-       function petroModIds = getPetroModId(obj)
-           petroModIdIndex   = 2*numel(obj.lithologyGroupTitles) +  find(ismember(obj.lithologyTitles, 'PetroModId'));
-           petroModIds = unique(obj.lithology(:,petroModIdIndex)); 
+       function petroModIds = getPetroModIds(obj)
+           petroModIdIndex1 = 0*numel(obj.lithologyGroupTitles) +  find(ismember(obj.lithologyTitles, 'PetroModId'));
+           petroModIdIndex2 = 1*numel(obj.lithologyGroupTitles) +  find(ismember(obj.lithologyTitles, 'PetroModId'));
+           petroModIdIndex3 = 2*numel(obj.lithologyGroupTitles) +  find(ismember(obj.lithologyTitles, 'PetroModId'));
+           
+           petroModIds1 = unique(obj.lithology(:,petroModIdIndex1));
+           petroModIds2 = unique(obj.lithology(:,petroModIdIndex2));
+           petroModIds3 = unique(obj.lithology(:,petroModIdIndex3));
+           
+           petroModIds = [petroModIds1; petroModIds2; petroModIds3];
            petroModIds = cell2mat(cellfun(@str2num, petroModIds, 'UniformOutput', false));
        end
        
@@ -308,26 +315,30 @@ classdef Lithology < handle
            obj.lithology{lithologyIndex, readOnlyIndex} = value;
        end
        % =========================================================          
-       function [] = updateGroups(obj, lithologyName, groupId, groupName, level, isReadOnly)
+       function [] = updateGroups(obj, lithologyName, groupId, petroModId, groupName, level, isReadOnly)
           % Defaults
           if ~(exist('level', 'var')); level = 1; end
           if ~(exist('isReadOnly', 'var')); isReadOnly = false; end
           
           
           % Main
-          groupIdIndex   = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Id'));
-          groupNameIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Name'));
-          readOnlyIndex  = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'ReadOnly'));
-          
+          groupIdIndex     = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Id'));
+          groupNameIndex   = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Name'));
+          readOnlyIndex    = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'ReadOnly'));
+          petroModIdIndex  = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'PetroModId'));
+          creatorIndex  = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Creator'));
+         
           lithologyIndex = obj.getLithologyIndex(lithologyName);
           
           obj.lithology{lithologyIndex, groupIdIndex} = groupId;
           obj.lithology{lithologyIndex, groupNameIndex} = groupName;
-          obj.lithology{lithologyIndex, groupIdIndex} = groupId;
+          obj.lithology{lithologyIndex, petroModIdIndex} = petroModId;
           obj.lithology{lithologyIndex, readOnlyIndex} = obj.bool2string(isReadOnly);
+          obj.lithology{lithologyIndex, creatorIndex} = 'PetroMod';
+
        end
        % ========================================================= 
-       function groupId = getGroupId(obj, groupName, level)
+       function [groupId, petroModId] = getGroupId(obj, groupName, level)
           
            % Defaults
           if ~(exist('level', 'var')); level = 1; end
@@ -335,15 +346,19 @@ classdef Lithology < handle
           % Main
           groupIdIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyGroupTitles,'Id'));
           groupNameIndex = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyGroupTitles,'Name'));
+          petroModIdIndex  = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'PetroModId'));
 
           [groupIds,ia]  = unique(obj.lithology(:,groupIdIndex));
           groupNames = obj.lithology(ia,groupNameIndex);
+          petroModIds = obj.lithology(ia,petroModIdIndex);
 
           [~, Locb] = ismember(groupName, groupNames);     
           if Locb>0
             groupId   = groupIds{Locb};
+            petroModId = petroModIds{Locb};
           else
               groupId = '';
+              petroModId = '';
           end     
        end
        % =========================================================          
