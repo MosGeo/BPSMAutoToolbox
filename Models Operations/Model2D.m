@@ -11,15 +11,32 @@ classdef Model2D < Model
             
             % Define the tables to search
             tables = containers.Map;
-            tables('SWIT')              = {'in/swit', 'pmt'};
-            tables('Heat Flow Table')   = {'in/hflt', 'pmt'};
-            tables('Paleo Water Table') = {'in/palg', 'pmt'};
+            
+            % Boundary
+            tables('SWIT Table')        = {'in/swim', 'pmt'};
+            tables('SWIT Group')        = {'in/switg', 'pmt'};
+            tables('SWIT Trend')        = {'in/swit', 'pmt'};
+            tables('SWIT Map')          = {'in/swi_m/cont', 'pmdGroup'};
+
+            tables('Heat Flow Table')   = {'in/heat', 'pmt'};
+            tables('Heat Flow Group')   = {'in/hfltg', 'pmt'};
+            tables('Heat Flow Trend')   = {'in/hflt', 'pmt'};
             tables('Heat Flow Map')     = {'in/hf_m/cont', 'pmdGroup'};
-            tables('Paleo Water Map')   = {'in/swi_m/cont', 'pmdGroup'};
+            
+            tables('Paleo Water Table') = {'in/palg', 'pmt'};
+            tables('Paleo Water Group') = {'in/wattg', 'pmt'};
+            tables('Paleo Water Trend') = {'in/watt', 'pmt'};
+            tables('Paleo Water Map')   = {'in/pdp_m/cont', 'pmdGroup'};
+
+            % Other
             tables('Fault')             = {'in/faultpropdef', 'pmt'};
             tables('Layers')            = {'in/layerdef', 'pmt'};
             tables('Facies')            = {'in/uni3', 'pmt'};
             tables('Grid')              = {'in/gref', 'pmt'};
+            tables('Tools')             = {'in/tool', 'pmt'};
+            tables('Rift')              = {'in/mckenzie/riftphases', 'pmt'};
+            
+            % Simulation
             tables('Simulation')        = {'sim_def/proj', 'pma'};
             tables('Mckenzie')          = {'def/mckenziehf_opts', 'pma'};
 
