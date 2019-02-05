@@ -16,7 +16,7 @@ classdef PetroMod < handle
     % in the main petromod directory) and a project directory.
 
             % PM
-            [isPMDirectory, version] = PetroMod.isPetroModProject(PMProjectDirectory);
+            [isPMDirectory, version] = PetroMod.isPetroModDirectory(PMDirectory);
             if isPMDirectory == true
                obj.PMDirectory = PMDirectory;
                obj.version = version;
