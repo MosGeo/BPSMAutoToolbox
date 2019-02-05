@@ -5,6 +5,7 @@ classdef PetroMod < handle
         PMProjectDirectory = '';
         isReady = true;
         Litho = [];
+        version = [];
    end
    
   methods
@@ -14,19 +15,24 @@ classdef PetroMod < handle
     % PetroMod  Constructor giving the petromod directory (bin directory
     % in the main petromod directory) and a project directory.
 
-            if PetroMod.isPetroModDirectory(PMDirectory) == true
+            % PM
+            [isPMDirectory, version] = PetroMod.isPetroModProject(PMProjectDirectory);
+            if isPMDirectory == true
                obj.PMDirectory = PMDirectory;
+               obj.version = version;
             else
                 obj.isReady = false;
                 warning('Cannot find PetroMod!');
             end
             
+            % Project
             if PetroMod.isPetroModProject(PMProjectDirectory) == true
                 obj.PMProjectDirectory = PMProjectDirectory;
             else
                 obj.isReady = false;
                 warning('Cannot find PetroMod Project!');
-            end  
+            end
+            
     end
     % =====================================================
     function [] = loadLithology(obj)
@@ -35,7 +41,7 @@ classdef PetroMod < handle
           if exist(lithologyFileName, 'file') == 2
             obj.Litho = LithologyFile(lithologyFileName);
           else
-             error('Cannot find lithology file');
+             error('Cannot find lithology file, make sure you modify the lithology file and save it in PetroMod first.');
           end
     end
        
@@ -165,11 +171,14 @@ classdef PetroMod < handle
   methods(Static)
       
        %=====================================================       
-       function isPMDirectory = isPetroModDirectory(PMDirectory)
+       function [isPMDirectory, version] = isPetroModDirectory(PMDirectory)
            hermesFileName = fullfile(PMDirectory, 'hermes.exe');
            isPMDirectory = exist(hermesFileName, 'file') == 2;
+ 
+           % Get file info
+           listing = dir(hermesFileName);
+           [version,~] = datevec(listing.datenum);
        end
-       
        %=====================================================
        function isPMProject = isPetroModProject(PMProjectDirectory)
            isPMProject = exist(fullfile(PMProjectDirectory, 'cult'), 'file') == 7;
@@ -221,6 +230,7 @@ classdef PetroMod < handle
            end
 
        end
+       %=====================================================
 
   end
 
