@@ -1,4 +1,4 @@
-function [id, value, layer, unit] = readDemoScriptOutput(fileName)
+function [id, value, layer, unit] = readDemoScriptOutput(fileName, isDeleteFile)
 %% READDEMOSCRIPTOUTPUT   Read demo script output
 %
 % filename:                 Filename
@@ -7,6 +7,9 @@ function [id, value, layer, unit] = readDemoScriptOutput(fileName)
 % Mustafa.Geoscientist@outlook.com
 
 %% Preprocessing
+
+% Defaults
+if ~exist('isDeleteFile', 'var'); isDeleteFile = true; end
 
 % Assertions
 assert(exist('fileName', 'var')== true && exist(fileName, 'file') == 2, 'Valid filename must be provided');
@@ -24,5 +27,10 @@ unit = unit{2};
 
 [id] = rawData.data(:,1);
 [value] = rawData.data(:,2);
+
+% Delete file
+if isDeleteFile
+    delete(fileName);
+end
 
 end
