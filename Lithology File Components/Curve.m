@@ -160,8 +160,9 @@ classdef Curve < handle
        end
        % =========================================================                       
        function NewPetroModId =  getNewPetroModId(obj, oldPetroModIds)
-           sortedIds = sort(oldPetroModIds);
-           NewPetroModId = sortedIds(find(diff(sortedIds)>1,1,'first'))+1;
+           NewPetroModId = max(oldPetroModIds)+1;
+           % sortedIds = sort(oldPetroModIds);
+           % NewPetroModId = sortedIds(find(diff(sortedIds)>1,1,'first'))+1;
        end
        % =========================================================   
        
@@ -171,6 +172,7 @@ classdef Curve < handle
    %% Get Methods
    methods
        
+      % =========================================================   
        function [info] = getCurveGroups(obj)
            [id, ia, ~]  = unique(obj.curveGroups(:,1));
            info.id = id;
@@ -179,6 +181,7 @@ classdef Curve < handle
            info.n = numel(id);       
        end
        
+      % =========================================================   
        function [info] = getCurves(obj, groupId)
           selectedCurves = ismember(obj.curveGroups(:,1), groupId);
           info.id              = obj.curveGroups(selectedCurves, 4);
@@ -193,6 +196,7 @@ classdef Curve < handle
           info.n               = sum(selectedCurves);
        end
        
+       % =========================================================   
        function [docNode] = writeCurveNode(obj, docNode)
            [infoCurveGroup] = obj.getCurveGroups();
            for i=1:infoCurveGroup.n
