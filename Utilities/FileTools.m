@@ -20,7 +20,7 @@ classdef FileTools
         end
         %=====================================================
         function folderName = getParentDirectory(folderName, upLevels)
-            %GETPARENTDIRECTORY go up the in the directory using the
+            % GETPARENTDIRECTORY go up the in the directory using the
             % predefined up levels
             
             % Defaults and assertions
