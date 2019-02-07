@@ -1,4 +1,4 @@
-function [data, layerNames, unit] = loadOutputOverlays(modelName, nDim, PM, overlayNumbers)
+function [data, layerNames, units] = loadOutputOverlays(modelName, nDim, PM, overlayNumbers)
 
 scriptFolder = fullfile(fileparts(fileparts(PM.PMDirectory)), 'scripts');
 
