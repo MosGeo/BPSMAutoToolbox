@@ -309,6 +309,19 @@ classdef LithologyFile < handle
        if ~exist('isOverwrite','var'); isOverwrite = true; end
        
        % Main
+       if obj.isLithologyExist(distLithoName) && ~isOverwrite
+           disp('Lithology exist, give permission to overwrite to continue')
+       end
+       
+       % Delete lithology if overwrite is turned on
+       if obj.isLithologyExist(distLithoName) && isOverwrite
+           obj.deleteLithology(distLithoName);
+       end
+       
+       % Dublicate lithology and insert mix information
+       obj.duplicateLithology(sourceLithologies{1}, distLithoName);
+       obj.lithology.updateMix(distLithoName, sourceLithologies, fractions, mixer)
+       
        [this.obj, parameterIds] = mixer.mixLithology(obj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite);
 
     end

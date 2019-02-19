@@ -18,3 +18,6 @@ mixer = LithoMixer('H');
 sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
 fractions         = [.6, .4];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
+
+PM.saveLithology();
+

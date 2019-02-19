@@ -21,10 +21,10 @@ classdef LithoMixer < handle
        thermalExpansion = 1
        relativePermeability = 1
     end
-    % =========================================================================
-    methods   
-    % =========================================================================
-        function obj = LithoMixer(type)
+    
+   % =========================================================================
+    methods
+    function obj = LithoMixer(type)
             if exist('type','var')  == false; type = 'H'; end
 
             switch upper(type(1))
@@ -37,91 +37,15 @@ classdef LithoMixer < handle
                     obj.permeability = [3, 1];
                     obj.capillaryPressure = [1, 2];
             end            
-        end
+    end
     % =========================================================================
-      function currentMixer = getMixerString(obj)
+    function currentMixer = getMixerString(obj)
          currentMixer{1} = [obj.mixerText{obj.thermalCondictivity(1)} obj.mixerText{obj.thermalCondictivity(2)}];
          currentMixer{2} = [obj.mixerText{obj.permeability(1)} obj.mixerText{obj.permeability(2)}];
          currentMixer{3} = [obj.mixerText{obj.capillaryPressure(1)} obj.mixerText{obj.capillaryPressure(2)}];
-      end
-    % =========================================================================
- 
-    % =========================================================================  
-
     end
-    
-    % =========================================================================  
-    methods (Static)     
     % =========================================================================
-        function effectiveCurve = mixCurves(curves, fractions, mixType)
-            nCurves = numel(curves);
-            
-            xValues = [];
-            for i = 1:nCurves
-                xValues = [xValues; curves{i}(:,1)];
-            end
-            
-            xFinal = unique(xValues);
-            nPoints = numel(xFinal);
-
-            curvesMatrix = zeros(nPoints, nCurves);
-            for i = 1:nCurves
-                x = curves{i}(:,1);
-                y = curves{i}(:,2);
-                newY = interp1(x,y, xFinal, 'linear', nan);
-                newY(xFinal > max(x)) = max(y);
-                newY(xFinal < min(x)) = min(y);
-                curvesMatrix(:,i) = newY;
-            end
-            
-            effectiveY= zeros(nPoints,1);
-            for i = 1:nPoints
-                effectiveY(i) = LithoMixer.mixVector(curvesMatrix(i,:),fractions,mixType);
-            end
-            effectiveCurve = [xFinal, effectiveY];
-        end
-    % =========================================================================
-      function effectiveBool = mixBooleans(bools, mixFunc)
-         
-          if exist('mixFunc','var')  == false; mixFunc = @mode; end
-
-          nPoints = numel(bools);
-          boolsValues = zeros(nPoints, 1);
-          for i = 1:nPoints
-              boolText = lower(bools{i});
-              boolsValues(i)= eval(boolText);
-          end
-          
-          effectiveValue = mixFunc(boolsValues);
-          switch effectiveValue
-              case 1
-                 effectiveBool = 'True';
-              case 0
-                effectiveBool = 'False';
-          end
-      end
-        
-    % =========================================================================
-        function effectiveScaler = mixScalers(scalers, fractions, mixType)
-            effectiveScaler = LithoMixer.mixVector(scalers,fractions,mixType);
-        end
-    % =========================================================================
-        function meanValue = mixVector(x,fractions,mixType)
-            % Defaults
-            if ~exist('fractions','var'); fractions = ones(size(x)); end
-            if ~exist('mixType','var'); mixType = 1; end
-          
-            switch mixType
-                case 1
-                    meanValue = StatsTools.mean(x, fractions);
-                case 2
-                    meanValue = StatsTools.geomean(x, fractions);
-                case 3
-                    meanValue = StatsTools.harmmean(x, fractions); 
-            end            
-        end
-    % =========================================================================
-   function [lithoFileObj, parameterIds] = mixLithology(lithoFileObj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite)
+   function [lithoFileObj, parameterIds] = mixLithology(obj, lithoFileObj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite)
 
        % Assertions
        assert(iscell(sourceLithologies), 'Source lithologies has to be a cell');
@@ -133,20 +57,6 @@ classdef LithoMixer < handle
        assert(ischar(distLithoName) , 'Distination lithology should be a string');
        assert(isa(mixer, 'LithoMixer'), 'Mixer should be a LithoMixer class');
        assert(isa(isOverwrite, 'logical'), 'Overwrite should be a boolean');
-
-       % Main
-       if lithoFileObj.isLithologyExist(distLithoName) && ~isOverwrite
-           disp('Lithology exist, give permission to overwrite to continue')
-       end
-       
-       % Delete lithology if overwrite is turned on
-       if lithoFileObj.isLithologyExist(distLithoName) && isOverwrite
-           lithoFileObj.deleteLithology(distLithoName);
-       end
-       
-       % Dublicate lithology and insert mix information
-       lithoFileObj.duplicateLithology(sourceLithologies{1}, distLithoName);
-       lithoFileObj.lithology.updateMix(distLithoName, sourceLithologies, fractions, mixer)
 
        % Get lithology information
        nLithos = numel(sourceLithologies);
@@ -229,14 +139,14 @@ classdef LithoMixer < handle
            switch parameterType
                case 'Decimal'
                   parameterValues = lithoFileObj.strcell2array(parameterValues);
-                  effectiveValue = mixer.mixScalers(parameterValues, fractions, mixType);
+                  effectiveValue = MixerTools.mixScalers(parameterValues, fractions, mixType);
                case 'Reference'
-                  effectiveValue = mixer.mixCurves(curves, fractions, mixType);
+                  effectiveValue = MixerTools.mixCurves(curves, fractions, mixType);
                case 'Integer'
                   parameterValues = lithoFileObj.strcell2array(parameterValues);
                   effectiveValue =  parameterValues(1);
                case 'Bool'
-                  effectiveValue = mixer.mixBooleans(parameterValues, @any);
+                  effectiveValue = MixerTools.mixBooleans(parameterValues, @any);
                case 'string'
                   effectiveValue =  parameterValues(1);
            end
@@ -258,12 +168,12 @@ classdef LithoMixer < handle
         condVert20   = lithoFileObj.getValue(sourceLithologies{i}, 'Thermal Conduct. at 20°C');
         depAnisotropy= lithoFileObj.getValue(sourceLithologies{i}, 'Anisotropy Factor Thermal Conduct.');
         condVert100  = ThermalModels.sekiguchi(condVert20, 100, 'C');
-        condVert(i)     = mean([condVert20, condVert100]);
-        condHor(i)      = mean([condVert20, condVert100]*depAnisotropy);
+        condVert(i)  = mean([condVert20, condVert100]);
+        condHor(i)   = mean([condVert20, condVert100]*depAnisotropy);
        end
 
-       effectiveVert = mixer.mixScalers(condVert, fractions, mixer.thermalCondictivity(1));
-       effectivehor = mixer.mixScalers(condHor, fractions, mixer.thermalCondictivity(2));
+       effectiveVert = MixerTools.mixScalers(condVert, fractions, mixer.thermalCondictivity(1));
+       effectivehor = MixerTools.mixScalers(condHor, fractions, mixer.thermalCondictivity(2));
        effectiveDepAnisotropy = effectivehor/effectiveVert;
        lithoFileObj.changeValue(distLithoName, parameterName, effectiveDepAnisotropy);
         
