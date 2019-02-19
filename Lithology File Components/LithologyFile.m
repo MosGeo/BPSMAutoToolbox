@@ -292,7 +292,7 @@ classdef LithologyFile < handle
    end
    %=====================================================
    function isExist = isLithologyExist(obj, lithologyName)
-      % Asserttions
+      % Assertions
       assert(exist('lithologyName', 'var') == true , 'Lithology name must be provided');
       assert(ischar(lithologyName) , 'Lithology name should be a string');
       
@@ -303,167 +303,22 @@ classdef LithologyFile < handle
    
    %=====================================================
    function [parameterIds] = mixLitholgies(obj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite)
-       
+
        % Defaults
        if ~exist('mixer','var'); mixer = LithoMixer(); end
        if ~exist('isOverwrite','var'); isOverwrite = true; end
        
-       % Assertions
-       assert(iscell(sourceLithologies), 'Source lithologies has to be a cell');
-       assert(all(cellfun(@ischar, sourceLithologies)), 'Cell in source lithologies must contain strings');
-       assert(isnumeric(fractions), 'Fractions must be a numeric vector');
-       assert(sum(fractions)-1 <= .001, 'Fractions must add up to 1');
-       assert(size(sourceLithologies,1) == 1 && size(fractions,1) == 1, 'Source lithologies and fractions should be rows');
-       assert(size(sourceLithologies,2) ==  size(fractions,2) , 'Source lithologies and fractions should be the same size');
-       assert(ischar(distLithoName) , 'Distination lithology should be a string');
-       assert(isa(mixer, 'LithoMixer'), 'Mixer should be a LithoMixer class');
-       assert(isa(isOverwrite, 'logical'), 'Overwrite should be a boolean');
-
        % Main
-       if obj.isLithologyExist(distLithoName) && ~isOverwrite
-           disp('Lithology exist, give permission to overwrite to continue')
-       end
-       
-       % Delete lithology if overwrite is turned on
-       if obj.isLithologyExist(distLithoName) && isOverwrite
-           obj.deleteLithology(distLithoName);
-       end
-       
-       % Dublicate lithology and insert mix information
-       obj.duplicateLithology(sourceLithologies{1}, distLithoName);
-       obj.lithology.updateMix(distLithoName, sourceLithologies, fractions, mixer)
+       [this.obj, parameterIds] = mixer.mixLithology(obj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite);
 
-       % Get lithology information
-       nLithos = numel(sourceLithologies);
-       lithoInfos = cell(nLithos,1);
-       parameterNames = []; 
-       parameterTypes=[];
-       parameterIds = [];
-       for i = 1:nLithos
-            lithoInfos{i} =  obj.lithology.getLithologyParameters(sourceLithologies{i});
-            [pn, pt] = obj.meta.getParameterNames(lithoInfos{i}(:,end-1));
-            parameterNames = [parameterNames; pn];
-            parameterTypes = [parameterTypes; pt];
-            parameterIds   = [parameterIds; lithoInfos{i}(:,1:2)];
-       end
-       
-        [~, ib,~]        = unique(parameterIds(:,2));
-        parameterNames   = parameterNames(ib,:);
-        parameterTypes   = parameterTypes(ib,:);
-        parameterIds     = parameterIds(ib,:);
-
-       % Get the titles of the properties
-
-       nParameters = size(parameterIds, 1);
-       for i = 1:nParameters
-           
-           % Get parameter information
-           parameterGroupName = parameterNames{i,1};
-           parameterGroupId   = parameterIds{i,1};
-           parameterName = parameterNames{i,2};
-           parameterType = parameterTypes{i};
-           parameterId   = parameterIds{i,2};
-
-           parameterValues = {};
-           curves = {};
-           for j = 1:nLithos
-               [~, paramInd] = (ismember(parameterId,lithoInfos{j}(:,end-1)));
-               if any(paramInd)==true
-                   parameterValue = lithoInfos{j}(paramInd,end);
-               else
-                   parameterValue = obj.meta.getDefaultValue(parameterId);
-               end              
-               parameterValues = [parameterValues, parameterValue];
-               if strcmp(parameterType, 'Reference')
-                    curveValue = obj.curve.getCurve(parameterValue);
-                    curves{end+1} = obj.strcell2array(curveValue);
-               end
-           end         
-           
-           % Decide on the mixing type
-           switch parameterGroupName      
-               case 'Thermal conductivity'
-                   mixType = mixer.thermalCondictivity(1);
-               case 'Permeability'
-                   mixType = mixer.permeability(1);
-               case 'Seal properties'
-                   mixType = mixer.capillaryPressure(1);
-               otherwise
-                   mixType = 1;
-           end
-           
-           % Decide on the mixing type
-           switch parameterName   
-               case 'Thermal Expansion Coefficient'
-                   mixType = 1;
-               case 'Anisotropy Factor Permeability'
-                   mixType = 1;
-               case 'Depositional Anisotropy'
-                   mixType = mixer.thermalCondictivity(2);
-               case 'Horizontal Upscaling Factor'
-                   mixType = mixer.permeability(2);
-               case 'Vertical Upscaling Factor'
-                   mixType = mixer.permeability(2);
-               case 'Maximum Permeability Shift'
-                   mixType = 2;
-               %case 'Anisotropy Factor Thermal Conduct.'
-                   %mixType = 1;
-           end
-                
-           % Mix
-           if isempty(parameterValues)==false || isempty(curves)==false
-           switch parameterType
-               case 'Decimal'
-                  parameterValues = obj.strcell2array(parameterValues);
-                  effectiveValue = mixer.mixScalers(parameterValues, fractions, mixType);
-               case 'Reference'
-                  effectiveValue = mixer.mixCurves(curves, fractions, mixType);
-               case 'Integer'
-                  parameterValues = obj.strcell2array(parameterValues);
-                  effectiveValue =  parameterValues(1);
-               case 'Bool'
-                  effectiveValue = mixer.mixBooleans(parameterValues, @any);
-               case 'string'
-                  effectiveValue =  parameterValues(1);
-           end
-           else
-              effectiveValue = '';
-           end
-           
-         
-       
-       % Update the lithology
-       obj.changeValue(distLithoName, parameterName, effectiveValue);
-
-       end
-       
-       % Mixing Anisotropy Factor thermal conductivity
-       parameterName = 'Anisotropy Factor Thermal Conduct.';
-       
-       condVert = zeros(1,nLithos);
-       condHor  = zeros(1,nLithos);
-       for i = 1:nLithos
-        condVert20   = obj.getValue(sourceLithologies{i}, 'Thermal Conduct. at 20°C');
-        depAnisotropy= obj.getValue(sourceLithologies{i}, 'Anisotropy Factor Thermal Conduct.');
-        condVert100  = ThermalModels.sekiguchi(condVert20, 100, 'C');
-        condVert(i)     = mean([condVert20, condVert100]);
-        condHor(i)      = mean([condVert20, condVert100]*depAnisotropy);
-       end
-
-       effectiveVert = mixer.mixScalers(condVert, fractions, mixer.thermalCondictivity(1));
-       effectivehor = mixer.mixScalers(condHor, fractions, mixer.thermalCondictivity(2));
-       effectiveDepAnisotropy = effectivehor/effectiveVert;
-       obj.changeValue(distLithoName, parameterName, effectiveDepAnisotropy);
-
-          
-
-   end
+    end
    %=====================================================
    function outputArray = strcell2array(obj, strcell)
          outputArray = cellfun(@str2num, strcell, 'UniformOutput', false);
          outputArray = cell2mat(outputArray);
    end
- 
+    %=====================================================
+
     
    end
 

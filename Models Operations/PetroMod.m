@@ -174,10 +174,12 @@ classdef PetroMod < handle
        function [isPMDirectory, version] = isPetroModDirectory(PMDirectory)
            hermesFileName = fullfile(PMDirectory, 'hermes.exe');
            isPMDirectory = exist(hermesFileName, 'file') == 2;
- 
-           % Get file info
-           listing = dir(hermesFileName);
-           [version,~] = datevec(listing.datenum);
+           version =[];
+           if isPMDirectory
+               % Get file info
+               listing = dir(hermesFileName);
+               [version,~] = datevec(listing.datenum);
+           end
        end
        %=====================================================
        function isPMProject = isPetroModProject(PMProjectDirectory)
