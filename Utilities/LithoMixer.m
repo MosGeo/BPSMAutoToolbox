@@ -45,18 +45,7 @@ classdef LithoMixer < handle
          currentMixer{3} = [obj.mixerText{obj.capillaryPressure(1)} obj.mixerText{obj.capillaryPressure(2)}];
     end
     % =========================================================================
-   function [lithoFileObj, parameterIds] = mixLithology(obj, lithoFileObj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite)
-
-       % Assertions
-       assert(iscell(sourceLithologies), 'Source lithologies has to be a cell');
-       assert(all(cellfun(@ischar, sourceLithologies)), 'Cell in source lithologies must contain strings');
-       assert(isnumeric(fractions), 'Fractions must be a numeric vector');
-       assert(sum(fractions)-1 <= .001, 'Fractions must add up to 1');
-       assert(size(sourceLithologies,1) == 1 && size(fractions,1) == 1, 'Source lithologies and fractions should be rows');
-       assert(size(sourceLithologies,2) ==  size(fractions,2) , 'Source lithologies and fractions should be the same size');
-       assert(ischar(distLithoName) , 'Distination lithology should be a string');
-       assert(isa(mixer, 'LithoMixer'), 'Mixer should be a LithoMixer class');
-       assert(isa(isOverwrite, 'logical'), 'Overwrite should be a boolean');
+   function [lithoFileObj, parameterIds] = mixLithologies(obj, lithoFileObj, sourceLithologies, fractions, distLithoName, mixer)
 
        % Get lithology information
        nLithos = numel(sourceLithologies);

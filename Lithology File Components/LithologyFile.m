@@ -303,11 +303,22 @@ classdef LithologyFile < handle
    
    %=====================================================
    function [parameterIds] = mixLitholgies(obj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite)
-
+       
        % Defaults
-       if ~exist('mixer','var'); mixer = LithoMixer(); end
+       if ~exist('mixer','var'); mixer = LithoMixer('H'); end
        if ~exist('isOverwrite','var'); isOverwrite = true; end
        
+       % Assertions
+       assert(iscell(sourceLithologies), 'Source lithologies has to be a cell');
+       assert(all(cellfun(@ischar, sourceLithologies)), 'Cell in source lithologies must contain strings');
+       assert(isnumeric(fractions), 'Fractions must be a numeric vector');
+       assert(sum(fractions)-1 <= .001, 'Fractions must add up to 1');
+       assert(size(sourceLithologies,1) == 1 && size(fractions,1) == 1, 'Source lithologies and fractions should be rows');
+       assert(size(sourceLithologies,2) ==  size(fractions,2) , 'Source lithologies and fractions should be the same size');
+       assert(ischar(distLithoName) , 'Distination lithology should be a string');
+       assert(isa(mixer, 'LithoMixer'), 'Mixer should be a LithoMixer class');
+       assert(isa(isOverwrite, 'logical'), 'Overwrite should be a boolean');
+
        % Main
        if obj.isLithologyExist(distLithoName) && ~isOverwrite
            disp('Lithology exist, give permission to overwrite to continue')
@@ -322,7 +333,7 @@ classdef LithologyFile < handle
        obj.duplicateLithology(sourceLithologies{1}, distLithoName);
        obj.lithology.updateMix(distLithoName, sourceLithologies, fractions, mixer)
        
-       [this.obj, parameterIds] = mixer.mixLithology(obj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite);
+       [this.obj, parameterIds] = mixer.mixLithologies(obj, sourceLithologies, fractions, distLithoName, mixer);
 
     end
    %=====================================================
