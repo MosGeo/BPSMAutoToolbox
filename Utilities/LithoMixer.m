@@ -154,11 +154,11 @@ classdef LithoMixer < handle
        condVert = zeros(1,nLithos);
        condHor  = zeros(1,nLithos);
        for i = 1:nLithos
-        condVert20   = lithoFileObj.getValue(sourceLithologies{i}, 'Thermal Conduct. at 20°C');
-        depAnisotropy= lithoFileObj.getValue(sourceLithologies{i}, 'Anisotropy Factor Thermal Conduct.');
-        condVert100  = ThermalModels.sekiguchi(condVert20, 100, 'C');
-        condVert(i)  = mean([condVert20, condVert100]);
-        condHor(i)   = mean([condVert20, condVert100]*depAnisotropy);
+            condVert20   = lithoFileObj.getValue(sourceLithologies{i}, 'Thermal Conduct. at 20°C');
+            depAnisotropy= lithoFileObj.getValue(sourceLithologies{i}, 'Anisotropy Factor Thermal Conduct.');
+            condVert100  = ThermalModels.sekiguchi(condVert20, 100, 'C');
+            condVert(i)  = mean([condVert20, condVert100]);
+            condHor(i)   = mean([condVert20, condVert100]*depAnisotropy);
        end
 
        effectiveVert = MixerTools.mixScalers(condVert, fractions, mixer.thermalCondictivity(1));

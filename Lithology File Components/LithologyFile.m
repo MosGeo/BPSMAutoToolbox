@@ -67,8 +67,15 @@ classdef LithologyFile < handle
        end
    %=====================================================
        function [] = changeCurve(obj, lithologyName, parameterName, matrix)
-           id = obj.meta.getId(parameterName);
+           
+           [id, groupId] = obj.meta.getId(parameterName);
            curveId = obj.lithology.getParameterValue(lithologyName, id);
+parameterName
+           if (~HashTools.isHash(curveId))
+               allIds = obj.getIds();
+               curveId = HashTools.getUniqueHash(allIds, [lithologyName curveId]);
+               obj.lithology.updateLithologyParametersValue(lithologyName, groupId, id, curveId);
+           end
            obj.curve.updateCurve(curveId, matrix);
        end
    %=====================================================
@@ -84,13 +91,9 @@ classdef LithologyFile < handle
 %                obj.lithology.addParameter(distLithoName, parameterGroupId, parameterId, hash);
 %          end
 %        end
-   %=====================================================
-       function [] = addCurve (obj, curveName, curveType, matrix)
-           allIds = obj.getIds();
-           hash = HashTools.getUniqueHash(allIds, distLithoName);
-           obj.curve.addCurve(curveName, curveType, matrix, hash)
-       end
-   %=====================================================
+       %=====================================================
+
+       %=====================================================
        function [parameterValues, defaults] = getValue(obj, lithologyName, parameterName)
            
            % Asserttions 
@@ -107,19 +110,20 @@ classdef LithologyFile < handle
            
            for i =  1:nLithologies
                parameterValue = obj.lithology.getParameterValue(lithologyName{i}, id);
-               if HashTools.isHash(parameterValue)
-                   parameterValue = obj.curve.getCurve(parameterValue);
-               end
-               parameterValue = cellfun(@str2num, parameterValue, 'UniformOutput', false);
-               parameterValue = cell2mat(parameterValue);
-               
-               if isnan(parameterValue)
+                              
+               if ~iscell(parameterValue) && isnan(parameterValue)
                    parameterValue = obj.meta.getDefaultValue(id);
                    default = true;
                else
                    default = false;
                end
                
+               if HashTools.isHash(parameterValue)
+                   parameterValue = obj.curve.getCurve(parameterValue);
+               end
+               parameterValue = cellfun(@str2num, parameterValue, 'UniformOutput', false);
+               parameterValue = cell2mat(parameterValue);
+  
                defaults(i) = default;
                parameterValues{i} = parameterValue;
            end
@@ -239,7 +243,6 @@ classdef LithologyFile < handle
            obj.deleteLithology(distLithoName);
        end
        
-       
         % Copy lithology
         allIds = obj.getIds();
         hash = HashTools.getUniqueHash(allIds, distLithoName);
@@ -254,7 +257,7 @@ classdef LithologyFile < handle
         lithologyParameters = obj.lithology.getLithologyParameters(distLithoName);
         for i =1:size(lithologyParameters,1)
             curveId = lithologyParameters(i,end);
-            if HashTools.isHash(curveId) == true
+            if HashTools.isHash(curveId)
                allIds = obj.getIds();
                hash = HashTools.getUniqueHash(allIds, [distLithoName curveId]);
                obj.curve.duplicateCurve(curveId, hash, distLithoName);
@@ -316,7 +319,6 @@ classdef LithologyFile < handle
        assert(size(sourceLithologies,1) == 1 && size(fractions,1) == 1, 'Source lithologies and fractions should be rows');
        assert(size(sourceLithologies,2) ==  size(fractions,2) , 'Source lithologies and fractions should be the same size');
        assert(ischar(distLithoName) , 'Distination lithology should be a string');
-       assert(isa(mixer, 'LithoMixer'), 'Mixer should be a LithoMixer class');
        assert(isa(isOverwrite, 'logical'), 'Overwrite should be a boolean');
 
        % Main
@@ -341,7 +343,7 @@ classdef LithologyFile < handle
          outputArray = cellfun(@str2num, strcell, 'UniformOutput', false);
          outputArray = cell2mat(outputArray);
    end
-    %=====================================================
+   %=====================================================
 
     
    end

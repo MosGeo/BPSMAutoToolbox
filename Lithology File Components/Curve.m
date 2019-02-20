@@ -104,13 +104,66 @@ classdef Curve < handle
             end
        end
        % =========================================================   
-       function [] = updateCurve(obj, curveId, matrix)
-            idIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
-            [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
-            matrix = cellfun(@(x) num2str(x), num2cell(matrix), 'UniformOutput', false);
-            obj.curveGroups{Locb,end} = matrix;
+       function [] = updateCurve(obj, curveId, matrix)  
+           idIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
+           [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
+           
+           if Locb ==0
+                [curveId] = createCurve(obj, 'PMToolbox', curveId);
+                [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
+           end
+           
+           matrix = cellfun(@(x) num2str(x), num2cell(matrix), 'UniformOutput', false);
+           obj.curveGroups{Locb,end} = matrix;
        end
-       % =========================================================   
+       % =========================================================
+       function [curveId] = createCurve(obj, groupName, curveId)
+           groupIdIndex         = find(ismember(obj.curveGroupTitles, 'Id'));
+           groupNameIndex       = find(ismember(obj.curveGroupTitles, 'Name'));
+           groupReadOnlyIndex   = find(ismember(obj.curveGroupTitles, 'ReadOnly'));
+           idIndex   = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'Id'));
+           nameIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'Name'));
+           readOnlyIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'ReadOnly'));
+           petrelTemplateXIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetrelTemplateX'));
+           petrelTemplateYIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetrelTemplateY'));
+           petroModUnitXIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetroModUnitX'));
+           petroModUnitYIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetroModUnitY'));
+           petroModIdIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetroModId'));
+           
+           if ~exist('groupName', 'var'); groupName = 'PMToolbox'; end
+           
+           [~, Locb] =  ismember(groupName, obj.curveGroups(:,groupNameIndex));
+           if Locb==0
+             newCurve  = obj.curveGroups(1,:);
+             newCurve{:,groupIdIndex} = HashTools.getUniqueHash(obj.getIds(), groupName);
+             newCurve{:,groupNameIndex} = groupName;
+             newCurve{:,groupReadOnlyIndex} = 'false';
+           else
+             newCurve  = obj.curveGroups(Locb,:);
+           end
+             
+           if ~exist('curveId', 'var')
+                curveId = HashTools.getUniqueHash(obj.getIds(), num2str(rand()*100000000));
+           end
+           curveName = [groupName '_' curveId];
+           newCurve{:,idIndex} = curveId;
+           newCurve{:,nameIndex} = curveName;
+           newCurve{:,readOnlyIndex} = 'false';
+           newCurve{:,petrelTemplateXIndex} = '00000014-0000-0000-0000-000000000000';
+           newCurve{:,petrelTemplateYIndex} = '00000025-0000-0000-0000-000000000000';
+           newCurve{:,petroModUnitXIndex} = '21';
+           newCurve{:,petroModUnitYIndex} = '52';          
+
+           % Update PetroModId
+           petroModIds = obj.getPetroModId();
+           NewPetroModId =  obj.getNewPetroModId(petroModIds);
+           newCurve{:,petroModIdIndex} = num2str(NewPetroModId);
+
+            % Add the new curve
+            obj.curveGroups(end+1,:) = newCurve;
+               
+       end
+       % =========================================================     
        function [] = duplicateCurve(obj, curveId, hash, LithoName)
             idIndex   = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
             nameIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Name'));

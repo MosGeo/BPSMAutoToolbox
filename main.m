@@ -89,8 +89,8 @@ model.printTable('Simulation');
 % Update the model and to the files
 model.updateModel();
 
-model.printTable('Main')
-data = model.getData('Main')
+model.printTable('Main');
+data = model.getData('Main');
 
 %% Model Operations (2D)
 

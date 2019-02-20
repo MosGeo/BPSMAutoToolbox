@@ -71,8 +71,33 @@ classdef MixerTools
                     meanValue = StatsTools.harmmean(x, fractions); 
             end            
         end
-    % =========================================================================    
-    
+    % =========================================================================
+    function property = getLithosProperties(lithoFileObj, sourceLithologies, propertyName, isNumber)
+       
+       if ~exist('isNumber', 'var'); isNumber = false; end 
+       
+       nLithos = numel(sourceLithologies);
+       for i = 1:nLithos
+            property{i}   = lithoFileObj.getValue(sourceLithologies{i}, propertyName);
+       end
+       
+       if isNumber; property = cell2mat(property); end
+
+    end
+    % =========================================================================
+    function curves = getLithosCurves(lithoFileObj, sourceLithologies, curveName)
+        curves = {};
+        nLithos = numel(sourceLithologies);
+        parameterId = lithoFileObj.meta.getId(curveName);
+
+        for j = 1:nLithos
+            curveId = lithoFileObj.lithology.getParameterValue(sourceLithologies{j}, parameterId);
+            curveValue = lithoFileObj.curve.getCurve(curveId{1});
+            curves{end+1} = lithoFileObj.strcell2array(curveValue);
+        end
+    end
+    % =========================================================================
+
     end
         
 end

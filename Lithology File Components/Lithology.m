@@ -5,7 +5,8 @@ classdef Lithology < handle
        lithologyTitles = {'Id', 'Name', 'Creator', 'ReadOnly', 'PetroModId', 'Pattern' , 'Color' , 'Mixing'};
        parameterGroupTitles = {'MetaParameterGroupId'};
        parameterTitles = {'MetaParameterId', 'Value'};
-       mixingTitles = {'LithologyComponent', 'ThermalConductivity', 'Permeability', 'CapillaryEntryPressure' ,'ReadOnly'}
+       %mixingTitles = {'LithologyComponent', 'ThermalConductivity', 'Permeability', 'CapillaryEntryPressure' ,'ReadOnly'} %2017
+       mixingTitles = {'LithologyComponent', 'ThermalConductivity', 'Permeability' ,'ReadOnly'} %2018
        lithoCompTitles = {'LithologyId', 'Fraction'}
    end
    
@@ -123,8 +124,8 @@ classdef Lithology < handle
       function mixing = analyzeMixingNode(obj, mixingNode)
           mixing = {};
           lithoCompNodes = mixingNode.getElementsByTagName(obj.mixingTitles{1});
-          nLithoComp = lithoCompNodes.getLength; 
-          
+          nLithoComp     = lithoCompNodes.getLength; 
+                    
           lithoMatrix = {};
           for i=1:nLithoComp
               lithoCompNode = lithoCompNodes.item(i-1);
@@ -133,7 +134,7 @@ classdef Lithology < handle
               end
           end
           mixing{1} = lithoMatrix;
-          
+
           for i =2:numel(obj.mixingTitles)
               mixing{i} = char(mixingNode.getElementsByTagName(obj.mixingTitles{i}).item(0).getFirstChild.getData);
           end

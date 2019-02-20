@@ -11,13 +11,18 @@ PM = PetroMod(PMDirectory, PMProjectDirectory);
 
 % Check the current parameter of the lithology
 PM.loadLithology()
-lithoInfo = PM.Litho.getLithologyInfo('Shale (typical)');
+lithoInfo = PM.Litho.getLithologyInfo('Sandstone (typical)');
 [PetroModId, id]   = PM.Litho.getLithologyId('Shale (typical)');
 
-mixer = LithoMixer('H');
+mixer = LithoMixerMos();
 sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
 fractions         = [.6, .4];
-PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
+distLithoName     = 'MosMix';
+PM.Litho.mixLitholgies(sourceLithologies, fractions, distLithoName , mixer);
+
+lithoInfo2 = PM.Litho.getLithologyInfo(distLithoName);
+
 
 PM.saveLithology();
+PM.restoreProject();
 

@@ -187,7 +187,7 @@ classdef Meta < handle
            nRecords = numel(ia);
            info =  obj.meta(ia,startIndex:endIndex);
        end
-        % =========================================================                       
+      % =========================================================                       
        function [info, nRecords] = getMetaParameterGroup2(obj, metaParameterGroupId)
            startIndex = numel(obj.metaParameterGroupTitles)+1;
            endIndex   = startIndex+numel(obj.metaParameterGroupTitles)-1;  
