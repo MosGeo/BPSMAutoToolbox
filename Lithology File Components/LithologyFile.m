@@ -49,11 +49,16 @@ classdef LithologyFile < handle
             lithology = Lithology(lithologyGroupMainNodes);
        end
    %=====================================================
-       function [] = changeValue(obj, lithologyName, parameterName, value)
+       function [] = changeValue(obj, lithologyName, parameterName, value, parameterGroupName, curveGroupName)
+           
+          if ~exist('parameterGroupName', 'var'); parameterGroupName = []; end
+          if ~exist('curveGroupName', 'var'); curveGroupName = []; end
+
+           
            if isscalar(value)==true || ischar(value)==true
                obj.changeScaler(lithologyName, parameterName, value);
            elseif ismatrix(value)==true
-               obj.changeCurve(lithologyName, parameterName, value);
+                 obj.changeCurve(lithologyName, parameterName, value, parameterGroupName, curveGroupName);
            end
        end
    %=====================================================
@@ -66,32 +71,25 @@ classdef LithologyFile < handle
            obj.lithology.updateLithologyParametersValue(lithologyName, groupId, id, scaler);
        end
    %=====================================================
-       function [] = changeCurve(obj, lithologyName, parameterName, matrix)
+       function [] = changeCurve(obj, lithologyName, parameterName, matrix, parameterGroupName, curveGroupName)
            
-           [id, groupId] = obj.meta.getId(parameterName);
+           if ~exist('parameterGroupName', 'var'); parameterGroupName = []; end
+           
+           [id, groupId] = obj.meta.getId(parameterName,parameterGroupName);
+           assert(numel(id)==1, 'More than one paramters found, provide group name');
            curveId = obj.lithology.getParameterValue(lithologyName, id);
-parameterName
-           if (~HashTools.isHash(curveId))
+           if (~iscell(curveId) && isnan(curveId))
+               disp('creating new curve');
                allIds = obj.getIds();
                curveId = HashTools.getUniqueHash(allIds, [lithologyName curveId]);
                obj.lithology.updateLithologyParametersValue(lithologyName, groupId, id, curveId);
+               assert(exist('curveGroupName', 'var')== true, 'Could not find already existing curve, provide curve group name')
+               obj.curve.updateCurve(curveId, matrix, curveGroupName);
+           else
+              obj.curve.updateCurve(curveId, matrix);
            end
-           obj.curve.updateCurve(curveId, matrix);
        end
    %=====================================================
-%        function [] = addValue(obj, lithologyName, parameterName, value)
-%          [parameterId, parameterGroupId] = obj.meta.getId(parameterName);     
-%          if isscalar(value)==true || isstring(value)==true
-%                obj.lithology.addParameter(distLithoName, parameterGroupId, parameterId, value);
-%          elseif ismatrix(value)==true
-%                allIds = obj.getIds();
-%                hash = HashTools.getUniqueHash(allIds, [lithologyName num2str(rand(100,1))]);
-%                obj.curve.duplicateCurve(curveId, hash, distLithoName);
-%                obj.curve.updateCurve(hash, value);
-%                obj.lithology.addParameter(distLithoName, parameterGroupId, parameterId, hash);
-%          end
-%        end
-       %=====================================================
 
        %=====================================================
        function [parameterValues, defaults] = getValue(obj, lithologyName, parameterName)
@@ -110,7 +108,7 @@ parameterName
            
            for i =  1:nLithologies
                parameterValue = obj.lithology.getParameterValue(lithologyName{i}, id);
-                              
+
                if ~iscell(parameterValue) && isnan(parameterValue)
                    parameterValue = obj.meta.getDefaultValue(id);
                    default = true;

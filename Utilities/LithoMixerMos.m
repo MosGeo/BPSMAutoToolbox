@@ -50,12 +50,7 @@ classdef LithoMixerMos < handle
     
     % =========================================================================
     function [lithoFileObj, parameterIds] = mixLithologies(obj, lithoFileObj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite)
-       
-       lithoInfo = lithoFileObj.getLithologyInfo('Sandstone (typical)');
-       lithoInfo = lithoFileObj.getLithologyInfo('Default');
-       
-       lithoInfo = lithoFileObj.getLithologyInfo('MosMix');
-     
+        
        mixType = 'V';
        
        % Thermal conductivity
@@ -113,13 +108,15 @@ classdef LithoMixerMos < handle
        lithoFileObj.changeValue(distLithoName, 'Density', effDensity);
        
        % Compaction II
-       stress = (0:2.5:75)';
-       athyFactorDepth = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Athy''s Factor k (depth)', true);
+       stress = (0:2.5:75)' * 10^6;
+       athyFactorDepth = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Athy''s Factor k (stress)', true);
+       athyFactorDepth = athyFactorDepth*10^(6)
        minimumPorosity = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Minimum Porosity', true);
        initialPorosity = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Initial Porosity', true); 
        [effectivePorosity, stress] = mixAthyDepth(mixType, stress, initialPorosity, athyFactorDepth, minimumPorosity, fractions);
-       lithoFileObj.changeValue(distLithoName, 'Compaction Model Key', 2);
-       lithoFileObj.changeValue(distLithoName, 'Effective Stress Curve', [effectivePorosity, stress]);
+       lithoFileObj.changeValue(distLithoName, 'Compaction Model Key', 6);
+       lithoFileObj.changeValue(distLithoName, 'Multipoint Curve', [effectivePorosity, stress], 'Mechanical compaction', 'Compaction curves');
+       lithoFileObj.changeValue(distLithoName, 'Curve Flag' , 1);
 
        % Compaction II
        compressibilityMax = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Compressibility Max', true);

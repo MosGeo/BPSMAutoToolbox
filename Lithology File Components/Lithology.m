@@ -187,7 +187,6 @@ classdef Lithology < handle
         
            if isa(value, 'double') == true; value = num2str(value); end 
            if iscell(value) == false; value = cellstr(value); end
-           if exist('isAdd','var') == true; isAdd = false;  end 
            
            % Indicies
            groupIdIndex    =   1;
@@ -320,8 +319,7 @@ classdef Lithology < handle
           % Defaults
           if ~(exist('level', 'var')); level = 1; end
           if ~(exist('isReadOnly', 'var')); isReadOnly = false; end
-          
-          
+                  
           % Main
           groupIdIndex     = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Id'));
           groupNameIndex   = (level-1)*numel(obj.lithologyGroupTitles) + find(ismember(obj.lithologyTitles,'Name'));

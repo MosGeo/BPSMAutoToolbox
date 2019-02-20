@@ -20,7 +20,8 @@ fractions         = [.6, .4];
 distLithoName     = 'MosMix';
 PM.Litho.mixLitholgies(sourceLithologies, fractions, distLithoName , mixer);
 
-lithoInfo2 = PM.Litho.getLithologyInfo(distLithoName);
+lithoInfo1 = PM.Litho.getLithologyInfo(distLithoName);
+lithoInfo2 = PM.Litho.getLithologyInfo('Default');
 
 
 PM.saveLithology();

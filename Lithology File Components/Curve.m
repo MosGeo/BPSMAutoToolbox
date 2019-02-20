@@ -36,6 +36,9 @@ classdef Curve < handle
           name   = char(curveGroupNode.getElementsByTagName('Name').item(0).getFirstChild.getData);
           readOnly   = char(curveGroupNode.getElementsByTagName('ReadOnly').item(0).getFirstChild.getData);
           
+          
+
+          
           curveNodes = curveGroupNode.getElementsByTagName('Curve');
           nCurveNodes = curveNodes.getLength;
           
@@ -56,14 +59,13 @@ classdef Curve < handle
        
        % =========================================================   
        function curve = analyzeCurve(obj, curveNode)
-          id                = char(curveNode.getElementsByTagName('Id').item(0).getFirstChild.getData);
-          name              = char(curveNode.getElementsByTagName('Name').item(0).getFirstChild.getData);
-          readOnly          = char(curveNode.getElementsByTagName('ReadOnly').item(0).getFirstChild.getData);
-          petrelTemplateX   = char(curveNode.getElementsByTagName('PetrelTemplateX').item(0).getFirstChild.getData);
-          petrelTemplateY   = char(curveNode.getElementsByTagName('PetrelTemplateY').item(0).getFirstChild.getData);
-          petroModUnitX     = char(curveNode.getElementsByTagName('PetroModUnitX').item(0).getFirstChild.getData);
-          petroModUnitY     = char(curveNode.getElementsByTagName('PetroModUnitY').item(0).getFirstChild.getData);
-          petroModId        = char(curveNode.getElementsByTagName('PetroModId').item(0).getFirstChild.getData);       
+           
+          nCurveInfo = numel(obj.curveTitles)-1;
+          curve = cell(1,nCurveInfo);
+          for i =1:nCurveInfo
+              curve{i} = XMLTools.anlyzeNodeValue(curveNode, obj.curveTitles{i});
+          end     
+          
           curvePointNodes   = curveNode.getElementsByTagName('CurvePoint');
           nCurvePointNodes  = curvePointNodes.getLength;
           
@@ -78,7 +80,7 @@ classdef Curve < handle
               curvePoints = '';
           end
           
-          curve = {id, name, readOnly, petrelTemplateX, petrelTemplateY, petroModUnitX, petroModUnitY, petroModId, curvePoints};
+          curve{end+1} = curvePoints;
            
        end
        
@@ -104,12 +106,13 @@ classdef Curve < handle
             end
        end
        % =========================================================   
-       function [] = updateCurve(obj, curveId, matrix)  
+       function [] = updateCurve(obj, curveId, matrix, groupName)  
            idIndex = numel(obj.curveGroupTitles) +  find(ismember(obj.curveTitles, 'Id'));
            [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
            
            if Locb ==0
-                [curveId] = createCurve(obj, 'PMToolbox', curveId);
+                assert(exist('groupName', 'var')== true, 'Could not find already existing curve, provide curve group name')
+                [curveId] = createCurve(obj, groupName, curveId);
                 [~, Locb] =  ismember(curveId, obj.curveGroups(:,idIndex));
            end
            
@@ -120,26 +123,23 @@ classdef Curve < handle
        function [curveId] = createCurve(obj, groupName, curveId)
            groupIdIndex         = find(ismember(obj.curveGroupTitles, 'Id'));
            groupNameIndex       = find(ismember(obj.curveGroupTitles, 'Name'));
-           groupReadOnlyIndex   = find(ismember(obj.curveGroupTitles, 'ReadOnly'));
            idIndex   = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'Id'));
            nameIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'Name'));
+           petroModIdIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetroModId'));
            readOnlyIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'ReadOnly'));
            petrelTemplateXIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetrelTemplateX'));
            petrelTemplateYIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetrelTemplateY'));
            petroModUnitXIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetroModUnitX'));
            petroModUnitYIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetroModUnitY'));
-           petroModIdIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetroModId'));
-           
+           petroModIdIndex = numel(obj.curveGroupTitles) + find(ismember(obj.curveTitles, 'PetroModId'));       
+
            if ~exist('groupName', 'var'); groupName = 'PMToolbox'; end
            
            [~, Locb] =  ismember(groupName, obj.curveGroups(:,groupNameIndex));
            if Locb==0
-             newCurve  = obj.curveGroups(1,:);
-             newCurve{:,groupIdIndex} = HashTools.getUniqueHash(obj.getIds(), groupName);
-             newCurve{:,groupNameIndex} = groupName;
-             newCurve{:,groupReadOnlyIndex} = 'false';
+                error('Could not find the curve group name provided');
            else
-             newCurve  = obj.curveGroups(Locb,:);
+                newCurve  = obj.curveGroups(Locb,:);
            end
              
            if ~exist('curveId', 'var')
@@ -148,6 +148,8 @@ classdef Curve < handle
            curveName = [groupName '_' curveId];
            newCurve{:,idIndex} = curveId;
            newCurve{:,nameIndex} = curveName;
+           
+           % Update other info
            newCurve{:,readOnlyIndex} = 'false';
            newCurve{:,petrelTemplateXIndex} = '00000014-0000-0000-0000-000000000000';
            newCurve{:,petrelTemplateYIndex} = '00000025-0000-0000-0000-000000000000';
@@ -159,8 +161,8 @@ classdef Curve < handle
            NewPetroModId =  obj.getNewPetroModId(petroModIds);
            newCurve{:,petroModIdIndex} = num2str(NewPetroModId);
 
-            % Add the new curve
-            obj.curveGroups(end+1,:) = newCurve;
+           % Add the new curve
+           obj.curveGroups(end+1,:) = newCurve;
                
        end
        % =========================================================     
@@ -252,6 +254,7 @@ classdef Curve < handle
        % =========================================================   
        function [docNode] = writeCurveNode(obj, docNode)
            [infoCurveGroup] = obj.getCurveGroups();
+           
            for i=1:infoCurveGroup.n
               curveGroupElement = XMLTools.addElement(docNode, 'CurveGroup');
               XMLTools.addElement(curveGroupElement, 'Id', infoCurveGroup.id{i});
@@ -259,7 +262,7 @@ classdef Curve < handle
               XMLTools.addElement(curveGroupElement, 'ReadOnly', infoCurveGroup.readOnly{i});
               
               [infoCurves] = obj.getCurves(infoCurveGroup.id{i});
-              if infoCurves.n > 1
+              if infoCurves.n >= 1
               for j = 1:infoCurves.n
                  curveElement = XMLTools.addElement(curveGroupElement, 'Curve');
                  XMLTools.addElement(curveElement, 'Id', infoCurves.id{j});

@@ -201,11 +201,17 @@ classdef Meta < handle
            info =  meta(ia,startIndex:endIndex);
        end
        % =========================================================                 
-       function [id,groupId] = getId(obj,parameterName)
+       function [id,groupId] = getId(obj,parameterName, parameterGroupName)
             nameIndex    = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Name'));
             idIndex      = 2*numel(obj.metaParameterGroupTitles) + find(ismember(obj.metaParameterTitles, 'Id'));
-            groupIdIndex =  find(ismember(obj.metaParameterGroupTitles, 'Id'));
-            ind = ismember(obj.meta(:,nameIndex), parameterName);
+            groupIdIndex = find(ismember(obj.metaParameterGroupTitles, 'Id'));
+            groupIdName = find(ismember(obj.metaParameterGroupTitles, 'Name'));
+
+            if ~exist('parameterGroupName', 'var') || isempty(parameterGroupName)
+                ind = ismember(obj.meta(:,nameIndex), parameterName);
+            else
+                ind = ismember(obj.meta(:,nameIndex), parameterName) & ismember(obj.meta(:,groupIdName), parameterGroupName) ;
+            end
             id = obj.meta(ind,idIndex);
             groupId = obj.meta(ind,groupIdIndex);
        end

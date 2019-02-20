@@ -43,11 +43,6 @@ classdef HashTools
         function ishash = isHash(hash)
            % A very simple hash checker. Too simplistic but it will work
            % for our current needs.
-           hash
-           if ~iscell(hash) && isnan(hash)
-               ishash = false;
-               return;
-           end
            
            regExpString = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
            [match,noMatch]  = regexp(hash, regExpString, 'match','split');          
