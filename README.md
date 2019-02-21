@@ -11,7 +11,7 @@ This is an effort to automate creation, modification, and running of models used
 - Custom open simulator scripts can be ran (pending license issues)
 
 ## How to start
-- Create your PetroMod 2017.1 "template project" (2016.2 should also work but I swtiched to testing on 2017.1 to increase the probablity of future compatibility).
+- Create your PetroMod 2018.2 "template project" (recent older versions should also work but I swtiched to testing on 2018.2 to increase the probablity of future compatibility).
 - Create your output script in python to export output if needed (see below).
 - Simulate your template project and make sure everything works.
 - See the "main.m" for the procedure to load your template project in Matlab, modify parameters, duplicate models and simulate them in Matlab.
