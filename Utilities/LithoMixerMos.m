@@ -3,40 +3,28 @@ classdef LithoMixerMos < handle
    
     % =========================================================================
     properties
-        mixerText = {'Arithmetic', 'Geometric', 'Harmonic'}
-       % 1: arithmatic, 2: Geometric, 3: harmonic
+       mixerText = {'Arithmetic', 'Geometric', 'Harmonic'} % 1: arithmatic, 2: Geometric, 3: harmonic
        thermalCondictivity = [2, 2]
        permeability = [2, 2]
-       capillaryPressure = [1, 1]
-       
-       % Defaults (Currently not used)
-       compressibility = 1
-       heatCapacity = 1
-       rockDensity = 1
-       radiogenicHeat = 1
-       sealProperties = 1
-       fracturing = 1
-       rockStress = 1 
-       mechanicalCompaction = 1
-       chemicalCompaction = 1
-       thermalExpansion = 1
-       relativePermeability = 1
+       capillaryPressure = [1, 1]      
+       mixType
     end
     
     % =========================================================================
     methods  
-        function obj = LithoMixer(type)
-        if exist('type','var')  == false; type = 'H'; end
-        switch upper(type(1))
-            case 'H'
-                obj.thermalCondictivity = [2, 2];
-                obj.permeability = [2, 2];
-                obj.capillaryPressure = [1, 1];
-            case 'V'
-                obj.thermalCondictivity = [3, 1];
-                obj.permeability = [3, 1];
-                obj.capillaryPressure = [1, 2];
-        end            
+        function obj = LithoMixerMos(type)
+            if exist('type','var')  == false; type = 'H'; end
+            obj.mixType = type;
+            switch upper(type(1))
+                case 'H'
+                    obj.thermalCondictivity = [2, 2];
+                    obj.permeability = [2, 2];
+                    obj.capillaryPressure = [1, 1];
+                case 'V'
+                    obj.thermalCondictivity = [3, 1];
+                    obj.permeability = [3, 1];
+                    obj.capillaryPressure = [1, 2];
+            end            
         end
     % =========================================================================
     function currentMixer = getMixerString(obj)
@@ -49,15 +37,13 @@ classdef LithoMixerMos < handle
     
     
     % =========================================================================
-    function [lithoFileObj, parameterIds] = mixLithologies(obj, lithoFileObj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite)
+    function [lithoFileObj] = mixLithologies(obj, lithoFileObj, sourceLithologies, fractions, distLithoName)
         
-       mixType = 'V';
-       
        % Thermal conductivity
        lambdaV20C0 = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Thermal Conduct. at 20°C', true);
        alphaD = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Depositional Anisotropy', true);
        alpha0 = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Anisotropy Factor Thermal Conduct.', true);
-       [effLambdaV20C0, effAlphaD, effAlpha0, effLambdaV100C0] = mixThermal(mixType, fractions, lambdaV20C0, alphaD, alpha0);
+       [effLambdaV20C0, effAlphaD, effAlpha0, effLambdaV100C0] = mixThermal(obj.mixType, fractions, lambdaV20C0, alphaD, alpha0);
        lithoFileObj.changeValue(distLithoName, 'Thermal Conduct. at 20°C', effLambdaV20C0);
        lithoFileObj.changeValue(distLithoName,  'Depositional Anisotropy', effAlphaD);
        lithoFileObj.changeValue(distLithoName, 'Anisotropy Factor Thermal Conduct.', effAlpha0);
@@ -65,8 +51,9 @@ classdef LithoMixerMos < handle
        lithoFileObj.changeValue(distLithoName, 'Depositional Anisotropy (On/Off)', 'true');
        
        % Thermal conductivity II
+       if (obj.mixType=='V'); meanType = 3; else; meanType =1; end
        lambdaMulti = MixerTools.getLithosCurves(lithoFileObj, sourceLithologies, 'Thermal Conduct. Multi-Point Model');
-       effLambdaMulti = MixerTools.mixCurves(lambdaMulti, fractions, 3);
+       effLambdaMulti = MixerTools.mixCurves(lambdaMulti, fractions, meanType);
        lithoFileObj.changeValue(distLithoName, 'Thermal Conduct. Multi-Point Model', effLambdaMulti);
 
        % Thermal conductivity III
@@ -101,31 +88,46 @@ classdef LithoMixerMos < handle
        lithoFileObj.changeValue(distLithoName, 'Uranium', effUranium);
        lithoFileObj.changeValue(distLithoName, 'Thorium', effThorium);
        lithoFileObj.changeValue(distLithoName, 'Potassium', effPotassium);
-
-       % Compaction
-       density = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Density', true);
-       effDensity = MixerTools.mixScalers(density, fractions, 1);
-       lithoFileObj.changeValue(distLithoName, 'Density', effDensity);
        
-       % Compaction II
-       stress = (0:2.5:75)' * 10^6;
-       athyFactorDepth = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Athy''s Factor k (stress)', true);
-       athyFactorDepth = athyFactorDepth*10^(6)
+       % Compaction I
+       if obj.mixType=='V'; porosityType = 'L'; else; porosityType = 'D'; end
        minimumPorosity = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Minimum Porosity', true);
        initialPorosity = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Initial Porosity', true); 
-       [effectivePorosity, stress] = mixAthyDepth(mixType, stress, initialPorosity, athyFactorDepth, minimumPorosity, fractions);
-       lithoFileObj.changeValue(distLithoName, 'Compaction Model Key', 6);
-       lithoFileObj.changeValue(distLithoName, 'Multipoint Curve', [effectivePorosity, stress], 'Mechanical compaction', 'Compaction curves');
-       lithoFileObj.changeValue(distLithoName, 'Curve Flag' , 1);
+       effMinimumPorosity = thomasStieberPorosity(minimumPorosity, fractions, porosityType);
+       effInitialPorosity = thomasStieberPorosity(initialPorosity, fractions, porosityType);
+       lithoFileObj.changeValue(distLithoName, 'Minimum Porosity', effMinimumPorosity);
+       lithoFileObj.changeValue(distLithoName, 'Initial Porosity', effInitialPorosity);
+       
+       % Compaction II (depth based)
+       depth = (0:.25:7.5); %(To Pa from MPa)
+       athyFactorDepth = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Athy''s Factor k (depth)', true); % Unit is Pa
+       [effectivePorosity, depth, effAthyDepth] = mixAthyDepth(obj.mixType, depth, initialPorosity, athyFactorDepth, minimumPorosity, fractions, false, 1);
+       lithoFileObj.changeValue(distLithoName, 'Athy''s Factor k (depth)', effAthyDepth);
+       lithoFileObj.changeValue(distLithoName, 'Compaction Model Key' , 5);  % Use this model
+       
+       % Compaction II (Based on stress to a multipoint curve)
+%        stress = (0:2.5:75)'*10^6; %(To Pa from MPa)
+%        athyFactorStress = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Athy''s Factor k (stress)', true); % Unit is Pa
+%        [effectivePorosity, stress, effAthy] = mixAthyDepth(mixType, stress, initialPorosity, athyFactorStress, minimumPorosity, fractions, false, 2);
+%        lithoFileObj.changeValue(distLithoName, 'Compaction Model Key', 6);
+%        lithoFileObj.changeValue(distLithoName, 'Multipoint Curve', [effectivePorosity, stress*10^-6], 'Mechanical compaction', 'Compaction curves');
+%        lithoFileObj.changeValue(distLithoName, 'Curve Flag' , 1);
 
-       % Compaction II
-       compressibilityMax = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Compressibility Max', true);
-       compressibilityMin = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Compressibility Min', true);
-       schneiderKa = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Schneider Factor ka', true);
-       schneiderKb = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Schneider Factor kb', true);
-       schneiderPhi = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Schneider Factor phi', true);
+       % Compaction IV (Whatever is left)
+       stress = (0:2.5:75)'*10^6; %(To Pa from MPa)
        athyFactorStress = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Athy''s Factor k (stress)', true);
- 
+      [effectivePorosity, stress, effAthyStress] = mixAthyDepth(obj.mixType, stress, initialPorosity, athyFactorStress, minimumPorosity, fractions, false, 2);
+       lithoFileObj.changeValue(distLithoName, 'Athy''s Factor k (stress)', effAthyStress);
+       %lithoFileObj.changeValue(distLithoName, 'Compaction Model Key' , 3);
+       
+       % Compaction III
+       compacProps = {'Compressibility Max';'Compressibility Min';  'Schneider Factor ka';  'Schneider Factor kb'; 'Schneider Factor phi'};
+       for i = 1:numel(compacProps)
+           compacProp = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, compacProps{i}, true);
+           effCompacProp = MixerTools.mixScalers(compacProp, fractions, 1);
+           lithoFileObj.changeValue(distLithoName, compacProps{i}, effCompacProp);
+       end     
+
        % Diagensis
        chemProps = {'Reference Viscosity';...
                     'Reference Temperature';...
@@ -174,29 +176,46 @@ classdef LithoMixerMos < handle
            lithoFileObj.changeValue(distLithoName, sealingProps{i}, effSealingProp);
        end
        
+       % Compaction
+       density = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Density', true);
+       effDensity = MixerTools.mixScalers(density, fractions, 1);
+       lithoFileObj.changeValue(distLithoName, 'Density', effDensity);
        
        % Rock stress
-       {'Poisson''s Ratio';'Constant Value 1';...
-           'Constant Value 2';...
-           'Plastic Model';...
-           'Friction Angle alpha';...
-           'Poisson''s Ratio 2';...
-           'Shear Modulus';...
-           'Lateral Poisson''s Ratio Fraction';...
-           'Lateral Elasticity Fraction';...
-           'Modulus of Elasticity Rock Matrix';...
-           'Cohesion';...
-           'Constant Biot Factor'}
+       nud = MixerTools.getLithosProperties(lithoFileObj,     sourceLithologies, 'Poisson''s Ratio' , true);
+       nu0 = MixerTools.getLithosProperties(lithoFileObj,     sourceLithologies, 'Poisson''s Ratio 2' , true);
+       kd = MixerTools.getLithosProperties(lithoFileObj,      sourceLithologies, 'Constant Value 1' , true);
+       k0 = MixerTools.getLithosProperties(lithoFileObj,      sourceLithologies, 'Constant Value 2' , true);
+       shear = MixerTools.getLithosProperties(lithoFileObj,   sourceLithologies, 'Shear Modulus' , true);
+       alphanu = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Lateral Poisson''s Ratio Fraction' , true);
+       alphaK  = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Lateral Elasticity Fraction' , true); 
+       kGrain = MixerTools.getLithosProperties(lithoFileObj,  sourceLithologies, 'Modulus of Elasticity Rock Matrix' , true); 
+
+       [effKd, effnud, effalphaKd, effalphaNud, effGd]   = mixElastic(obj.mixType, kd, nud, density, fractions);
+       [effK0, effnu0, effalphaK0, effalphaNu0, effG0]   = mixElastic(obj.mixType, k0, nu0, density, fractions);
+       lithoFileObj.changeValue(distLithoName, 'Poisson''s Ratio', effnud);
+       lithoFileObj.changeValue(distLithoName, 'Poisson''s Ratio 2', effnu0);
+       lithoFileObj.changeValue(distLithoName, 'Constant Value 1', effKd);
+       lithoFileObj.changeValue(distLithoName, 'Constant Value 2', effK0);
+       lithoFileObj.changeValue(distLithoName, 'Shear Modulus', (effGd+effG0)/2);
+       lithoFileObj.changeValue(distLithoName, 'Lateral Poisson''s Ratio Fraction', (effalphaNud + effalphaNu0)/2);
+       lithoFileObj.changeValue(distLithoName, 'Lateral Elasticity Fraction', (effalphaKd + effalphaK0)/2);
+       lithoFileObj.changeValue(distLithoName, 'Modulus of Elasticity Rock Matrix', hill(kGrain, fractions));
+       lithoFileObj.changeValue(distLithoName, 'Elastic Model', 2);
+       lithoFileObj.changeValue(distLithoName, 'Poisson''s ratio Model', 1);
+       lithoFileObj.changeValue(distLithoName, 'Constant Biot Factor', 'True');
        
-       
-       
-       % Miscllaneous
-       
-       % Mixing
-       
-       % Pattern Editor
-       parameterIds = [];
-       
+       if (obj.mixType=='V'); plasticModel = 1; else; plasticModel = 0; end %anisotropic vs isotropic
+       lithoFileObj.changeValue(distLithoName, 'Plastic Model', plasticModel);
+
+       % Plastic
+       frictionAngle = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Friction Angle alpha'  , true);
+       cohesion = MixerTools.getLithosProperties(lithoFileObj, sourceLithologies, 'Cohesion'  , true);
+       effFrictionAngle = MixerTools.mixScalers(frictionAngle, fractions, 1);
+       effCohesion = MixerTools.mixScalers(cohesion, fractions, 1);
+       lithoFileObj.changeValue(distLithoName, 'Friction Angle alpha', effFrictionAngle);
+       lithoFileObj.changeValue(distLithoName, 'Cohesion' , effCohesion);
+              
    end
    % =========================================================================
 

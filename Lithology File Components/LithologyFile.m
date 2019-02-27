@@ -79,7 +79,6 @@ classdef LithologyFile < handle
            assert(numel(id)==1, 'More than one paramters found, provide group name');
            curveId = obj.lithology.getParameterValue(lithologyName, id);
            if (~iscell(curveId) && isnan(curveId))
-               disp('creating new curve');
                allIds = obj.getIds();
                curveId = HashTools.getUniqueHash(allIds, [lithologyName curveId]);
                obj.lithology.updateLithologyParametersValue(lithologyName, groupId, id, curveId);
@@ -303,7 +302,7 @@ classdef LithologyFile < handle
    end
    
    %=====================================================
-   function [parameterIds] = mixLitholgies(obj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite)
+   function [] = mixLitholgies(obj, sourceLithologies, fractions, distLithoName, mixer, isOverwrite)
        
        % Defaults
        if ~exist('mixer','var'); mixer = LithoMixer('H'); end
@@ -333,7 +332,7 @@ classdef LithologyFile < handle
        obj.duplicateLithology(sourceLithologies{1}, distLithoName);
        obj.lithology.updateMix(distLithoName, sourceLithologies, fractions, mixer)
        
-       [this.obj, parameterIds] = mixer.mixLithologies(obj, sourceLithologies, fractions, distLithoName, mixer);
+       [this.obj] = mixer.mixLithologies(obj, sourceLithologies, fractions, distLithoName);
 
     end
    %=====================================================

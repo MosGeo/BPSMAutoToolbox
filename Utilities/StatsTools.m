@@ -23,6 +23,13 @@ classdef StatsTools
            meanValue =  1/sum(f./x);
         end 
        % =========================================================
+       function meanValue = genmean(x, f, p)
+           if exist('f','var')  == false; f = ones(size(x)); end
+           if sum(f)  ~= 1; f = f/sum(f); end
+           meanValue = (1/sum(f) * sum(f.*x.^p)).^(1/p);
+       end
+       % =========================================================
+
        
        % MATH
        % =========================================================

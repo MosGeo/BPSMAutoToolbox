@@ -1,4 +1,4 @@
-function [data, layerNames, units] = loadOutputOverlays(modelName, nDim, PM, overlayNumbers)
+function [data, layerNames, units, status] = loadOutputOverlays(modelName, nDim, PM, overlayNumbers)
 
 scriptFolder = fullfile(fileparts(fileparts(PM.PMDirectory)), 'scripts');
 
@@ -11,7 +11,7 @@ for iLayer = 1:numel(overlayNumbers)
     else
         outputFileName = 'demo_1.txt';
     end
-    [id, value, layer, unit] = readDemoScriptOutput(outputFileName, true);  
+    [id, value, layer, unit, status] = readDemoScriptOutput(outputFileName, true, true);  
     data = [data, value];
     layerNames{iLayer} = layer;
     units{iLayer} = unit;

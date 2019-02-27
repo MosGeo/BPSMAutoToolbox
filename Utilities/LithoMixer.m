@@ -45,7 +45,7 @@ classdef LithoMixer < handle
          currentMixer{3} = [obj.mixerText{obj.capillaryPressure(1)} obj.mixerText{obj.capillaryPressure(2)}];
     end
     % =========================================================================
-   function [lithoFileObj, parameterIds] = mixLithologies(obj, lithoFileObj, sourceLithologies, fractions, distLithoName, mixer)
+   function [lithoFileObj, parameterIds] = mixLithologies(obj, lithoFileObj, sourceLithologies, fractions, distLithoName)
 
        % Get lithology information
        nLithos = numel(sourceLithologies);
@@ -96,11 +96,11 @@ classdef LithoMixer < handle
            % Decide on the mixing type
            switch parameterGroupName      
                case 'Thermal conductivity'
-                   mixType = mixer.thermalCondictivity(1);
+                   mixType = obj.thermalCondictivity(1);
                case 'Permeability'
-                   mixType = mixer.permeability(1);
+                   mixType = obj.permeability(1);
                case 'Seal properties'
-                   mixType = mixer.capillaryPressure(1);
+                   mixType = obj.capillaryPressure(1);
                otherwise
                    mixType = 1;
            end
@@ -112,11 +112,11 @@ classdef LithoMixer < handle
                case 'Anisotropy Factor Permeability'
                    mixType = 1;
                case 'Depositional Anisotropy'
-                   mixType = mixer.thermalCondictivity(2);
+                   mixType = obj.thermalCondictivity(2);
                case 'Horizontal Upscaling Factor'
-                   mixType = mixer.permeability(2);
+                   mixType = obj.permeability(2);
                case 'Vertical Upscaling Factor'
-                   mixType = mixer.permeability(2);
+                   mixType = obj.permeability(2);
                case 'Maximum Permeability Shift'
                    mixType = 2;
                %case 'Anisotropy Factor Thermal Conduct.'
@@ -161,8 +161,8 @@ classdef LithoMixer < handle
             condHor(i)   = mean([condVert20, condVert100]*depAnisotropy);
        end
 
-       effectiveVert = MixerTools.mixScalers(condVert, fractions, mixer.thermalCondictivity(1));
-       effectivehor = MixerTools.mixScalers(condHor, fractions, mixer.thermalCondictivity(2));
+       effectiveVert = MixerTools.mixScalers(condVert, fractions, obj.thermalCondictivity(1));
+       effectivehor = MixerTools.mixScalers(condHor, fractions, obj.thermalCondictivity(2));
        effectiveDepAnisotropy = effectivehor/effectiveVert;
        lithoFileObj.changeValue(distLithoName, parameterName, effectiveDepAnisotropy);
         
