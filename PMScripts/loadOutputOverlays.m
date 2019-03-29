@@ -1,11 +1,12 @@
 function [data, layerNames, units, status] = loadOutputOverlays(modelName, nDim, PM, overlayNumbers)
 
 scriptFolder = fullfile(fileparts(fileparts(PM.PMDirectory)), 'scripts');
+scriptName  = 'demo_opensim_output_3rd_party_format';
 
 data = []; 
 layerNames=[];
 for iLayer = 1:numel(overlayNumbers)
-    [cmdout, status] = PM.runScript(modelName, nDim, 'demo_opensim_output_3rd_party_format', num2str(overlayNumbers(iLayer)), false, false, scriptFolder);
+    [cmdout, status] = PM.runScript(modelName, nDim, scriptName, num2str(overlayNumbers(iLayer)), false, false, scriptFolder);
     if PM.version >= 2018
         outputFileName =  fullfile(PM.getModelFolder(modelName, nDim),'out','demo_1.txt') ;
     else
