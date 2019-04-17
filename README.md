@@ -1,4 +1,4 @@
-# The Stanford BPSM Petromod Toolbox
+# The Stanford BPSM PM Automation Toolbox
 
 This is an effort to automate creation, modification, and running of models used in the Schlumberger PetroMod software.
 
