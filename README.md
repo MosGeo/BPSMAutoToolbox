@@ -26,6 +26,7 @@ The BPSM Automation toolbox is a library to automate the creation, modification,
 - Some parameters are internally saved with different unit than the one that is displayed in the PetroMod GUI.
 
 ## Open Simulator scripts tips
+- Open Simulator requires Python to be installed in the system. The version of required Python in 2018 or older is 2.7.
 - Check out scripts folder in PetroMod script folder for example (e.g., "C:\Program Files\Schlumberger\PetroMod 2016.2\scripts")
 - To activate your script, in the Simulator window, choose "Output", "Open Simulator" and select your script. Make sure your script run in the template project. Save the simulator window.
 - Another option is to run the written script directly from matlab as given in the example file.
