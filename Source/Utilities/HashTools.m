@@ -1,4 +1,8 @@
 classdef HashTools
+% Mustafa Al Ibrahim @ 2018, Stanford BPSM
+% Email:    Mustafa.Geoscientist@outlook.com
+% Linkedin: https://www.linkedin.com/in/mosgeo/ 
+
     methods (Static)
         %=====================================================
         function hash = getUniqueHash(oldHashs, startingString)

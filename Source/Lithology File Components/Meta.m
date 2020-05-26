@@ -1,4 +1,8 @@
 classdef Meta < handle
+% Mustafa Al Ibrahim @ 2018, Stanford BPSM
+% Email:    Mustafa.Geoscientist@outlook.com
+% Linkedin: https://www.linkedin.com/in/mosgeo/ 
+
    properties
        metaParameterGroupTitles = {'Id', 'Name', 'ReadOnly'}
        metaParameterTitles = {'Id', 'Name', 'ValueType', 'DefaultValue', 'PetrelTemplate', 'PetroModUnit', 'ReadOnly'};

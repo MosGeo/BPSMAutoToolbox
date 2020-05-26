@@ -1,5 +1,8 @@
-% Custom mixer basd on Al Ibrahim et al., 2019
+% Custom mixer basd on Al Ibrahim, 2019 PhD thesis
 classdef LithoMixerMos < handle
+% Mustafa Al Ibrahim @ 2018, Stanford BPSM
+% Email:    Mustafa.Geoscientist@outlook.com
+% Linkedin: https://www.linkedin.com/in/mosgeo/ 
    
     % =========================================================================
     properties

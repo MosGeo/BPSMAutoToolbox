@@ -1,4 +1,7 @@
 classdef Model3D < Model
+% Mustafa Al Ibrahim @ 2018, Stanford BPSM
+% Email:    Mustafa.Geoscientist@outlook.com
+% Linkedin: https://www.linkedin.com/in/mosgeo/ 
    
    properties
 

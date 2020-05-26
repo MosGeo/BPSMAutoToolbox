@@ -1,9 +1,11 @@
 classdef Model < handle
-    % Model A super class to all models (1D, 2D, and 3D). Provides interface with
-    % different file types
-    %
-    % Mustafa Al Ibrahim @ 2018
-    % Mustafa.Geoscientist@outlook.com
+% Model A super class to all models (1D, 2D, and 3D). Provides interface with
+% different file types
+%
+% Mustafa Al Ibrahim @ 2018, Stanford BPSM
+% Email:    Mustafa.Geoscientist@outlook.com
+% Linkedin: https://www.linkedin.com/in/mosgeo/ 
+
     
    properties
         modelName 
@@ -120,7 +122,7 @@ classdef Model < handle
         end
          % =========================================================                 
         function [] = printTable(obj, title)
-            table = obj.getTable(title);
+            table = obj.getTable(title)
             switch table.type
                 case 'pmt'
                   PMTTools.print(table.data);              

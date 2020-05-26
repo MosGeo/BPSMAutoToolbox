@@ -1,4 +1,7 @@
 classdef PetroMod < handle
+% Mustafa Al Ibrahim @ 2018, Stanford BPSM
+% Email:    Mustafa.Geoscientist@outlook.com
+% Linkedin: https://www.linkedin.com/in/mosgeo/ 
    
    properties
         PMDirectory = '';
@@ -100,7 +103,7 @@ classdef PetroMod < handle
            % Defaults
            if ~exist('isDisplayOutput', 'var'); isDisplayOutput = false; end
            if ~exist('isSaveOutput', 'var'); isSaveOutput = true; end
-           if ~exist('scriptFolder', 'var');  scriptFolder = fullfile(pwd, 'PMScripts'); end
+           if ~exist('scriptFolder', 'var');  scriptFolder = fullfile(fileparts(fileparts(obj.PMDirectory)), 'scripts'); end
            if ~exist('scriptArg', 'var');  scriptArg = ''; end
 
            % Assertions

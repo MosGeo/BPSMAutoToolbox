@@ -7,8 +7,10 @@ function [petroModIds, ids] = patchMixer(fractions, sourceLithologies, PM, mixer
 % groupName:                Main group name
 % subGroupName:             Subgroup name
 %
-% Mustafa Al Ibrahim @ 2018
-% Mustafa.Geoscientist@outlook.com
+% Mustafa Al Ibrahim @ 2018, Stanford BPSM
+% Email:    Mustafa.Geoscientist@outlook.com
+% Linkedin: https://www.linkedin.com/in/mosgeo/ 
+
 
 %% Preprocessing
 

@@ -1,4 +1,8 @@
 classdef Lithology < handle
+% Mustafa Al Ibrahim @ 2018, Stanford BPSM
+% Email:    Mustafa.Geoscientist@outlook.com
+% Linkedin: https://www.linkedin.com/in/mosgeo/ 
+
    properties
        lithology
        lithologyGroupTitles = {'Id', 'Name', 'Creator', 'ReadOnly', 'PetroModId'}
