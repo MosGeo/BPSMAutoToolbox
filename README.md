@@ -1,6 +1,6 @@
-# The Stanford BPSM Automation Toolbox
+# The BPSM Automation Toolbox for Probabilistic Interactions
 
-The Stanford BPSM Automation toolbox isa library to automate the creation, modification, and running of models used in the Schlumberger PetroMod software. The code is written in MATLAB (Octave support has not been tested).
+The BPSM Automation toolbox is a library to automate the creation, modification, and running of models used in the Schlumberger PetroMod software. The code is written in MATLAB (Octave support has not been tested).
 
 ## What can be done with the library?
 - A template PetroMod project can be loaded into Matlab. 
