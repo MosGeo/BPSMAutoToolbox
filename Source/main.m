@@ -1,11 +1,15 @@
+% Mustafa Al Ibrahim @ 2018, Stanford BPSM
+% Email:    Mustafa.Geoscientist@outlook.com
+% Linkedin: https://www.linkedin.com/in/mosgeo/ 
+
 clear all
 
 % Define parameters (NEED TO BE UPDATED TO MATCH YOUR PC LOCATION)
-PMDirectory = 'C:\Program Files\Schlumberger\PetroMod 2017.1\WIN64\bin';
-PMProjectDirectory = 'C:\Users\malibrah\Desktop\T17';
+PMDirectory = 'C:\Program Files\Schlumberger\PetroMod 2018.2\WIN64\bin';
+PMProjectDirectory = 'C:\Users\Musta\Documents\GitHub\BPSMAutoToolbox\Workshop\PM18 Workshop Project\';
 
 nDim = 1;   % is your model 1D, 2D, or 3D
-templateModel = 'M1DEmpty';
+templateModel = 'Workshop1D';
 newModel      = 'UpdatedModel';
 
 % Open the project
@@ -35,7 +39,7 @@ PM.Litho.changeLithologyGroup('Mos Lithology', 'MainGroup', 'SubGroup')
 PM.Litho.deleteLithology('Mos Lithology');
 
 % Create a lithology mix
-mixer = LithoMixer('H');
+mixer = LithoMixer('H'); % H or V
 sourceLithologies = {'Sandstone (typical)','Shale (typical)'};
 fractions         = [.6, .4];
 PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
@@ -44,7 +48,7 @@ PM.Litho.mixLitholgies(sourceLithologies, fractions, 'MosMix' , mixer);
 PM.saveLithology();
 
 % Create a new model and delete model
-PM.dublicateModel(templateModel, newModel, nDim);
+PM.duplicateModel(templateModel, newModel, nDim);
 
 % Update model
 % - See below (next cell)
@@ -52,11 +56,19 @@ PM.dublicateModel(templateModel, newModel, nDim);
 % Simulate model
 [output] = PM.simModel(newModel, nDim, true);
 
-% Run a DEMO script on the output
+% Run a custom demo script
 [cmdout, status] = PM.runScript(newModel, nDim, 'demo_opensim_output_3rd_party_format', '4', true);
 
-% Run a custom script on the output (not working; need license)
-[cmdout, status] = PM.runScript(newModel, nDim, 'demo_ExtractOutput', '1', true);
+% Run a custom script by in a none standard script folder (requires Open Simulator license)
+scriptFolder   = 'C:\Users\Musta\Documents\GitHub\BPSMAutoToolbox\Source\PMScripts';
+scriptName     = 'TestScript';
+scriptArgument = '';
+[cmdout, status] = PM.runScript(newModel, nDim, scriptName, scriptArgument, true, false, scriptFolder);
+
+% Special scripts to get data from output based on demo script
+[cmdout] = getAvailableOverlays(newModel, nDim, PM);
+overlayNumbers = [4,5, 6];
+[data, layerNames] = loadOutputOverlays(newModel, nDim, PM, overlayNumbers);
 
 % Delete model
 PM.deleteModel(newModel, nDim);
@@ -67,7 +79,7 @@ PM.restoreProject();
 %% Model Operations (1D)
 
 % Load Model
-model = Model1D(newModel, PMProjectDirectory);
+model = Model1D('Workshop1D', PMProjectDirectory);
 
 % Get the names of data tables
 model.getTableNames()
@@ -94,23 +106,22 @@ data = model.getData('Main');
 
 %% Model Operations (2D)
 
-PMProjectDirectory = 'C:\Users\malibrah\Desktop\PM_Inline_Uncertainty_NewHorizons-Copy2';
-
 % Load Model
-model = Model2D('NewModel_new', PMProjectDirectory);
+model = Model2D('Structural2D', PMProjectDirectory);
 
 % Get the names of data tables
 model.getTableNames()
 
 % Update the some table data (matrix table) and check if it is updated
-model.printTable('SWIT');
-data = model.getData('SWIT');
-data(:,300:400) = data(:,300:400) + 500;
-model.updateData('TS 1 B 1 Depth', data);
-model.printTable('TS 1 B 1 Depth');
+model.printTable('SWIT Trend');
+data = model.getData('SWIT Trend');
+data(:,3) = data(:,3) + 10;
+model.updateData('SWIT Trend', data);
+model.printTable('SWIT Trend');
 
-% Maps
+% Maps (vectors in 2D). In 3D they are surfaces reshaped as vectors
 data = model.getData('Heat Flow Map');
+data(:,300:400) = data(:,300:400) + 500;
 model.updateData('Heat Flow Map', data);
 
 % Update the model and to the files
