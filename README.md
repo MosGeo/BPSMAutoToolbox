@@ -2,6 +2,10 @@
 
 The BPSM Automation toolbox is a library to automate the creation, modification, and running of models used in the Schlumberger PetroMod software. The code is written in MATLAB (Octave support has not been tested).
 
+<div align="center">
+    <img width=800 src="https://github.com/MosGeo/BPSMAutoToolbox/blob/master/ReadmeFiles/Workflow.png" alt="TopImage" title="Image of particle pack"</img>
+</div>
+
 ## What can be done with the library?
 - A template PetroMod project can be loaded into Matlab. 
 - Lithologies can be duplicated, mixed, modified, and deleted. 
