@@ -13,7 +13,7 @@ The Stanford BPSM Automation toolbox isa library to automate the creation, modif
 - Create your PetroMod 2017.2 or newer "template project" (recent older versions should work too).
 - Create your output script in python to export output if needed (see below).
 - Simulate your template project and make sure everything works.
-- See the "main.m" for the procedure to load your template project in Matlab, modify parameters, duplicate models and simulate them in Matlab.
+- See the "main.m" for the procedure to load your template project in Matlab, modify parameters, duplicate models and simulate them in Matlab. You can also read the report accomponied in the repository and the workshop material included.
 
 ## Tips?
 - Save your PetroMod project in a folder that does not require administrator privileges.
