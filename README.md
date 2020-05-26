@@ -11,7 +11,7 @@ The BPSM Automation toolbox is a library to automate the creation, modification,
 - Lithologies can be duplicated, mixed, modified, and deleted. 
 - Models can be duplicated, deleted, and simulated directly from Matlab. 
 - 1D, 2D, and 3D models can be modified.
-- Custom open simulator scripts can be ran (OpenSimulator license is required)
+- Custom open simulator scripts can be ran (OpenSimulator license is required). Using this, results can be read back into Matlab.
 
 ## How to start?
 - Create your PetroMod 2017.2 or newer "template project" (recent older versions should work too).
