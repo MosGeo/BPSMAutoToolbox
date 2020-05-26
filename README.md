@@ -35,3 +35,4 @@ The basic framework is implemented now. Most needed functionalites can be automa
 
 ## Referencing this work
 If you use this library in your work, please reference the accompanying report as:
+Al Ibrahim, M. A., 2019, Petroleum system modeling of heterogeneous organic-rich mudrocks, PhD Thesis, Stanford University, p. 131-135.
