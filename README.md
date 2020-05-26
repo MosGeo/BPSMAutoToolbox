@@ -26,7 +26,7 @@ The BPSM Automation toolbox is a library to automate the creation, modification,
 - Some parameters are internally saved with different unit than the one that is displayed in the PetroMod GUI.
 
 ## Open Simulator scripts tips
-- Check out scripts folder in PetroMod (e.g., "C:\Program Files\Schlumberger\PetroMod 2016.2\scripts"). You will need to write your own scripts that export your specific needed data automatically after the simulator.
+- Check out scripts folder in PetroMod script folder for example (e.g., "C:\Program Files\Schlumberger\PetroMod 2016.2\scripts")
 - To activate your script, in the Simulator window, choose "Output", "Open Simulator" and select your script. Make sure your script run in the template project. Save the simulator window.
 - Another option is to run the written script directly from matlab as given in the example file.
 
