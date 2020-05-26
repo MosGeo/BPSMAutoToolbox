@@ -30,3 +30,4 @@ The basic framework is implemented now. The whole process can be automated in Ma
 - Another option is to run the written script directly from matlab as given in the example file.
 
 ## Referencing this work
+If you use this library in your work, please reference the accompanying report as:
