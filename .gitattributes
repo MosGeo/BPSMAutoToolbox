@@ -1,2 +1,2 @@
-
-*.html -linguist-vendored
+* linguist-vendored
+*.m linguist-vendored=false
